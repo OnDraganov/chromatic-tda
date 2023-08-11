@@ -4,18 +4,31 @@
 
 # Installation
 
-The project uses `poetry` for Python dependecy management.
+## Install with `pip`
+
+The package is uploaded to [PyPI](https://pypi.org/project/chromatic-tda/), so it can be installed with `pip`:
+Run `pip install chromatic_tda`.
+
+## Install from github project
+
+The project uses `poetry` for Python dependecy management, which allows you to easily install all you need to run the package:
 
 - Clone the repository
 - Install `poetry`
 - Go to the repository folder in terminal
-- run `poetry shell`
-- run `poetry install`
-- [optional] run `pytest` to check that the code runs
+- Run `poetry shell`
+- Run `poetry install`
+- [optional] Run `pytest` to check that the code runs
 
 # How to use
 
 Check the jupyter notebook file `manual` to see how to use the code.
+
+# Future
+
+The code is under active developement. The future plans include:
+- Adding support for points in R^3
+- Making persistence computation faster with clearing.
 
 # License
 

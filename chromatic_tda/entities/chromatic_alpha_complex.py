@@ -1,7 +1,6 @@
-from src.chromatic_tda.core.core_simplicial_complex import CoreSimplicialComplex
-from src.chromatic_tda.core.core_chromatic_alpha_complex import CoreChromaticAlphaComplex
-from src.chromatic_tda.core.chromatic_alpha_complex_factory import CoreChromaticAlphaComplexFactory
-from src.chromatic_tda.entities.simplicial_complex import SimplicialComplex
+from chromatic_tda.core.core_chromatic_alpha_complex import CoreChromaticAlphaComplex
+from chromatic_tda.core.chromatic_alpha_complex_factory import CoreChromaticAlphaComplexFactory
+from chromatic_tda.entities.simplicial_complex import SimplicialComplex
 
 
 class ChromaticAlphaComplex:

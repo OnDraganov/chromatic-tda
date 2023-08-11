@@ -3,7 +3,7 @@ import math
 import os
 
 from multiprocessing.managers import SharedMemoryManager
-from src.chromatic_tda.utils.timing import TimingUtils
+from chromatic_tda.utils.timing import TimingUtils
 
 N = 5*1000*1000
 

@@ -1,12 +1,10 @@
-import time
 from pathlib import Path
 import unittest
 import json
 import numpy as np
-from matplotlib import pyplot as plt
 
-from src.chromatic_tda import ChromaticAlphaComplex, SimplicialComplex, plot_six_pack, plot_persistence_diagram
-from src.chromatic_tda.utils.persistence_utils import PersistenceUtils
+from chromatic_tda import ChromaticAlphaComplex
+from chromatic_tda.utils.persistence_utils import PersistenceUtils
 
 
 # class TestClass(unittest.TestCase):

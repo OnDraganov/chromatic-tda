@@ -1,6 +1,6 @@
-from src.chromatic_tda.core.core_simplicial_complex import CoreSimplicialComplex
-from src.chromatic_tda.utils.filter_functions import FilterFunctions
-from src.chromatic_tda.algorithms.reduce_matrix import ReduceMatrixAlgorithm
+from chromatic_tda.core.core_simplicial_complex import CoreSimplicialComplex
+from chromatic_tda.utils.filter_functions import FilterFunctions
+from chromatic_tda.algorithms.reduce_matrix import ReduceMatrixAlgorithm
 
 
 class PersistenceAlgorithm:  # why is this not a singleton? with complex as a parameter for each function?

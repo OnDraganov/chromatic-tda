@@ -1,9 +1,9 @@
-from src.chromatic_tda.utils.singleton import singleton
+from chromatic_tda.utils.singleton import singleton
 
 from itertools import combinations
-from src.chromatic_tda.core.core_simplicial_complex import CoreSimplicialComplex
-from src.chromatic_tda.utils.simplex_utils import SimplexUtils
-from src.chromatic_tda.utils.boundary_matrix_utils import BoundaryMatrixUtils
+from chromatic_tda.core.core_simplicial_complex import CoreSimplicialComplex
+from chromatic_tda.utils.simplex_utils import SimplexUtils
+from chromatic_tda.utils.boundary_matrix_utils import BoundaryMatrixUtils
 
 @singleton
 class CoreSimplicialComplexFactory():

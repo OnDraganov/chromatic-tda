@@ -1,6 +1,6 @@
 import unittest
 
-from src.chromatic_tda.entities.simplicial_complex import SimplicialComplex
+from chromatic_tda.entities.simplicial_complex import SimplicialComplex
 
 class ComplexTest(unittest.TestCase):
     def test_complex(self, verbose=False) -> None:

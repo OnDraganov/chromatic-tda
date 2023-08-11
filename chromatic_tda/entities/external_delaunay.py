@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from src.chromatic_tda.entities.simplicial_complex import SimplicialComplex
+from chromatic_tda.entities.simplicial_complex import SimplicialComplex
 
 class ExternalDelaunay(ABC):
     pass

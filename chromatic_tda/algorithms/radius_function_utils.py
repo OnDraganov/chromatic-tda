@@ -2,11 +2,11 @@ import numpy as np
 import multiprocessing
 import math
 
-from src.chromatic_tda.utils.singleton import singleton
-from src.chromatic_tda.core.core_chromatic_alpha_complex import CoreChromaticAlphaComplex
-from src.chromatic_tda.utils.geometrical_utils import GeometricalUtils
-from src.chromatic_tda.core.core_simplicial_complex import CoreSimplicialComplex
-from src.chromatic_tda.utils.timing import TimingUtils
+from chromatic_tda.utils.singleton import singleton
+from chromatic_tda.core.core_chromatic_alpha_complex import CoreChromaticAlphaComplex
+from chromatic_tda.utils.geometrical_utils import GeometricalUtils
+from chromatic_tda.core.core_simplicial_complex import CoreSimplicialComplex
+from chromatic_tda.utils.timing import TimingUtils
 
 
 class RadiusFunctionParallelUtils():

@@ -1,6 +1,6 @@
-from src.chromatic_tda.algorithms.persistence_algorithm import PersistenceAlgorithm
-from src.chromatic_tda.core.core_simplicial_complex import CoreSimplicialComplex
-from src.chromatic_tda.core.simplicial_complex_factory import CoreSimplicialComplexFactory
+from chromatic_tda.algorithms.persistence_algorithm import PersistenceAlgorithm
+from chromatic_tda.core.core_simplicial_complex import CoreSimplicialComplex
+from chromatic_tda.core.simplicial_complex_factory import CoreSimplicialComplexFactory
 
 
 class SimplicialComplex:

@@ -1,10 +1,9 @@
 import numpy as np
 import itertools
 
-from src.chromatic_tda.core.core_simplicial_complex import CoreSimplicialComplex
-from src.chromatic_tda.utils.simplex_utils import SimplexUtils
-from src.chromatic_tda.utils.geometrical_utils import GeometricalUtils
-from src.chromatic_tda.core.simplicial_complex_factory import CoreSimplicialComplexFactory
+from chromatic_tda.core.core_simplicial_complex import CoreSimplicialComplex
+from chromatic_tda.utils.geometrical_utils import GeometricalUtils
+from chromatic_tda.core.simplicial_complex_factory import CoreSimplicialComplexFactory
 
 
 class CoreChromaticAlphaComplex():

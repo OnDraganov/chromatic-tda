@@ -1,6 +1,4 @@
-from src.chromatic_tda.utils.timing import TimingUtils
 from tests.test_bars import main as test_bars_main
-from tests.timing.timing_analysis import TimingAnalysis
 
 
 def main():

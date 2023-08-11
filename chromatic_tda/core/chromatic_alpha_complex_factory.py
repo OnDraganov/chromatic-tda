@@ -3,12 +3,12 @@ import numpy as np
 import random
 from scipy.spatial import Delaunay
 
-from src.chromatic_tda.utils.singleton import singleton
-from src.chromatic_tda.core.core_chromatic_alpha_complex import CoreChromaticAlphaComplex
-from src.chromatic_tda.utils.boundary_matrix_utils import BoundaryMatrixUtils
-from src.chromatic_tda.algorithms.radius_function_utils import RadiusFunctionUtils, RadiusFunctionParallelUtils
-from src.chromatic_tda.core.simplicial_complex_factory import CoreSimplicialComplexFactory
-from src.chromatic_tda.utils.timing import TimingUtils
+from chromatic_tda.utils.singleton import singleton
+from chromatic_tda.core.core_chromatic_alpha_complex import CoreChromaticAlphaComplex
+from chromatic_tda.utils.boundary_matrix_utils import BoundaryMatrixUtils
+from chromatic_tda.algorithms.radius_function_utils import RadiusFunctionUtils
+from chromatic_tda.core.simplicial_complex_factory import CoreSimplicialComplexFactory
+from chromatic_tda.utils.timing import TimingUtils
 
 
 

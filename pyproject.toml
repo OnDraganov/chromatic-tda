@@ -12,7 +12,7 @@ homepage = "https://github.com/OnDraganov/chromatic-tda"
 repository = "https://github.com/OnDraganov/chromatic-tda"
 documentation = "https://github.com/OnDraganov/chromatic-tda"
 packages = [
-    {include = "chromatic_tda", from = "src"}
+    {include = "chromatic_tda"}
 ]
 keywords = [
     "tda", "topological data analysis", "chromatic", "chromatic alpha", "delaunay", "persistence", "persistent homology"

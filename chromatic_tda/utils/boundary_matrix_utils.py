@@ -1,7 +1,5 @@
-import numpy as np
-
-from src.chromatic_tda.utils.singleton import singleton
-from src.chromatic_tda.utils.timing import TimingUtils
+from chromatic_tda.utils.singleton import singleton
+from chromatic_tda.utils.timing import TimingUtils
 
 @singleton
 class BoundaryMatrixUtils():

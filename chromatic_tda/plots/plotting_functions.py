@@ -1,8 +1,7 @@
-import numpy as np
 from matplotlib import pyplot as plt
 
-from src.chromatic_tda.entities.simplicial_complex import SimplicialComplex
-from src.chromatic_tda.utils.singleton import singleton
+from chromatic_tda.entities.simplicial_complex import SimplicialComplex
+from chromatic_tda.utils.singleton import singleton
 
 
 def plot_persistence_diagram(bars, ax=None, **kwargs):

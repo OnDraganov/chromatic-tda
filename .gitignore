@@ -1,6 +1,7 @@
 # python and jupyter notebook
 .ipynb_checkpoints
 *__pycache__
+*.pytest_cache
 
 # IDE
 .idea

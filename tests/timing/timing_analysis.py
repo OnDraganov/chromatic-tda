@@ -1,8 +1,8 @@
 import random
 
-from src.chromatic_tda.entities.chromatic_alpha_complex import ChromaticAlphaComplex
-from src.chromatic_tda.entities.simplicial_complex import SimplicialComplex
-from src.chromatic_tda.utils.timing import TimingUtils
+from chromatic_tda.entities.chromatic_alpha_complex import ChromaticAlphaComplex
+from chromatic_tda.entities import SimplicialComplex
+from chromatic_tda.utils.timing import TimingUtils
 
 
 class TimingAnalysis:

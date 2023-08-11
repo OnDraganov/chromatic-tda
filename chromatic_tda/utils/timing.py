@@ -1,6 +1,6 @@
 from time import perf_counter
 
-from src.chromatic_tda.utils.singleton import singleton
+from chromatic_tda.utils.singleton import singleton
 
 
 @singleton

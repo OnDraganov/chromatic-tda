@@ -1,6 +1,6 @@
 import numpy as np
 
-from src.chromatic_tda.utils.persistence_utils import PersistenceUtils
+from chromatic_tda.utils.persistence_utils import PersistenceUtils
 
 
 class CoreSimplicialComplex():

@@ -1,4 +1,4 @@
-from src.chromatic_tda.core.core_simplicial_complex import CoreSimplicialComplex
+from chromatic_tda.core.core_simplicial_complex import CoreSimplicialComplex
 
 
 class FilterFunctions():

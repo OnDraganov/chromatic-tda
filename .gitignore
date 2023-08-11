@@ -1,0 +1,10 @@
+# python and jupyter notebook
+.ipynb_checkpoints
+*__pycache__
+
+# IDE
+.idea
+venv
+
+# mac files
+*.DS_Store

@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "chromatic_tda"
+version = "1.0.0"
+description = "Tool to compute six-packs of persistence diagrams for chromatic point clouds"
+authors = [
+    "Ondrej Draganov <ondrej.draganov@ist.ac.at>",
+    "Mohammad Mahini <m.mahini@gmail.com>"
+    ]
+license = "AGPL-3.0-or-later"
+readme = "README.md"
+homepage = "https://github.com/OnDraganov/chromatic-tda"
+repository = "https://github.com/OnDraganov/chromatic-tda"
+documentation = "https://github.com/OnDraganov/chromatic-tda"
+packages = [
+    {include = "chromatic_tda", from = "src"}
+]
+keywords = [
+    "tda", "topological data analysis", "chromatic", "chromatic alpha", "delaunay", "persistence", "persistent homology"
+]
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.13"
+numpy = "^1.24.2"
+matplotlib = "^3.7.0"
+scipy = "^1.10.1"
+mypy = "^1.3.0"
+pytest = "^7.3.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -4,7 +4,14 @@
 
 # Installation
 
-All the necessary Python code is in the folder `src`.
+The project uses `poetry` for Python dependecy management.
+
+- Clone the repository
+- Install `poetry`
+- Go to the repository folder in terminal
+- run `poetry shell`
+- run `poetry install`
+- [optional] run `pytest` to check that the code runs
 
 # How to use
 

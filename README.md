@@ -1,12 +1,13 @@
 # chromatic_tda
 
-`chromatic_tda` is a package for computing six-packs of persistent diagrams of colored point clouds. Currently point clouds in R^2 with 2 or 3 colors are supported.
+`chromatic_tda` is a package for computing six-packs of persistent diagrams of colored point clouds. Currently point clouds in R^2 with 2 or 3 colors are supported (see Future).
 
 # Installation
 
 ## Install with `pip`
 
-The package is uploaded to [PyPI](https://pypi.org/project/chromatic-tda/), so it can be installed with `pip`:
+The package is uploaded to [PyPI](https://pypi.org/project/chromatic-tda/), so it can be installed with `pip`.
+
 Run `pip install chromatic_tda`.
 
 ## Install from github project
@@ -29,6 +30,15 @@ Check the jupyter notebook file `manual` to see how to use the code.
 The code is under active developement. The future plans include:
 - Adding support for points in R^3
 - Making persistence computation faster with clearing.
+- Add more details and examples about how to use the code.
+
+# Publications
+
+The code is based on research done at Institute of Science and Technology by Ranita Biswas, Sebastiano Cultrera di Montesano, Ondřej Draganov, Herbert Edelsbrunner and Morteza Saghafian. A draft write up can be found on [arxiv](https://arxiv.org/abs/2212.03128). An updated version is currently being written.
+
+# Contact
+
+If you have any questions to the code, do not hesitate to contat us. We are also eager to hear from you if you try the code out, and happy to chat about how you can use it on your data. Use, e.g., the mail in my [github profile](https://github.com/OnDraganov).
 
 # License
 

@@ -1,6 +1,6 @@
 # chromatic_tda
 
-imper is a code under development for computing kernel, image and cokernel persistent homology of colored point clouds. Currently point clouds in R^2 with 2 or 3 colors are supported.
+`chromatic_tda` is a package for computing six-packs of persistent diagrams of colored point clouds. Currently point clouds in R^2 with 2 or 3 colors are supported.
 
 # Installation
 

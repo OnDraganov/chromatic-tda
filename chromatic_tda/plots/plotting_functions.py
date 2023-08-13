@@ -16,18 +16,7 @@ def plot_persistence_diagram(bars, ax=None, **kwargs):
     bars_dict_fin, bars_dict_inf = PlottingUtils().split_finite_infinite_dictionary(bars_dict)
 
     if 'lim' in kwargs and kwargs['lim'] is not None:
-        if isinstance(kwargs['lim'], list) or isinstance(kwargs['lim'], tuple):
-            if isinstance(kwargs['lim'][0], list) or isinstance(kwargs['lim'][0], tuple):
-                xlim = kwargs['lim'][0]
-                ylim = kwargs['lim'][1]
-            else:  # is (xmax, ymax) tuple
-                lim_left = -.03 * max(kwargs['lim'][0], kwargs['lim'][1])
-                xlim = (lim_left, kwargs['lim'][0])
-                ylim = (lim_left, kwargs['lim'][1])
-        else:  # is just one number
-            lim_left = -.03 * kwargs['lim']
-            xlim = (lim_left, kwargs['lim'])
-            ylim = (lim_left, kwargs['lim'])
+        xlim, ylim = PlottingUtils().parse_plot_limit_argument(kwargs['lim'])
     else:  # is not in kwargs (or is None)
         xlim, ylim = PlottingUtils().find_plot_limits(bars_dict_fin, **kwargs)
 
@@ -111,9 +100,14 @@ def plot_six_pack(data, axs=None, **kwargs):
                                 figsize=(3 * kwargs.get('size', 5), 2 * kwargs.get('size', 5)),
                                 facecolor=kwargs.get('facecolor', 'white'))
     axs = axs.flatten()
-    xlims, ylims = zip(*[PlottingUtils().find_plot_limits(bars_dict) for group, bars_dict in data.items()])
-    xlim = (min(x[0] for x in xlims), max(x[1] for x in xlims))
-    ylim = (min(y[0] for y in ylims), max(y[1] for y in ylims))
+    if 'lim' in kwargs and kwargs['lim'] is not None:
+        xlim, ylim = PlottingUtils().parse_plot_limit_argument(kwargs['lim'])
+    else:
+        xlims, ylims = zip(*[PlottingUtils().find_plot_limits(bars_dict) for group, bars_dict in data.items()])
+        xlim = (min(x[0] for x in xlims), max(x[1] for x in xlims))
+        ylim = (min(y[0] for y in ylims), max(y[1] for y in ylims))
+    kwargs['lim'] = (xlim, ylim)
+
     if kwargs.get('axes_labels', True):
         plt.gcf().supxlabel('birth', fontsize=kwargs.get('label_fontsize', 14), y=.06)
         plt.gcf().supylabel('death', fontsize=kwargs.get('label_fontsize', 14), x=.09)
@@ -129,8 +123,7 @@ def plot_six_pack(data, axs=None, **kwargs):
                              "'image', 'complex'. To allow different keys, pass allow_arbitrary_keys=True.")
 
     for group, ax in zip(groups, axs):
-        plot_persistence_diagram(data[group], ax=ax,
-                                 title=group.replace('_', '-'), lim=(xlim, ylim), **kwargs)
+        plot_persistence_diagram(data[group], ax=ax, title=group.replace('_', '-'), **kwargs)
 
     return plt.gcf(), axs
 
@@ -138,6 +131,11 @@ def plot_six_pack(data, axs=None, **kwargs):
 
 @singleton
 class PlottingUtils:
+
+    X_AXIS_EXTRA_RELATIVE_SPACE = 0.03
+    Y_AXIS_EXTRA_RELATIVE_SPACE = 0.02
+    Y_AXIS_EXTRA_RELATIVE_SPACE_WITH_INFINITY = 0.07
+
     def __init__(self):
         pass
 
@@ -149,12 +147,28 @@ class PlottingUtils:
 
     def find_plot_limits(self, bars_dict, **kwargs):
         maxdeath = PlottingUtils().find_max_finite_death_dictionary(bars_dict)
-        lim_left = -.03 * maxdeath
-        xlim = (lim_left, maxdeath * 1.02)
+        lim_left = -self.X_AXIS_EXTRA_RELATIVE_SPACE * maxdeath
+        xlim = (lim_left, maxdeath * (1 + self.Y_AXIS_EXTRA_RELATIVE_SPACE))
         if kwargs.get('only_finite', False):
-            ylim = (lim_left, maxdeath * 1.02)
+            ylim = (lim_left, maxdeath * (1 + self.Y_AXIS_EXTRA_RELATIVE_SPACE))
         else:
-            ylim = (lim_left, maxdeath * 1.07)
+            ylim = (lim_left, maxdeath * (1 + self.Y_AXIS_EXTRA_RELATIVE_SPACE_WITH_INFINITY))
+
+        return xlim, ylim
+
+    def parse_plot_limit_argument(self, lim) -> tuple[tuple[float, float], tuple[float, float]]:
+        if isinstance(lim, list) or isinstance(lim, tuple):
+            if isinstance(lim[0], list) or isinstance(lim[0], tuple):
+                xlim = lim[0]
+                ylim = lim[1]
+            else:  # is (xmax, ymax) tuple
+                lim_left = -self.X_AXIS_EXTRA_RELATIVE_SPACE * max(lim[0], lim[1])
+                xlim = (lim_left, lim[0])
+                ylim = (lim_left, lim[1])
+        else:  # is just one number
+            lim_left = -self.X_AXIS_EXTRA_RELATIVE_SPACE * lim
+            xlim = (lim_left, lim)
+            ylim = (lim_left, lim)
 
         return xlim, ylim
 

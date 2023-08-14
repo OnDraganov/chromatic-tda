@@ -72,7 +72,7 @@ def plot_persistence_diagram(bars, ax=None, **kwargs):
             alpha=kwargs.get('alpha', .7),
             label=str(d) if d != '' else None
         )
-    if set(bars_dict_fin.keys()) != {''} or kwargs.get('infinite_line_legend', False):
+    if len(set(bars_dict_fin.keys()) - {''}) > 0 or kwargs.get('infinite_line_legend', False):
         plt.legend(loc='center right', fontsize=kwargs.get('legend_fontsize', 11))
 
     return plt.gcf(), plt.gca()

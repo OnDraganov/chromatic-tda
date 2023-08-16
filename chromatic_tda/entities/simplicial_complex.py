@@ -47,7 +47,7 @@ class SimplicialComplex:
         if len(self.core_complex.birth_death) == 0:
             self.compute_persistence()
         bars = self.core_complex.get_bars_list(group, dim=dim, only_finite=only_finite)
-        if return_as == 'list':
+        if dim is not None or return_as == 'list':
             return bars
         elif return_as == 'dict':
             bars_dict = {}
@@ -58,20 +58,6 @@ class SimplicialComplex:
             return bars_dict
         else:
             raise ValueError('The argument `return_as` can only be "dict" or "list".')
-
-    def bars_dict(self, group : str, only_finite : bool = False) -> dict:
-        """Return persistence bars for a given group as a dictionary of the form { dimension : list of (birth, death) }.
-        Keyword arguments:
-            only_finite ... If True, only return the finite bars (default: False).
-
-        Remark: If compute_persistence was not called on the SimplicialComplex yet, it is called.
-        """
-        bars = {}
-        for dim, bar in self.bars(group, only_finite=only_finite):
-            if dim not in bars:
-                bars[dim] = []
-            bars[dim].append(bar)
-        return bars
 
     def bars_six_pack(self, only_finite : bool = False) -> dict:
         """Return the whole six-pack as a dictionary of the form { group : list of (dimension, (birth, death)) }.
@@ -86,15 +72,25 @@ class SimplicialComplex:
         """Return the 1-norm of finite bars of the given group and dimension"""
         return sum([death - birth for birth, death in self.bars(group, dim=dim, only_finite=True)])
 
-    def get_1norm_share(self, group_numerator : str, group_denominator : str, dim : int):
-        """Return the ratio of finite bars 1-norms of group_numerator and group_denominator"""
-        numerator = self.bars_finite_1norm(group_numerator, dim)
-        denominator = self.bars_finite_1norm(group_denominator, dim)
-        return numerator/denominator if denominator else 0
+    def diagrams_list(self, group_dimension_pattern, only_finite=False):
+        """Return list of persistence diagrams defined by the `group_dimension_pattern`. The pattern is a list of
+        pairs (group, dimension). The method respects the order given.
+        """
+        return [self.bars(group, dim, only_finite=only_finite) for group, dim in group_dimension_pattern]
+
+    # def get_1norm_share(self, group_numerator : str, group_denominator : str, dim : int):
+    #     """Return the ratio of finite bars 1-norms of group_numerator and group_denominator"""
+    #     numerator = self.bars_finite_1norm(group_numerator, dim)
+    #     denominator = self.bars_finite_1norm(group_denominator, dim)
+    #     return numerator/denominator if denominator else 0
     
     def simplices(self) -> list:
         """Return list of all simplices sorted by dimension and then lexicographically (w.r.t. vertex indices)."""
         return self.core_complex.get_simplices()
+
+    def weight_function(self) -> dict:
+        """Return the weight/radius function as a dictionary {simplex : weight}."""
+        return self.core_complex.get_simplex_weights()
 
     def simplices_of_dim(self, dim : int) -> list:
         """Return list of all simplices ."""
@@ -105,16 +101,9 @@ class SimplicialComplex:
         lexicographically (w.r.t. vertex indices)."""
         return self.core_complex.get_sub_complex_simplices()
 
-    def vertices(self) -> list:
-        """Return list of all vertices."""
-        return self.core_complex.get_vertices()
-
     def set_simplex_weights(self, radius_function, default_value = 0):
         self.core_complex.set_simplex_weights(radius_function, default_value)
 
     def set_sub_complex(self, simplices):
         self.core_complex.set_sub_complex(simplices)
-
-    def write(self):
-        self.core_complex.write()
 

@@ -25,6 +25,10 @@ The project uses `poetry` for Python dependecy management, which allows you to e
 
 Check the jupyter notebook file `manual` to see how to use the code.
 
+# !!! Warning !!!
+
+In the current version there seems to be a bug: certain point-clouds show infinite class in cokernel, when there should not be any. We are working on the solution.
+
 # Future
 
 The code is under active developement. The future plans include:

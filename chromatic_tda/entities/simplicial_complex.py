@@ -53,14 +53,21 @@ class SimplicialComplex:
         else:
             raise ValueError('The argument `return_as` can only be "dict" or "list".')
 
-    def bars_six_pack(self, only_finite : bool = False) -> dict:
-        """Return the whole six-pack as a dictionary of the form { group : list of (dimension, (birth, death)) }.
+    def bars_six_pack(self, only_finite : bool = False, return_as : str = 'dict') -> dict:
+        """Return the whole six-pack as a dictionary of the form { group : bars_of_the_group }. Bars of one group
+        are returned in one of the following formats:
+            - dict ... a dictionary {dimension : list_of_bars}
+            - list ... a list of tuples (dimension, (birth, death))
+        Default return format is `dict`.
+
         Keyword arguments:
             only_finite ... If True, only return the finite bars (default: False).
+            return_as ... Either 'dict' or 'list'. Switch return format as described above. (default: 'dict')
 
         Remark: If compute_persistence was not called on the SimplicialComplex yet, it is called.
         """
-        return {group : self.bars(group, dim=None, only_finite=only_finite) for group in self.GROUPS}
+        return {group : self.bars(group, dim=None, only_finite=only_finite, return_as=return_as)
+                for group in self.GROUPS}
 
     def bars_finite_1norm(self, group : str, dim : int):
         """Return the 1-norm of finite bars of the given group and dimension"""

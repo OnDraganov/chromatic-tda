@@ -47,7 +47,7 @@ class TestBars(unittest.TestCase):
             )
             simplicial_complex.compute_persistence()
             for group in ('kernel', 'sub_complex', 'image', 'complex', 'cokernel', 'relative'):
-                bars = simplicial_complex.bars(group)
+                bars = simplicial_complex.bars(group, return_as='list')
                 bars_test = [(dim, bar) for dim, bar in instance['bars'][group]
                              if not PersistenceUtils().is_trivial_bar(bar)]
                 results_instance[group] = all(

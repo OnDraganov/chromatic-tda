@@ -28,11 +28,17 @@ class SimplicialComplex:
         )
         return simplicial_complex
 
-    def bars(self, group : str, dim : int = None, only_finite : bool = False) -> list:
-        """Return persistence bars for a given group as a list with elements of the form (dimension, (birth, death)).
+    def bars(self, group : str, dim : int = None, only_finite : bool = False, return_as : str = 'dict'):
+        """Return persistence bars for a given group as. If dimension is given, bars are returned as a list of
+         (birth, death) pairs. If no dimension is given, all dimensions are returned in one of the following formats:
+            - dict ... a dictionary {dimension : list_of_bars}
+            - list ... a list of tuples (dimension, (birth, death))
+        Default return format is `dict`.
+
         Keyword arguments:
             dim ... Dimension. If an integer is given, returns a list of bars of only that dimension (default: None).
             only_finite ... If True, only return the finite bars (default: False).
+            return_as ... Either 'dict' or 'list'. Switch return format as described above. (default: 'dict')
 
         Remark: If compute_persistence was not called on the SimplicialComplex yet, it is called.
         """
@@ -40,7 +46,18 @@ class SimplicialComplex:
             raise ValueError(f'The group needs to be one of the following: '+', '.join(self.GROUPS))
         if len(self.core_complex.birth_death) == 0:
             self.compute_persistence()
-        return self.core_complex.get_bars_list(group, dim, only_finite)
+        bars = self.core_complex.get_bars_list(group, dim=dim, only_finite=only_finite)
+        if return_as == 'list':
+            return bars
+        elif return_as == 'dict':
+            bars_dict = {}
+            for dim, bar in bars:
+                if dim not in bars_dict:
+                    bars_dict[dim] = []
+                bars_dict[dim].append(bar)
+            return bars_dict
+        else:
+            raise ValueError('The argument `return_as` can only be "dict" or "list".')
 
     def bars_dict(self, group : str, only_finite : bool = False) -> dict:
         """Return persistence bars for a given group as a dictionary of the form { dimension : list of (birth, death) }.

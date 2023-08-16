@@ -1,3 +1,4 @@
+import numpy as np
 from matplotlib import pyplot as plt
 
 from chromatic_tda.entities.simplicial_complex import SimplicialComplex
@@ -25,7 +26,7 @@ def plot_persistence_diagram(bars, ax=None, **kwargs):
     if ax:
         plt.sca(ax)
     else:
-        plt.figure(figsize=(kwargs.get('size', 8), kwargs.get('size', 8)),
+        plt.figure(figsize=(kwargs.get('size', 5), kwargs.get('size', 5)),
                    facecolor=kwargs.get('facecolor', 'white'))
     plt.xlim(xlim)
     plt.ylim(ylim)
@@ -36,8 +37,8 @@ def plot_persistence_diagram(bars, ax=None, **kwargs):
         plt.xlabel('birth', fontsize=kwargs.get('label_fontsize', 11))
         plt.ylabel('death', fontsize=kwargs.get('label_fontsize', 11))
 
-    color = kwargs.get('color', {0:'tab:green', 1:'blue', 2:'black', 3:'orange'})
-    marker = kwargs.get('marker', {0:'D', 1:'o', 2:'s', 3:'*'})
+    color = kwargs.get('color', {0: 'tab:green', 1: 'blue', 2: 'black', 3: 'orange'})
+    marker = kwargs.get('marker', {0: 'D', 1: 'o', 2: 's', 3: '*'})
     if type(color) == list:
         color = {d: color[i] for i, d in enumerate(sorted(bars_dict)) if len(color) > i}
     elif type(color) == str:
@@ -147,6 +148,8 @@ class PlottingUtils:
 
     def find_plot_limits(self, bars_dict, **kwargs):
         maxdeath = PlottingUtils().find_max_finite_death_dictionary(bars_dict)
+        if np.isclose(maxdeath, 0):
+            maxdeath += 1  # to avoid passing identical low and high lims to pyplot
         lim_left = -self.X_AXIS_EXTRA_RELATIVE_SPACE * maxdeath
         xlim = (lim_left, maxdeath * (1 + self.Y_AXIS_EXTRA_RELATIVE_SPACE))
         if kwargs.get('only_finite', False):

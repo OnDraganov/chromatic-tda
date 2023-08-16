@@ -22,12 +22,6 @@ class SimplicialComplex:
         """Return the dimension of the simplicial complex"""
         return self.core_complex.get_dimension()
 
-    def restricted_complex(self, simplices):
-        simplicial_complex = SimplicialComplex(
-            CoreSimplicialComplexFactory().create_restricted_instance(self.core_complex, simplices)
-        )
-        return simplicial_complex
-
     def bars(self, group : str, dim : int = None, only_finite : bool = False, return_as : str = 'dict'):
         """Return persistence bars for a given group as. If dimension is given, bars are returned as a list of
          (birth, death) pairs. If no dimension is given, all dimensions are returned in one of the following formats:
@@ -101,9 +95,16 @@ class SimplicialComplex:
         lexicographically (w.r.t. vertex indices)."""
         return self.core_complex.get_sub_complex_simplices()
 
-    def set_simplex_weights(self, radius_function, default_value = 0):
-        self.core_complex.set_simplex_weights(radius_function, default_value)
+    def set_simplex_weights(self, weight_function, default_value = 0):
+        """Set the weights of simplices. The `weight_function` is a dictionary {simplex : weight}.
+        The `default_value` is used for all simplices not present in `weight_function`.
+        USE WITH CAUTION: The method is meant for creating a new simplicial complex with your own filtration. If you
+        change this, you need to manually run `compute_persistence` again."""
+        self.core_complex.set_simplex_weights(weight_function, default_value)
 
     def set_sub_complex(self, simplices):
+        """Set the sub-complex by passing its maximal (generating) simplices.
+        USE WITH CAUTION: The method is meant for creating a new simplicial complex with your own filtration. If you
+        change this, you need to manually run `compute_persistence` again."""
         self.core_complex.set_sub_complex(simplices)
 

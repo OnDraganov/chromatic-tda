@@ -1,6 +1,6 @@
 import numpy as np
 
-from chromatic_tda.utils.persistence_utils import PersistenceUtils
+from chromatic_tda.utils.floating_point_utils import FloatingPointUtils
 
 
 class CoreSimplicialComplex:
@@ -78,10 +78,10 @@ class CoreSimplicialComplex:
         dim_bars = dim_bars_finite + dim_bars_infinite
 
         if dim is None:
-            return sorted([b for b in dim_bars if not PersistenceUtils().is_trivial_bar(b[1])])
+            return sorted([b for b in dim_bars if not FloatingPointUtils().is_trivial_bar(b[1])])
         else:
             bars : list[tuple] = [bar for bar_dim, bar in dim_bars if bar_dim == dim]
-            return sorted([b for b in bars if not PersistenceUtils().is_trivial_bar(b)])
+            return sorted([b for b in bars if not FloatingPointUtils().is_trivial_bar(b)])
 
     def get_simplices(self) -> list:
         """Return list of all simplices sorted by dimension and then lexicographically."""

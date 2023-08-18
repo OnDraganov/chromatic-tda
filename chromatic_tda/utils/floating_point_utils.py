@@ -3,7 +3,7 @@ from chromatic_tda.utils.singleton import singleton
 
 
 @singleton
-class PersistenceUtils:
+class FloatingPointUtils:
 
     def is_trivial_bar(self, bar):
         return np.isclose(bar[0], bar[1])

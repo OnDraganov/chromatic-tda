@@ -8,8 +8,28 @@ class PersistenceAlgorithm:  # why is this not a singleton? with complex as a pa
     filters : FilterFunctions
 
     def __init__(self, simplicial_complex : CoreSimplicialComplex) -> None:
+        if set(simplicial_complex.simplex_weights.keys()) != set(simplicial_complex.boundary.keys()):
+            raise ValueError("The weight function does not match the simplices of the simplicial complex.")
         self.complex = simplicial_complex
-        self.filters = FilterFunctions(simplicial_complex)
+        self.filters = FilterFunctions(simplicial_complex.simplex_weights, simplicial_complex.sub_complex)
+
+    def compute_persistence(self) -> None:
+        """
+        Compute the following persistence homology:
+            complex -- PH of the whole complex
+            sub_complex -- PH only of the sub_complex
+            kernel -- kernel PH
+            image  -- image PH
+            cokernel -- co_kernel PH
+        """
+        self._compute_persistence_data()
+        self.complex.birth_death = {}
+        self._compute_birth_death_complex()
+        self._compute_birth_death_sub_complex()
+        self._compute_birth_death_image()
+        self._compute_birth_death_kernel()
+        self._compute_birth_death_cokernel()
+        self._compute_persistence_relative()
 
     def _compute_birth_death_complex(self) -> None:
         Rf = self.complex.persistence_data['complex']['R']
@@ -20,7 +40,7 @@ class PersistenceAlgorithm:  # why is this not a singleton? with complex as a pa
         pairs = set((k, v) for k, v in low_inv_f.items())
         killed = set(pair[0] for pair in pairs)
         essential = birth - killed
-        
+
         self.complex.birth_death['complex'] = {
             'birth' : birth,
             'death' : death,
@@ -122,7 +142,7 @@ class PersistenceAlgorithm:  # why is this not a singleton? with complex as a pa
 
     def _compute_persistence_data(self) -> None:
         self.complex.persistence_data = {}
-        
+
         # TODO (low priority): Only compute what is needed. The prerequisites graph is as follows:
         #   complex    -R--> image
         #   complex    -R--> relative
@@ -172,24 +192,6 @@ class PersistenceAlgorithm:  # why is this not a singleton? with complex as a pa
             matrix_relative,
             order_function=self.filters.filter_function_rad(),
             return_V=False)
-
-    def compute_persistence(self) -> None:
-        """
-        Compute the following persistence homology:
-            complex -- PH of the whole complex
-            sub_complex -- PH only of the sub_complex
-            kernel -- kernel PH
-            image  -- image PH
-            cokernel -- co_kernel PH
-        """
-        self._compute_persistence_data()
-        self.complex.birth_death = {}
-        self._compute_birth_death_complex()
-        self._compute_birth_death_sub_complex()
-        self._compute_birth_death_image()
-        self._compute_birth_death_kernel()
-        self._compute_birth_death_cokernel()
-        self._compute_persistence_relative()
 
     def get_birth_death_from_matrix(self, R, low_inv) -> dict:
         """Given a matrix R a low_inv function,

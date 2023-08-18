@@ -29,6 +29,8 @@ Check the jupyter notebook file `manual` to see how to use the code.
 
 In the current version there is a bug due to floating point arithmetics: certain point-clouds show infinite class in cokernel, when there should not be any. We are working on the solution—version 1.0.3 fixing the issue is expected to be released by 20th of August.
 
+This is version 1.0.3a1. It implements the fix, but needs to be tested. The current testing returns a failure, because the testing data was incorrect.
+
 # Future
 
 The code is under active developement. The future plans include:

@@ -105,8 +105,11 @@ class CoreSimplicialComplex:
         Note: Monotonicity is NOT checked.
         """
         self.simplex_weights = {simplex : default_value for simplex in self.boundary}
-        for simplex,weight in weight_function.items():
-            self.simplex_weights[tuple(sorted(simplex))] = weight
+        for simplex, weight in weight_function.items():
+            simplex_tuple = tuple(sorted(simplex))
+            if simplex_tuple not in self.boundary:
+                raise ValueError(f"Simplex {simplex} is not in the simplicial complex, cannot add its weight.")
+            self.simplex_weights[simplex_tuple] = weight
 
     def get_weight_function_copy(self) -> dict:
         """Return copy of {simplex : weight} dictionary."""
@@ -125,6 +128,8 @@ class CoreSimplicialComplex:
         queue = sorted(simplices, key=lambda s : (len(s), s))
         while queue:
             simplex = queue.pop()
+            if simplex not in self.boundary:
+                raise KeyError(f"Simplex {simplex} is not in the simplicial complex, cannot add into sub-complex.")
             simplex_boundary = self.boundary[simplex]
             for sub_simplex in simplex_boundary:
                 if sub_simplex not in simplices:

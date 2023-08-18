@@ -36,9 +36,11 @@ The code is under active developement. The future plans include:
 - Making persistence computation faster with clearing.
 - Add more details and examples about how to use the code.
 
-# Publications
+# Resources
 
 The code is based on research done at Institute of Science and Technology by Ranita Biswas, Sebastiano Cultrera di Montesano, Ondřej Draganov, Herbert Edelsbrunner and Morteza Saghafian. A draft write up can be found on [arxiv](https://arxiv.org/abs/2212.03128). An updated version is currently being written.
+
+A presentation about the main concepts used in this package can be viewed on YouTube: [AATRN Online Seminar: TDA for Chromatic Point Clouds](https://youtu.be/HIqiF00yKaw).
 
 # Contact
 

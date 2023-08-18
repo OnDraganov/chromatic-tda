@@ -89,9 +89,12 @@ class SimplicialComplex:
         """Return list of all simplices sorted by dimension and then lexicographically (w.r.t. vertex indices)."""
         return self.core_complex.get_simplices()
 
-    def weight_function(self) -> dict:
-        """Return the weight/radius function as a dictionary {simplex : weight}."""
-        return self.core_complex.get_simplex_weights()
+    def weight_function(self, simplex=None):
+        """If simplex is given, return the weight/radius of the simplex.
+        If no simplex is given, return the weight/radius function as a dictionary {simplex : weight}."""
+        if simplex is None:
+            return self.core_complex.get_weight_function_copy()
+        return self.core_complex.get_simplex_weight(simplex)
 
     def simplices_of_dim(self, dim : int) -> list:
         """Return list of all simplices ."""
@@ -102,7 +105,7 @@ class SimplicialComplex:
         lexicographically (w.r.t. vertex indices)."""
         return self.core_complex.get_sub_complex_simplices()
 
-    def set_simplex_weights(self, weight_function, default_value = 0):
+    def set_simplex_weights(self, weight_function : dict, default_value : float = 0):
         """Set the weights of simplices. The `weight_function` is a dictionary {simplex : weight}.
         The `default_value` is used for all simplices not present in `weight_function`.
         USE WITH CAUTION: The method is meant for creating a new simplicial complex with your own filtration. If you

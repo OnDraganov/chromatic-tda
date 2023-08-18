@@ -17,14 +17,17 @@ class TestBars(unittest.TestCase):
 
     data_folder = Path(__file__).parent / 'test_data'
 
-    def test_all(self):
-        print('=== Testing bars computation for all pre-computed tests ===')
+    def test_all(self, verbose=False):
+        if verbose:
+            print('=== Testing bars computation for all pre-computed tests ===')
         # results = []
         for data_name in ('line_sep', 'one_circle_20_40', 'two_circles', 'two_circles_cc', 'random', 'random2',
                           'one_circle_3col_back_split', 'one_circle_3col_bi-circle_tri-filled',
                           'one_circle_3col_circ_split'):
             test = self.single_test(data_name)
             assert test
+            if verbose:
+                print(f'    {test}  ...  {data_name}')
 
     def single_test(self, data_name, return_detailed=False):
         return self.single_test_data(self.load_data(data_name), return_detailed=return_detailed)

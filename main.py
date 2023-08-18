@@ -1,8 +1,14 @@
-from tests.test_bars import main as test_bars_main
+from tests.test_bars import TestBars
+from chromatic_tda import ChromaticAlphaComplex, SimplicialComplex
+import numpy as np
 
 
 def main():
-    test_bars_main()
+    TestBars().test_all(verbose=True)
+
+    # points = np.random.random((50, 2))
+    # labels = list(map(int, 2 * np.random.random(len(points))))
+    # cplx = ChromaticAlphaComplex(points, labels).get_simplicial_complex(sub_complex=((0,),))
 
     # TimingAnalysis(
     #     n=1000,

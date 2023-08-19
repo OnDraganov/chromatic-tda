@@ -4,7 +4,7 @@ import numpy as np
 
 
 def main():
-    TestBars().test_all(verbose=True)
+    TestBars().test_all(verbose=True, assertions=False)
 
     # points = np.random.random((50, 2))
     # labels = list(map(int, 2 * np.random.random(len(points))))

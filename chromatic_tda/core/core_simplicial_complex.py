@@ -110,6 +110,7 @@ class CoreSimplicialComplex:
             if simplex_tuple not in self.boundary:
                 raise ValueError(f"Simplex {simplex} is not in the simplicial complex, cannot add its weight.")
             self.simplex_weights[simplex_tuple] = weight
+        FloatingPointUtils().ensure_weights_monotonicity_and_equal_values(self.simplex_weights, self.co_boundary)
 
     def get_weight_function_copy(self) -> dict:
         """Return copy of {simplex : weight} dictionary."""

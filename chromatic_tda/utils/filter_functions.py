@@ -6,10 +6,9 @@ class FilterFunctions:
     def __init__(self, weight_function : dict, sub_complex : set):
         self.weight_function = weight_function
         self.sub_complex = sub_complex
-        ordered_simplices = list(weight_function)
-        ordered_simplices.sort(key= lambda simplex: self.weight_function[simplex])
-        ordered_simplices.sort(key= lambda simplex: set(simplex))
-        self.total_filtration = {simplex : index for index, simplex in enumerate(ordered_simplices)}
+        self.total_filtration = {simplex : index for index, simplex in enumerate(
+            sorted(weight_function.keys(), key= lambda simplex: (weight_function[simplex], len(simplex), simplex))
+        )}
 
     def filter_function_rad(self):
         """Filter by radius."""

@@ -17,7 +17,7 @@ class TestBars(unittest.TestCase):
 
     data_folder = Path(__file__).parent / 'test_data'
 
-    def test_all(self, verbose=False):
+    def test_all(self, verbose=False, assertions=True):
         if verbose:
             print('=== Testing bars computation for all pre-computed tests ===')
         # results = []
@@ -25,7 +25,8 @@ class TestBars(unittest.TestCase):
                           'one_circle_3col_back_split', 'one_circle_3col_bi-circle_tri-filled',
                           'one_circle_3col_circ_split'):
             test = self.single_test(data_name)
-            assert test
+            if assertions:
+                assert test
             if verbose:
                 print(f'    {test}  ...  {data_name}')
 

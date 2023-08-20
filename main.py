@@ -5,6 +5,10 @@ import numpy as np
 
 def main():
     TestBars().test_all(verbose=True, assertions=False)
+    # for embedding in TestBars().single_test('two_circles_cc', return_detailed=True):
+    #     for group, result in embedding.items():
+    #         print(group.ljust(12), result)
+    #     print()
 
     # points = np.random.random((50, 2))
     # labels = list(map(int, 2 * np.random.random(len(points))))

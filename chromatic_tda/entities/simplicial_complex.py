@@ -15,6 +15,15 @@ class SimplicialComplex:
         else:
             self.core_complex = CoreSimplicialComplexFactory().create_instance(data)
 
+    def __iter__(self):
+        yield from self.core_complex
+
+    def __len__(self) -> int:
+        return len(self.core_complex)
+
+    def __contains__(self, element) -> bool:
+        return element in self.core_complex
+
     def compute_persistence(self):
         PersistenceAlgorithm(simplicial_complex=self.core_complex).compute_persistence()
 

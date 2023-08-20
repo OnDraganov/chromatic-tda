@@ -24,6 +24,15 @@ class ChromaticAlphaComplex:
         self.core_alpha_complex : CoreChromaticAlphaComplex = CoreChromaticAlphaComplexFactory().create_instance(
             points, labels, lift_perturbation, point_perturbation, **kwargs)
 
+    def __iter__(self):
+        yield from self.core_alpha_complex
+
+    def __len__(self) -> int:
+        return len(self.core_alpha_complex)
+
+    def __contains__(self, element) -> bool:
+        return element in self.core_alpha_complex
+
     def get_simplicial_complex(self, sub_complex=None, complex=None, relative=None, allow_unused_labels=False) -> SimplicialComplex:
         """Generate a simplicial complex and sub-complex pair based on the parameters given.
         The parameter complex restricts the complex, the parameter sub_complex defines the sub-complex,

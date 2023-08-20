@@ -22,11 +22,14 @@ class CoreChromaticAlphaComplex():
         self.internal_labels = []
         self.sq_rad = {}
 
+    def __iter__(self):
+        yield from self.simplicial_complex
+
     def __len__(self) -> int:
         return len(self.simplicial_complex)
 
-    def __contains__(self, item) -> bool:
-        return item in self.simplicial_complex
+    def __contains__(self, element) -> bool:
+        return element in self.simplicial_complex
 
     def _process_sub_complex_parameter_string(self, parameter : str):
         parameter = parameter.lower().strip()

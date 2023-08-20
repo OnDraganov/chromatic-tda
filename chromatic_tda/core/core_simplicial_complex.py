@@ -26,7 +26,16 @@ class CoreSimplicialComplex:
         self.birth_death = {}
 
         self.dimension : int
-        
+
+    def __iter__(self):
+        yield from self.get_simplices()
+
+    def __len__(self) -> int:
+        return len(self.boundary)
+
+    def __contains__(self, element) -> bool:
+        return element in self.boundary
+
     def clear(self) -> None:
         self.dim_simplex_dict = {}
         self.simplex_weights = {}

@@ -28,8 +28,10 @@ def plot_persistence_diagram(bars, ax=None, **kwargs):
     else:
         plt.figure(figsize=(kwargs.get('size', 5), kwargs.get('size', 5)),
                    facecolor=kwargs.get('facecolor', 'white'))
-    plt.xlim(xlim)
-    plt.ylim(ylim)
+    if not np.isclose(*xlim):  # to avoid passing identical low and high xlim to pyplot
+        plt.xlim(xlim)
+    if not np.isclose(*ylim):  # to avoid passing identical low and high ylim to pyplot
+        plt.ylim(ylim)
     plt.gca().set_aspect(kwargs.get('aspect', 'equal'))
     plt.xticks(fontsize=kwargs.get('ticks_fontsize', 9))
     plt.yticks(fontsize=kwargs.get('ticks_fontsize', 9))
@@ -148,8 +150,6 @@ class PlottingUtils:
 
     def find_plot_limits(self, bars_dict, **kwargs):
         maxdeath = PlottingUtils().find_max_finite_death_dictionary(bars_dict)
-        if np.isclose(maxdeath, 0):
-            maxdeath += 1  # to avoid passing identical low and high lims to pyplot
         lim_left = -self.X_AXIS_EXTRA_RELATIVE_SPACE * maxdeath
         xlim = (lim_left, maxdeath * (1 + self.Y_AXIS_EXTRA_RELATIVE_SPACE))
         if kwargs.get('only_finite', False):

@@ -46,7 +46,7 @@ class SimplicialComplex:
         Remark: If compute_persistence was not called on the SimplicialComplex yet, it is called.
         """
         if group not in self.GROUPS:
-            raise ValueError(f'The group needs to be one of the following: '+', '.join(self.GROUPS))
+            raise ValueError(f'The group needs to be one of the following: ' + ', '.join(self.GROUPS))
         if len(self.core_complex.birth_death) == 0:
             self.compute_persistence()
         bars = self.core_complex.get_bars_list(group, dim=dim, only_finite=only_finite)

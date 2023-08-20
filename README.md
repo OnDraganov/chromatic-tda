@@ -10,7 +10,7 @@ The package is uploaded to [PyPI](https://pypi.org/project/chromatic-tda/), so i
 
 Run `pip install chromatic_tda`.
 
-## Install from github project
+## Install from [github project](https://github.com/OnDraganov/chromatic-tda)
 
 The project uses `poetry` for Python dependecy management, which allows you to easily install all you need to run the package:
 
@@ -19,17 +19,11 @@ The project uses `poetry` for Python dependecy management, which allows you to e
 - Go to the repository folder in terminal
 - Run `poetry shell`
 - Run `poetry install`
-- [optional] Run `pytest` to check that the code runs
+- [optional] Run `poetry run pytest` to check that the code runs
 
 # How to use
 
 Check the jupyter notebook file `manual` to see how to use the code.
-
-# Warning
-
-In the current version there is a bug due to floating point arithmetics: certain point-clouds show infinite class in cokernel, when there should not be any. We are working on the solution—version 1.0.3 fixing the issue is expected to be released by 20th of August.
-
-This is version 1.0.3a1. It implements the fix, but needs to be tested. The current testing returns a failure, because the testing data was incorrect.
 
 # Future
 

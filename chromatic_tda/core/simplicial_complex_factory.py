@@ -5,6 +5,7 @@ from chromatic_tda.core.core_simplicial_complex import CoreSimplicialComplex
 from chromatic_tda.utils.simplex_utils import SimplexUtils
 from chromatic_tda.utils.boundary_matrix_utils import BoundaryMatrixUtils
 
+
 @singleton
 class CoreSimplicialComplexFactory():
 
@@ -16,7 +17,7 @@ class CoreSimplicialComplexFactory():
     def build_complex(self, simplicial_complex: CoreSimplicialComplex, simplices):
         if str(type(simplices)) in (
                 "<class 'list'>", "<class 'tuple'>", "<class 'set'>",
-                "<class 'numpy.ndarray'>", "<class 'dict_keys'>"):
+                "<class 'numpy.ndarray'>", "<class 'dict_keys'>"):  # TODO: fix to check properly
             self._build_complex_from_list(simplicial_complex, simplices)
 
         elif str(type(simplices)) == "<class 'dict'>":
@@ -45,9 +46,9 @@ class CoreSimplicialComplexFactory():
         for vertex in complex.dim_simplex_dict[0]:
             complex.boundary[vertex] = set()        
 
-    def _build_complex_dict(self, complex: CoreSimplicialComplex, simplex_weights_dict):
-        self._build_complex_from_list(complex, simplex_weights_dict.keys())
-        complex.set_simplex_weighs(simplex_weights_dict)
+    def _build_complex_dict(self, simplicial_complex: CoreSimplicialComplex, simplex_weights_dict):
+        self._build_complex_from_list(simplicial_complex, simplex_weights_dict.keys())
+        simplicial_complex.set_simplex_weights(simplex_weights_dict)
 
     def create_restricted_instance(self, complex: CoreSimplicialComplex, restricted_simplices) -> CoreSimplicialComplex:
         """Return a new SimplicialComplex restricted to given simplices."""

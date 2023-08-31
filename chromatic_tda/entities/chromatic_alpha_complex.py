@@ -62,17 +62,27 @@ class ChromaticAlphaComplex:
         """
         return SimplicialComplex(self.core_alpha_complex.get_complex(sub_complex, complex, relative, allow_unused_labels))
 
-    def radius_function(self):
-        return {simplex : radius for simplex, radius in self.core_alpha_complex.simplicial_complex.simplex_weights.items()}
+    def weight_function(self, simplex=None):
+        """If simplex is given, return the weight/radius of the simplex.
+        If no simplex is given, return the weight/radius function as a dictionary {simplex : weight}."""
+        if simplex is None:
+            return self.core_alpha_complex.simplicial_complex.get_weight_function_copy()
+        return self.core_alpha_complex.simplicial_complex.get_simplex_weight(simplex)
 
     def simplices(self):
-        return set(self.core_alpha_complex.simplicial_complex.boundary.keys())
+        """Return list of all simplices sorted by dimension and then lexicographically (w.r.t. vertex indices)."""
+        return set(self.core_alpha_complex.simplicial_complex.get_simplices())
 
     def simplex_labels(self, simplex):
-        return self.core_alpha_complex.simplex_labels_input(simplex)
+        """Return set of labels of the vertices of the given simplex"""
+        if simplex in self:
+            return self.core_alpha_complex.simplex_labels_input(simplex)
+        else:
+            raise KeyError(f'{simplex} is not a simplex in the chromatic alpha complex.')
 
-    def simplex_radius(self, simplex):
-        return self.core_alpha_complex.simplicial_complex.simplex_weights[simplex]
-
-    def write(self) -> None:
-        self.core_alpha_complex.write()
+    def simplex_points(self, simplex):
+        """Return a list of points spanning the given simplex"""
+        if simplex in self:
+            return [self.core_alpha_complex.points[vertex] for vertex in sorted(simplex)]
+        else:
+            raise KeyError(f'{simplex} is not a simplex in the chromatic alpha complex.')

@@ -109,10 +109,14 @@ class SimplicialComplex:
         """Return list of all simplices ."""
         return self.core_complex.get_simplices_of_dim(dim)
 
-    def sub_complex_simplices(self) -> list:
+    def simplices_sub_complex(self) -> list:
         """Return list of all simplices of the sub_complex, sorted by dimension and then
         lexicographically (w.r.t. vertex indices)."""
         return self.core_complex.get_sub_complex_simplices()
+
+    def is_in_sub_complex(self, simplex) -> bool:
+        """Return True iff the given simplex is in the sub-complex."""
+        return simplex in self.core_complex.sub_complex
 
     def set_simplex_weights(self, weight_function : dict, default_value : float = 0):
         """Set the weights of simplices. The `weight_function` is a dictionary {simplex : weight}.

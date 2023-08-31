@@ -23,7 +23,19 @@ The project uses `poetry` for Python dependecy management, which allows you to e
 
 # How to use
 
-Check the jupyter notebook file `manual` to see how to use the code.
+The basic use of the package is as follows:
+```
+import chromatic_tda as chro
+points, labels = ... # load points, labels
+chro_alpha = chro.ChromaticAlphaComplex(points, labels) simplicial_complex = chro_alpha.get_simplicial_complex(
+             sub_complex=‘bi-chromatic’
+             complex=‘all’
+             relative=‘mono-chromatic’
+)  # these options of make sense for three colors; for two use, e.g., just sub_complex='mono-chromatic'
+six_pack = simplicial_complex.bars_six_pack() chro.plot_six_pack(six_pack)
+```
+
+For more details check the docstrings of the methods and the jupyter notebook file `manual` (in [github repo](https://github.com/OnDraganov/chromatic-tda)). For more background on the theory, check the resources listed below.
 
 # Future
 

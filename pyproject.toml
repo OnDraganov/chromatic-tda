@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "chromatic_tda"
-version = "1.0.4a3"
+version = "1.0.4"
 description = "Tool to compute six-packs of persistence diagrams for chromatic point clouds"
 authors = [
     "Ondrej Draganov <ondrej.draganov@ist.ac.at>",

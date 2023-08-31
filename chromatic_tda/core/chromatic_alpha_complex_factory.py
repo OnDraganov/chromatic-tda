@@ -47,16 +47,16 @@ class CoreChromaticAlphaComplexFactory():
             raise ValueError("The list of labels must have the same length as the list of points.")
 
         self.construct_chromatic_delaunay(alpha_complex, lift_perturbation)
-        alpha_complex.simplicial_complex.co_boundary = BoundaryMatrixUtils().make_co_boundary(alpha_complex.simplicial_complex.boundary)
+        alpha_complex.simplicial_complex.co_boundary = BoundaryMatrixUtils().make_co_boundary(
+                                                       alpha_complex.simplicial_complex.boundary)
         RadiusFunctionUtils().compute_radius_function(alpha_complex, **kwargs)
-#        RadiusFunctionParallelUtils(alpha_complex).compute_radius_function_in_parallel(**kwargs)
 
         TimingUtils().stop("Build Alpha Complex")
 
     def construct_chromatic_delaunay(self, alpha_complex: CoreChromaticAlphaComplex, lift_perturbation = None):
         TimingUtils().start("Construct Chromatic Delaunay")
 
-        del_complex = Delaunay( self.chromatic_lift(alpha_complex, lift_perturbation))
+        del_complex = Delaunay(self.chromatic_lift(alpha_complex, lift_perturbation))
         all_labels = set(alpha_complex.internal_labels)
         simplices = [simplex for simplex in del_complex.simplices if set(alpha_complex.internal_labels[i] for i in simplex) == all_labels]
         alpha_complex.simplicial_complex = CoreSimplicialComplexFactory().create_instance(simplices)

@@ -25,26 +25,27 @@ class CoreSimplicialComplexFactory():
         else:
             raise TypeError(f"Cannot build complex from type {type(simplices)}.")
 
-    def _build_complex_from_list(self, complex: CoreSimplicialComplex, simplex_list):
-        complex.dimension = max(SimplexUtils().dimension(simplex) for simplex in simplex_list)
+    def _build_complex_from_list(self, simplicial_complex: CoreSimplicialComplex, simplex_list):
+        simplicial_complex.dimension = max(SimplexUtils().dimension(simplex) for simplex in simplex_list)
 
-        for dim in range(0, complex.dimension+1):
-            complex.dim_simplex_dict[dim] = set()
+        for dim in range(0, simplicial_complex.dimension + 1):
+            simplicial_complex.dim_simplex_dict[dim] = set()
 
         # create dict for dim -> simplex mapping
         for simplex in simplex_list:
             simplex_dim = SimplexUtils().dimension(simplex)
-            complex.dim_simplex_dict[simplex_dim].add(tuple(sorted(simplex)))
+            simplicial_complex.dim_simplex_dict[simplex_dim].add(tuple(sorted(simplex)))
 
-        # creating boundary map (simplex -> it's lower dimension simplices)
-        for dim in range(complex.dimension, 0, -1):
-            for simplex in complex.dim_simplex_dict[dim]:
-                complex.boundary[simplex] = set(combinations(simplex, dim))
+        # creating boundary map (simplex -> its lower dimension simplices)
+        for dim in range(simplicial_complex.dimension, 0, -1):
+            for simplex in simplicial_complex.dim_simplex_dict[dim]:
+                simplicial_complex.boundary[simplex] = set(combinations(simplex, dim))
             # update dim to simplex dict with boundary maps
-            complex.dim_simplex_dict[dim-1] = complex.dim_simplex_dict[dim-1].union(*[complex.boundary[simplex] for simplex in complex.dim_simplex_dict[dim]])
+            simplicial_complex.dim_simplex_dict[dim - 1] = simplicial_complex.dim_simplex_dict[dim - 1].union(
+                *[simplicial_complex.boundary[simplex] for simplex in simplicial_complex.dim_simplex_dict[dim]])
 
-        for vertex in complex.dim_simplex_dict[0]:
-            complex.boundary[vertex] = set()        
+        for vertex in simplicial_complex.dim_simplex_dict[0]:
+            simplicial_complex.boundary[vertex] = set()
 
     def _build_complex_dict(self, simplicial_complex: CoreSimplicialComplex, simplex_weights_dict):
         self._build_complex_from_list(simplicial_complex, simplex_weights_dict.keys())

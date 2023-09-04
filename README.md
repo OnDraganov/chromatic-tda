@@ -31,7 +31,7 @@ chro_alpha = chro.ChromaticAlphaComplex(points, labels) simplicial_complex = chr
              sub_complex=‘bi-chromatic’
              complex=‘all’
              relative=‘mono-chromatic’
-)  # these options of make sense for three colors; for two use, e.g., just sub_complex='mono-chromatic'
+)  # these options make sense for three colors; for two use, e.g., just sub_complex='mono-chromatic'
 six_pack = simplicial_complex.bars_six_pack() chro.plot_six_pack(six_pack)
 ```
 

@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+title: chromatic-tda
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Ondrej
+    family-names: Draganov
+    email: ondra@draganov.cz
+    orcid: 'https://orcid.org/0000-0003-0464-3823'
+    affiliation: Institute of Science and Technology Austria (ISTA)
+  - given-names: Mohammad
+    family-names: Mahini
+    email: m.mahini@gmail.com
+repository-code: 'https://github.com/OnDraganov/chromatic-tda'
+repository-artifact: 'https://pypi.org/project/chromatic-tda/'
+abstract: >-
+  Tool to compute six-packs of persistence diagrams for
+  chromatic point clouds
+keywords:
+  - python
+  - tda
+  - topological data analysis
+  - persistent homology
+  - persistence
+  - chromatic alpha
+  - delaunay
+license: AGPL-3.0-or-later

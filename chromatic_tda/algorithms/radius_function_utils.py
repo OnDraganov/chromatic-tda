@@ -145,10 +145,12 @@ class RadiusFunctionUtils():
                 GeometricalUtils().intersect_lines(p, p_dir, *GeometricalUtils().bisector(red[0], blu[0])),
                 GeometricalUtils().intersect_lines(p, p_dir, *GeometricalUtils().bisector(grn[0], blu[0]))
             ]
-            radii = [max(   GeometricalUtils().sq_dist(pt, red[0]),
-                            GeometricalUtils().sq_dist(pt, grn[0]),
-                            GeometricalUtils().sq_dist(pt, blu[0])) for pt in pts]
-            radius, center = min( (r,p) for r,p in zip(radii, pts))
+            radii = [max(GeometricalUtils().sq_dist(pt, red[0]),
+                         GeometricalUtils().sq_dist(pt, grn[0]),
+                         GeometricalUtils().sq_dist(pt, blu[0])) for pt in pts]
+
+            radius, center_index = min((rad, ind) for ind, rad in enumerate(radii))
+            center = pts[center_index]
             if alpha_complex.is_empty_stack(center, simplex):
                 res = radius
             else:
@@ -179,9 +181,11 @@ class RadiusFunctionUtils():
                 GeometricalUtils().project_to_line(p, p_dir, grn[0]),
                 GeometricalUtils().intersect_lines(p, p_dir, *GeometricalUtils().bisector(red[0], grn[0]))
             ]
-            radii = [max(   GeometricalUtils().sq_dist(pt, red[0]),
-                            GeometricalUtils().sq_dist(pt, grn[0])) for pt in pts]
-            radius, center = min( (r,p) for r,p in zip(radii, pts))
+            radii = [max(GeometricalUtils().sq_dist(pt, red[0]),
+                         GeometricalUtils().sq_dist(pt, grn[0])) for pt in pts]
+
+            radius, center_index = min((rad, ind) for ind, rad in enumerate(radii))
+            center = pts[center_index]
             if alpha_complex.is_empty_stack(center, simplex):
                 res = radius
             else:
@@ -194,10 +198,11 @@ class RadiusFunctionUtils():
                 GeometricalUtils().bisector(grn[0], blu[0])[0],
                 GeometricalUtils().circum_center(red[0], grn[0], blu[0])
             ]
-            radii = [max(   GeometricalUtils().sq_dist(pt, red[0]),
-                            GeometricalUtils().sq_dist(pt, grn[0]),
-                            GeometricalUtils().sq_dist(pt, blu[0])) for pt in pts]
-            radius, center = min( (r,p) for r,p in zip(radii, pts))
+            radii = [max(GeometricalUtils().sq_dist(pt, red[0]),
+                         GeometricalUtils().sq_dist(pt, grn[0]),
+                         GeometricalUtils().sq_dist(pt, blu[0])) for pt in pts]
+            radius, center_index = min((rad, ind) for ind, rad in enumerate(radii))
+            center = pts[center_index]
             if alpha_complex.is_empty_stack(center, simplex):
                 res = radius
             else:

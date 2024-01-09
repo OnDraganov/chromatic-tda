@@ -11,7 +11,12 @@ def plot_persistence_diagram(bars, ax=None, **kwargs):
         - list of (dimension, (birth, death)) tuples ... prints each dimension with different marker/color
         - dictionary of the form { dimension : list_of_bars }
     A matplotlib axis can be given as the ax argument.
-    Various options can be given via keyword arguments, many coming from matplotlib options.
+    Various options can be given via keyword arguments, many coming from matplotlib options. Include the following,
+    with default values in parentheses:
+        size (5), facecolor ('white'), aspect ('equal'), 'lim' (None), markersize (6), fillstyle ('none'), alpha (.7)
+        ticks_fontsize (9), label_fontsize (11), title_fontsize (17), legend_fontsize (11)
+        axes_labels (True), only_finite (False), label_inf (True), infinite_line_legend (True),
+        color ({0: 'tab:green', 1: 'blue', 2: 'black', 3: 'orange'}), marker ({0: 'D', 1: 'o', 2: 's', 3: '*'}),
     """
     bars_dict = PlottingUtils().process_input_to_dict_form(bars)
     bars_dict_fin, bars_dict_inf = PlottingUtils().split_finite_infinite_dictionary(bars_dict)
@@ -90,7 +95,8 @@ def plot_six_pack(data, axs=None, **kwargs):
             - list of (dimension, (birth, death)) tuples ... prints each dimension with different marker/color
             - dictionary of the form { dimension : list_of_bars }
     A list of six matplotlib axes can be given as the axs argument.
-    Various options can be given via keyword arguments, many coming from matplotlib options.
+    Various options can be given via keyword arguments, many coming from matplotlib options. For more details see
+    docstring of plot_persistence_diagram.
     """
     if isinstance(data, SimplicialComplex):
         data = data.bars_six_pack()
@@ -102,7 +108,7 @@ def plot_six_pack(data, axs=None, **kwargs):
         fig, axs = plt.subplots(2, 3,
                                 figsize=(3 * kwargs.get('size', 5), 2 * kwargs.get('size', 5)),
                                 facecolor=kwargs.get('facecolor', 'white'))
-    axs = axs.flatten()
+    axs = np.array(axs).flatten()
     if 'lim' in kwargs and kwargs['lim'] is not None:
         xlim, ylim = PlottingUtils().parse_plot_limit_argument(kwargs['lim'])
     else:
@@ -112,8 +118,8 @@ def plot_six_pack(data, axs=None, **kwargs):
     kwargs['lim'] = (xlim, ylim)
 
     if kwargs.get('axes_labels', True):
-        plt.gcf().supxlabel('birth', fontsize=kwargs.get('label_fontsize', 14), y=.06)
-        plt.gcf().supylabel('death', fontsize=kwargs.get('label_fontsize', 14), x=.09)
+        plt.gcf().supxlabel('birth', fontsize=kwargs.get('label_fontsize', 11), y=.06)
+        plt.gcf().supylabel('death', fontsize=kwargs.get('label_fontsize', 11), x=.09)
         kwargs['axes_labels'] = False
 
     groups_order = ['kernel', 'relative', 'cokernel', 'sub_complex', 'image', 'complex']

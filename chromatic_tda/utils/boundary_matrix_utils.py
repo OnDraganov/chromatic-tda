@@ -23,9 +23,6 @@ class BoundaryMatrixUtils():
         TimingUtils().stop("Make Co-Boundary")
         return co_boundary
 
-    def get_restricted_boundary(self, complex, simplices_set: set):
-        return { simplex : complex.boundary[simplex] & simplices_set for simplex in set(complex.boundary) & simplices_set }
-
     def print_matrix(self, matrix, order_function):
         order = sorted(matrix, key=order_function)
         for row in order:

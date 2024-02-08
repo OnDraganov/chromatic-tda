@@ -158,12 +158,12 @@ class PersistenceAlgorithm:  # why is this not a singleton? with complex as a pa
             return_V=True)
 
         self.complex.persistence_data['sub_complex'] = ReduceMatrixAlgorithm().reduce(
-            {simplex : self.complex.boundary[simplex] for simplex in self.complex.sub_complex},  # boundary matrix of sub-complex
+            {simplex : self.complex.boundary[simplex] for simplex in self.complex.sub_complex},  # bnd mat of subcomplex
             order_function=self.filters.filter_function_rad(),
             return_V=True)
 
         self.complex.persistence_data['image'] = ReduceMatrixAlgorithm().reduce(
-            self.complex.persistence_data['complex']['R'],  # instead of (self.complex.boundary) to have more performance
+            self.complex.persistence_data['complex']['R'],  # instead of (self.complex.boundary) for performance
             order_function=self.filters.filter_function_rad(),
             order_function_row=self.filters.filter_function_rad_sub_first(),
             return_V=False)

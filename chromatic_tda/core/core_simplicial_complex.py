@@ -12,20 +12,10 @@ class CoreSimplicialComplex:
     sub_complex: set
     persistence_data: dict
     birth_death: dict
+    dimension: int
 
     def __init__(self) -> None:
-        # should we just call clear?
-        self.dim_simplex_dict = {}  # self.dim
-        self.simplex_weights = {}  # self.rad
-
-        self.boundary = {}  # example: {(1,2,3) : {(1,2), (1,3), (2,3)}, (1,2) : {(1), (2)}, ...}
-        self.co_boundary = {}  # example:  {(1,2) : {(1,2,3), (1,2,4)}, (1,3) : {(1,2,3), (1,3,4)}, ...}
-
-        self.sub_complex = set()
-        self.persistence_data = {}
-        self.birth_death = {}
-
-        self.dimension: int
+        self.clear()
 
     def __iter__(self):
         yield from self.get_simplices()
@@ -40,12 +30,14 @@ class CoreSimplicialComplex:
         self.dim_simplex_dict = {}
         self.simplex_weights = {}
 
-        self.boundary = {}
-        self.co_boundary = {}
+        self.boundary = {}  # example: {(1,2,3) : {(1,2), (1,3), (2,3)}, (1,2) : {(1), (2)}, ...}
+        self.co_boundary = {}  # example:  {(1,2) : {(1,2,3), (1,2,4)}, (1,3) : {(1,2,3), (1,3,4)}, ...}
 
         self.sub_complex = set()
         self.persistence_data = {}
         self.birth_death = {}
+
+        self.dimension = 0
 
     def clear_empty_dimensions(self) -> None:
         clear_dims = []

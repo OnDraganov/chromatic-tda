@@ -11,6 +11,7 @@ def plot_persistence_diagram(bars, ax=None, **kwargs):
         - list of (dimension, (birth, death)) tuples ... prints each dimension with different marker/color
         - dictionary of the form { dimension : list_of_bars }
     A matplotlib axis can be given as the ax argument.
+    If keyword argument 'max_dimension' is a number, only print diagrams up to that dimension.
     Various options can be given via keyword arguments, many coming from matplotlib options. Include the following,
     with default values in parentheses:
         size (5), facecolor ('white'), aspect ('equal'), 'lim' (None), markersize (6), fillstyle ('none'), alpha (.7)
@@ -19,6 +20,8 @@ def plot_persistence_diagram(bars, ax=None, **kwargs):
         color ({0: 'tab:green', 1: 'blue', 2: 'black', 3: 'orange'}), marker ({0: 'D', 1: 'o', 2: 's', 3: '*'}),
     """
     bars_dict = PlottingUtils().process_input_to_dict_form(bars)
+    if 'max_dimension' in kwargs:
+        bars_dict = {dim : bars for dim, bars in bars_dict.items() if dim <= kwargs['max_dimension']}
     bars_dict_fin, bars_dict_inf = PlottingUtils().split_finite_infinite_dictionary(bars_dict)
 
     if 'lim' in kwargs and kwargs['lim'] is not None:
@@ -97,6 +100,7 @@ def plot_six_pack(data, axs=None, **kwargs):
     A list of six matplotlib axes can be given as the axs argument.
     Various options can be given via keyword arguments, many coming from matplotlib options. For more details see
     docstring of plot_persistence_diagram.
+    If keyword argument 'max_dimension' is a number, only print diagrams up to that dimension.
     """
     if isinstance(data, SimplicialComplex):
         data = data.bars_six_pack()
@@ -104,6 +108,11 @@ def plot_six_pack(data, axs=None, **kwargs):
         data = {group : PlottingUtils().process_input_to_dict_form(bars) for group, bars in data.items()}
     else:
         raise TypeError("The data to plot a six-pack need to be given either as SimplicialComplex or a dictionary.")
+
+    if 'max_dimension' in kwargs:
+        for group in data:
+            data[group] = {dim : bars for dim, bars in data[group].items() if dim <= kwargs['max_dimension']}
+
     if axs is None:
         fig, axs = plt.subplots(2, 3,
                                 figsize=(3 * kwargs.get('size', 5), 2 * kwargs.get('size', 5)),
@@ -148,7 +157,8 @@ class PlottingUtils:
     def __init__(self):
         pass
 
-    def find_max_finite_death_single_diagram(self, bars):
+    @staticmethod
+    def find_max_finite_death_single_diagram(bars):
         return max((death for birth, death in bars if death < float('inf')), default=0)
 
     def find_max_finite_death_dictionary(self, bars_dict):
@@ -181,7 +191,8 @@ class PlottingUtils:
 
         return xlim, ylim
 
-    def convert_tuple_form_to_dict_form(self, bars_tuple_form):
+    @staticmethod
+    def convert_tuple_form_to_dict_form(bars_tuple_form):
         bars_dict_form = {}
         for dim, bar in bars_tuple_form:
             if dim not in bars_dict_form:
@@ -190,7 +201,7 @@ class PlottingUtils:
         return bars_dict_form
 
     def process_input_to_dict_form(self, input_form):
-        if not input_form:
+        if len(input_form) == 0:
             return {}
         if isinstance(input_form, dict):
             return input_form
@@ -207,7 +218,8 @@ class PlottingUtils:
         raise TypeError("Bars given in an invalid format. Should be either a dim -> list_of_bars dictionary"
                         " or a (dim, (birth, death)) list.")
 
-    def split_finite_infinite_single_diagram(self, bars_list):
+    @staticmethod
+    def split_finite_infinite_single_diagram(bars_list):
         return ([bar for bar in bars_list if bar[1] < float('inf')],
                 [bar for bar in bars_list if bar[1] == float('inf')])
 

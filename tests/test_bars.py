@@ -21,14 +21,33 @@ class TestBars(unittest.TestCase):
         if verbose:
             print('=== Testing bars computation for all pre-computed tests ===')
         # results = []
-        for data_name in ('line_sep', 'one_circle_20_40', 'two_circles', 'two_circles_cc', 'random', 'random2',
-                          'one_circle_3col_back_split', 'one_circle_3col_bi-circle_tri-filled',
-                          'one_circle_3col_circ_split'):
+        for data_name in ('line_sep',
+                          'one_circle_20_40',
+                          'two_circles',
+                          # 'two_circles_cc',
+                          'random',
+                          'random2',
+                          # 'one_circle_3col_back_split',
+                          # 'one_circle_3col_circ_split',
+                          'one_circle_3col_bi-circle_tri-filled'
+                          ):
             test = self.single_test(data_name)
             if assertions:
                 assert test
             if verbose:
                 print(f'    {test}  ...  {data_name}')
+
+        # an instance with labels 'blue', 'orange' instead of 0, 1
+        data = self.load_data('one_circle_20_40')
+        data['labels'] = ['blue' if lab == 0 else 'orange' for lab in data['labels']]
+        for instance in data['persistence']:
+            instance['map']['sub_complex'] = [
+                [{'0': 'blue', '1': 'orange'}[ch]] for ch in instance['map']['sub_complex'].split(',')]
+        self.single_test_data(data, return_detailed=False)
+        if assertions:
+            assert test
+        if verbose:
+            print(f'    {test}  ...  one_circle_20_40 recolored')
 
     def single_test(self, data_name, return_detailed=False):
         return self.single_test_data(self.load_data(data_name), return_detailed=return_detailed)

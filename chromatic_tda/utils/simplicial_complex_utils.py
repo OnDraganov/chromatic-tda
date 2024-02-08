@@ -11,10 +11,10 @@ class SimplicialComplexUtils:
     def get_chromatic_subcomplex(self, sub_complex, full_complex, relative,
                                  simplicial_complex: CoreSimplicialComplex, internal_labeling,
                                  labels_user_to_internal=None, allow_unused_labels=False) -> CoreSimplicialComplex:
-        if full_complex is None or full_complex == '':
+        if full_complex is None or full_complex == '' or full_complex.lower().strip() == 'all':
             complex_simplices = set(simplicial_complex.boundary)
         else:
-            pattern = self.read_pattern_input(full_complex, internal_labeling, check_labels=not allow_unused_labels)
+            pattern = self.read_pattern_input(full_complex, labels_user_to_internal, check_labels=not allow_unused_labels)
             if labels_user_to_internal is not None:
                 pattern = self.pattern_translate_user_to_internal(pattern, labels_user_to_internal)
             complex_simplices = self.select_simplices_with_chromatic_pattern(
@@ -23,7 +23,7 @@ class SimplicialComplexUtils:
         if relative is None or relative == '':
             relative_simplices = set()
         else:
-            pattern = self.read_pattern_input(relative, internal_labeling, check_labels=not allow_unused_labels)
+            pattern = self.read_pattern_input(relative, labels_user_to_internal, check_labels=not allow_unused_labels)
             if labels_user_to_internal is not None:
                 pattern = self.pattern_translate_user_to_internal(pattern, labels_user_to_internal)
             relative_simplices = self.select_simplices_with_chromatic_pattern(
@@ -32,7 +32,7 @@ class SimplicialComplexUtils:
         if sub_complex is None or sub_complex == '':
             sub_complex_simplices = set(self.simplicial_complex.boundary)
         else:
-            pattern = self.read_pattern_input(sub_complex, internal_labeling, check_labels=not allow_unused_labels)
+            pattern = self.read_pattern_input(sub_complex, labels_user_to_internal, check_labels=not allow_unused_labels)
             if labels_user_to_internal is not None:
                 pattern = self.pattern_translate_user_to_internal(pattern, labels_user_to_internal)
             sub_complex_simplices = self.select_simplices_with_chromatic_pattern(
@@ -65,9 +65,7 @@ class SimplicialComplexUtils:
     @staticmethod
     def read_pattern_input_string(parameter: str, labels=None):
         parameter = parameter.lower().strip()
-        if parameter == 'all':
-            pattern_list_of_sets = [set(labels)] if labels is not None else []
-        elif parameter.endswith('chromatic'):
+        if parameter.endswith('chromatic'):
             chromaticity = parameter.replace('chromatic', '').replace('-', '')
             words_to_numbers = {'mono': 1, 'one': 1, 'bi': 2, 'two': 2, 'tri': 3, 'three': 3, 'tetra': 4, 'four': 4}
             if chromaticity in words_to_numbers:

@@ -24,7 +24,7 @@ class TestBars(unittest.TestCase):
         for data_name in ('line_sep',
                           'one_circle_20_40',
                           'two_circles',
-                          # 'two_circles_cc',
+                          'two_circles_cc',
                           'random',
                           'random2',
                           # 'one_circle_3col_back_split',

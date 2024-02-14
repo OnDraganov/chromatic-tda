@@ -136,7 +136,7 @@ class SimplicialComplex:
         """Ignoring the current subcomplex, return a new SimplicialComplex as a chromatic subcomplex given by
         the parameters (see docstring of ChromaticAlphaComplex.get_simplicial_complex).
         Argument labeling is a dictionary or a list such that labeling[vertex] = label"""
-        return SimplicialComplex(simplicial_complex_utils.get_chromatic_subcomplex(
+        return SimplicialComplex(chromatic_subcomplex_utils.get_chromatic_subcomplex(
             internal_labeling=labeling, sub_complex=sub_complex, full_complex=full_complex, relative=relative,
             simplicial_complex=self.core_complex, allow_unused_labels=allow_unused_labels)
         )

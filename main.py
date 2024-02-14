@@ -1,6 +1,5 @@
 from tests.test_bars import TestBars
-from chromatic_tda import ChromaticAlphaComplex, SimplicialComplex, plot_six_pack, plot_persistence_diagram
-from chromatic_tda.utils.simplicial_complex_utils import SimplicialComplexUtils
+from chromatic_tda import ChromaticAlphaComplex, plot_six_pack
 import numpy as np
 from matplotlib import pyplot as plt
 

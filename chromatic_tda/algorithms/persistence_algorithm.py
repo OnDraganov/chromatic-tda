@@ -1,6 +1,6 @@
 from chromatic_tda.core.core_simplicial_complex import CoreSimplicialComplex
 from chromatic_tda.utils.filter_functions import FilterFunctions
-from chromatic_tda.algorithms.reduce_matrix import ReduceMatrixAlgorithm
+from chromatic_tda.algorithms import reduce_matrix
 
 
 class PersistenceAlgorithm:  # why is this not a singleton? with complex as a parameter for each function?
@@ -152,17 +152,17 @@ class PersistenceAlgorithm:  # why is this not a singleton? with complex as a pa
         # Now user can give a list of desired groups, we add prerequisites to the list
         # and then only compute the data from the list. ! Also need to change compute_persistence !
 
-        self.complex.persistence_data['complex'] = ReduceMatrixAlgorithm().reduce(
+        self.complex.persistence_data['complex'] = reduce_matrix.reduce(
             self.complex.boundary,
             order_function=self.filters.filter_function_rad(),
             return_V=True)
 
-        self.complex.persistence_data['sub_complex'] = ReduceMatrixAlgorithm().reduce(
+        self.complex.persistence_data['sub_complex'] = reduce_matrix.reduce(
             {simplex : self.complex.boundary[simplex] for simplex in self.complex.sub_complex},  # bnd mat of subcomplex
             order_function=self.filters.filter_function_rad(),
             return_V=True)
 
-        self.complex.persistence_data['image'] = ReduceMatrixAlgorithm().reduce(
+        self.complex.persistence_data['image'] = reduce_matrix.reduce(
             self.complex.persistence_data['complex']['R'],  # instead of (self.complex.boundary) for performance
             order_function=self.filters.filter_function_rad(),
             order_function_row=self.filters.filter_function_rad_sub_first(),
@@ -170,7 +170,7 @@ class PersistenceAlgorithm:  # why is this not a singleton? with complex as a pa
 
         R = self.complex.persistence_data['complex']['R'] # should be V_im, but coincides on cycles with V_f
         V = self.complex.persistence_data['complex']['V'] # should be R_im, but coincides on cycles with R_f
-        self.complex.persistence_data['kernel'] = ReduceMatrixAlgorithm().reduce(
+        self.complex.persistence_data['kernel'] = reduce_matrix.reduce(
             {simplex : V[simplex] for simplex in V if len(R[simplex]) == 0},  # columns of V which represent cycles
             order_function=self.filters.filter_function_rad(),
             order_function_row=self.filters.filter_function_rad_sub_first(),
@@ -181,14 +181,14 @@ class PersistenceAlgorithm:  # why is this not a singleton? with complex as a pa
         Df = self.complex.persistence_data['complex']['R']  # We can take R rather than D, because we only replace
                                                             # cycle columns, so all reductions are still valid.
         D_cok = {simplex : Vg[simplex] if (simplex in Rg and len(Rg[simplex]) == 0) else Df[simplex] for simplex in Df}
-        self.complex.persistence_data['cokernel'] = ReduceMatrixAlgorithm().reduce(
+        self.complex.persistence_data['cokernel'] = reduce_matrix.reduce(
             D_cok,
             order_function=self.filters.filter_function_rad(),
             return_V=False)
 
         matrix_relative = {s : {t for t in self.complex.persistence_data['complex']['R'][s] if t not in self.complex.sub_complex}
                                   for s in self.complex.persistence_data['complex']['R']    if s not in self.complex.sub_complex}
-        self.complex.persistence_data['relative'] = ReduceMatrixAlgorithm().reduce(
+        self.complex.persistence_data['relative'] = reduce_matrix.reduce(
             matrix_relative,
             order_function=self.filters.filter_function_rad(),
             return_V=False)

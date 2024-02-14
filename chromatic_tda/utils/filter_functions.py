@@ -1,6 +1,3 @@
-from chromatic_tda.core.core_simplicial_complex import CoreSimplicialComplex
-
-
 class FilterFunctions:
     """Functions to order tuples according to float values and subset-relation."""
     def __init__(self, weight_function : dict, sub_complex : set):

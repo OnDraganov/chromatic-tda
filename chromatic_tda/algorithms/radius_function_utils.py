@@ -4,12 +4,13 @@ import math
 
 from chromatic_tda.utils.singleton import singleton
 from chromatic_tda.core.core_chromatic_alpha_complex import CoreChromaticAlphaComplex
-from chromatic_tda.utils.geometrical_utils import GeometricalUtils
+from chromatic_tda.utils.geometrical_utils import intersect_lines, project_to_line, bisector, \
+    circum_center, sq_dist, sq_dist_max
 from chromatic_tda.core.core_simplicial_complex import CoreSimplicialComplex
 from chromatic_tda.utils.timing import TimingUtils
 
 
-class RadiusFunctionParallelUtils():
+class RadiusFunctionParallelUtils:
 
     atoms : int
     alpha_complex : CoreChromaticAlphaComplex
@@ -17,7 +18,7 @@ class RadiusFunctionParallelUtils():
 
     def __init__(self, alpha_complex) -> None:
         # we can use os.cpu_count()
-        self.atoms= 5
+        self.atoms = 5
         self.alpha_complex = alpha_complex
 
     def calculate_radius_function(self, simplex):
@@ -78,7 +79,7 @@ class RadiusFunctionParallelUtils():
 
 
 @singleton
-class RadiusFunctionUtils():
+class RadiusFunctionUtils:
 
     def compute_radius_function(self, alpha_complex: CoreChromaticAlphaComplex, **kwargs) -> None:
         TimingUtils().start("Compute Radius Function")
@@ -105,11 +106,11 @@ class RadiusFunctionUtils():
 
         red, grn, blu = (alpha_complex.points[list(s)] for s in alpha_complex.split_simplex_sort_by_size(simplex))
         if (len(red), len(grn), len(blu)) == (2,2,1):
-            E_pt = GeometricalUtils().intersect_lines(*GeometricalUtils().bisector(*red), *GeometricalUtils().bisector(*grn))
-            res = GeometricalUtils().sq_dist_max(E_pt, red[0], grn[0], blu[0])
+            E_pt = intersect_lines(*bisector(*red), *bisector(*grn))
+            res = sq_dist_max(E_pt, red[0], grn[0], blu[0])
         elif (len(red), len(grn), len(blu)) == (3,1,1):
-            E_pt = GeometricalUtils().circum_center(*red)
-            res = GeometricalUtils().sq_dist_max(E_pt, red[0], grn[0], blu[0])
+            E_pt = circum_center(*red)
+            res = sq_dist_max(E_pt, red[0], grn[0], blu[0])
         else:
             raise RuntimeError(f"Simplex colored {len(red)}:{len(grn)}:{len(blu)} cannot occur in 2D.")
 
@@ -122,32 +123,32 @@ class RadiusFunctionUtils():
 
         red, grn, blu = (alpha_complex.points[list(s)] for s in alpha_complex.split_simplex_sort_by_size(simplex))
         if (len(red), len(grn), len(blu)) == (3,1,0):
-            E_pt = GeometricalUtils().circum_center(*red)
+            E_pt = circum_center(*red)
             if alpha_complex.is_empty_stack(E_pt, simplex):
-                res = GeometricalUtils().sq_dist_max(E_pt, red[0], grn[0])
+                res = sq_dist_max(E_pt, red[0], grn[0])
             else:
                 res = min(alpha_complex.sq_rad[cf] for cf in alpha_complex.simplicial_complex.co_boundary[simplex])
 
         elif (len(red), len(grn), len(blu)) == (2,2,0):
-            E_pt = GeometricalUtils().intersect_lines(*GeometricalUtils().bisector(*red), *GeometricalUtils().bisector(*grn))
+            E_pt = intersect_lines(*bisector(*red), *bisector(*grn))
             if alpha_complex.is_empty_stack(E_pt, simplex):
-                res = GeometricalUtils().sq_dist_max(E_pt, red[0], grn[0])
+                res = sq_dist_max(E_pt, red[0], grn[0])
             else:
                 res = min(alpha_complex.sq_rad[cf] for cf in alpha_complex.simplicial_complex.co_boundary[simplex])
 
         elif (len(red), len(grn), len(blu)) == (2,1,1):
-            p, p_dir = GeometricalUtils().bisector(*red)
+            p, p_dir = bisector(*red)
             pts = [
-                GeometricalUtils().project_to_line(p, p_dir, red[0]),
-                GeometricalUtils().project_to_line(p, p_dir, grn[0]),
-                GeometricalUtils().project_to_line(p, p_dir, blu[0]),
-                GeometricalUtils().intersect_lines(p, p_dir, *GeometricalUtils().bisector(red[0], grn[0])),
-                GeometricalUtils().intersect_lines(p, p_dir, *GeometricalUtils().bisector(red[0], blu[0])),
-                GeometricalUtils().intersect_lines(p, p_dir, *GeometricalUtils().bisector(grn[0], blu[0]))
+                project_to_line(p, p_dir, red[0]),
+                project_to_line(p, p_dir, grn[0]),
+                project_to_line(p, p_dir, blu[0]),
+                intersect_lines(p, p_dir, *bisector(red[0], grn[0])),
+                intersect_lines(p, p_dir, *bisector(red[0], blu[0])),
+                intersect_lines(p, p_dir, *bisector(grn[0], blu[0]))
             ]
-            radii = [max(GeometricalUtils().sq_dist(pt, red[0]),
-                         GeometricalUtils().sq_dist(pt, grn[0]),
-                         GeometricalUtils().sq_dist(pt, blu[0])) for pt in pts]
+            radii = [max(sq_dist(pt, red[0]),
+                         sq_dist(pt, grn[0]),
+                         sq_dist(pt, blu[0])) for pt in pts]
 
             radius, center_index = min((rad, ind) for ind, rad in enumerate(radii))
             center = pts[center_index]
@@ -167,22 +168,22 @@ class RadiusFunctionUtils():
         red, grn, blu = (alpha_complex.points[list(s)] for s in alpha_complex.split_simplex_sort_by_size(simplex))
 
         if (len(red), len(grn), len(blu)) == (3,0,0):
-            E_pt = GeometricalUtils().circum_center(*red)
+            E_pt = circum_center(*red)
             if alpha_complex.is_empty_stack(E_pt, simplex):
-                res = GeometricalUtils().sq_dist_max(E_pt, red[0])
+                res = sq_dist_max(E_pt, red[0])
             else:
                 res = min(alpha_complex.sq_rad[cf] for cf in alpha_complex.simplicial_complex.co_boundary[simplex])
 
         elif (len(red), len(grn), len(blu)) == (2,1,0):
-            p, p_dir = GeometricalUtils().bisector(*red)
+            p, p_dir = bisector(*red)
             
             pts = [
-                GeometricalUtils().project_to_line(p, p_dir, red[0]),
-                GeometricalUtils().project_to_line(p, p_dir, grn[0]),
-                GeometricalUtils().intersect_lines(p, p_dir, *GeometricalUtils().bisector(red[0], grn[0]))
+                project_to_line(p, p_dir, red[0]),
+                project_to_line(p, p_dir, grn[0]),
+                intersect_lines(p, p_dir, *bisector(red[0], grn[0]))
             ]
-            radii = [max(GeometricalUtils().sq_dist(pt, red[0]),
-                         GeometricalUtils().sq_dist(pt, grn[0])) for pt in pts]
+            radii = [max(sq_dist(pt, red[0]),
+                         sq_dist(pt, grn[0])) for pt in pts]
 
             radius, center_index = min((rad, ind) for ind, rad in enumerate(radii))
             center = pts[center_index]
@@ -193,14 +194,14 @@ class RadiusFunctionUtils():
 
         elif (len(red), len(grn), len(blu)) == (1,1,1):
             pts = [ # no need to check red[0],grn[0],blu[0], max rad is never maxed there
-                GeometricalUtils().bisector(red[0], grn[0])[0],
-                GeometricalUtils().bisector(red[0], blu[0])[0],
-                GeometricalUtils().bisector(grn[0], blu[0])[0],
-                GeometricalUtils().circum_center(red[0], grn[0], blu[0])
+                bisector(red[0], grn[0])[0],
+                bisector(red[0], blu[0])[0],
+                bisector(grn[0], blu[0])[0],
+                circum_center(red[0], grn[0], blu[0])
             ]
-            radii = [max(GeometricalUtils().sq_dist(pt, red[0]),
-                         GeometricalUtils().sq_dist(pt, grn[0]),
-                         GeometricalUtils().sq_dist(pt, blu[0])) for pt in pts]
+            radii = [max(sq_dist(pt, red[0]),
+                         sq_dist(pt, grn[0]),
+                         sq_dist(pt, blu[0])) for pt in pts]
             radius, center_index = min((rad, ind) for ind, rad in enumerate(radii))
             center = pts[center_index]
             if alpha_complex.is_empty_stack(center, simplex):
@@ -218,15 +219,15 @@ class RadiusFunctionUtils():
 
         red, grn, blu = (alpha_complex.points[list(s)] for s in alpha_complex.split_simplex_sort_by_size(simplex))
         if (len(red), len(grn), len(blu)) == (2,0,0):
-            E_pt, _ = GeometricalUtils().bisector(*red)
+            E_pt, _ = bisector(*red)
             if alpha_complex.is_empty_stack(E_pt, simplex):
-                res = GeometricalUtils().sq_dist_max(E_pt, red[0])
+                res = sq_dist_max(E_pt, red[0])
             else:
                 res = min(alpha_complex.sq_rad[cf] for cf in alpha_complex.simplicial_complex.co_boundary[simplex])
         elif (len(red), len(grn), len(blu)) == (1,1,0):
-            E_pt, _ = GeometricalUtils().bisector(red[0], grn[0])
+            E_pt, _ = bisector(red[0], grn[0])
             if alpha_complex.is_empty_stack(E_pt, simplex):
-                res = GeometricalUtils().sq_dist_max(E_pt, red[0], grn[0]) #grn[0] not needed here
+                res = sq_dist_max(E_pt, red[0], grn[0]) #grn[0] not needed here
             else:
                 res = min(alpha_complex.sq_rad[cf] for cf in alpha_complex.simplicial_complex.co_boundary[simplex])
         else:

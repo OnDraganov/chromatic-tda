@@ -5,15 +5,14 @@ from scipy.spatial import Delaunay
 
 from chromatic_tda.utils.singleton import singleton
 from chromatic_tda.core.core_chromatic_alpha_complex import CoreChromaticAlphaComplex
-from chromatic_tda.utils.boundary_matrix_utils import BoundaryMatrixUtils
+from chromatic_tda.utils import boundary_matrix_utils
 from chromatic_tda.algorithms.radius_function_utils import RadiusFunctionUtils
 from chromatic_tda.core.simplicial_complex_factory import CoreSimplicialComplexFactory
 from chromatic_tda.utils.timing import TimingUtils
 
 
-
 @singleton
-class CoreChromaticAlphaComplexFactory():
+class CoreChromaticAlphaComplexFactory:
 
     def create_instance(self, points, labels, lift_perturbation, point_perturbation, **kwargs) -> CoreChromaticAlphaComplex:
         alpha_complex = CoreChromaticAlphaComplex()
@@ -47,7 +46,7 @@ class CoreChromaticAlphaComplexFactory():
             raise ValueError("The list of labels must have the same length as the list of points.")
 
         self.construct_chromatic_delaunay(alpha_complex, lift_perturbation)
-        alpha_complex.simplicial_complex.co_boundary = BoundaryMatrixUtils().make_co_boundary(
+        alpha_complex.simplicial_complex.co_boundary = boundary_matrix_utils.make_co_boundary(
                                                        alpha_complex.simplicial_complex.boundary)
         RadiusFunctionUtils().compute_radius_function(alpha_complex, **kwargs)
 
@@ -63,7 +62,8 @@ class CoreChromaticAlphaComplexFactory():
 
         TimingUtils().stop("Construct Chromatic Delaunay")
 
-    def chromatic_lift(self, alpha_complex: CoreChromaticAlphaComplex, lift_perturbation = None):
+    @staticmethod
+    def chromatic_lift(alpha_complex: CoreChromaticAlphaComplex, lift_perturbation = None):
         """
         Add extra coordinates to lift points to the chromatic simplex. Here we choose one-hot embedding without
         the first coordinate. That is, 0 --> (0,0,0,...), 1 --> (1,0,0,...), 2 --> (0,1,0,...), etc.

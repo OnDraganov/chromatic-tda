@@ -1,9 +1,7 @@
 import numpy as np
-import itertools
 
 from chromatic_tda.core.core_simplicial_complex import CoreSimplicialComplex
-from chromatic_tda.utils.geometrical_utils import GeometricalUtils
-from chromatic_tda.core.simplicial_complex_factory import CoreSimplicialComplexFactory
+from chromatic_tda.utils.geometrical_utils import sq_dist
 from chromatic_tda.utils.simplicial_complex_utils import SimplicialComplexUtils
 
 
@@ -62,9 +60,9 @@ class CoreChromaticAlphaComplex:
         vertices_to_check = self.star_vertices(simplex)
         for mono_chrom_face in self.split_simplex(simplex): # for every color
             if len(mono_chrom_face) > 0: # if the color is present in simplex
-                radius = GeometricalUtils().sq_dist(center, self.points[mono_chrom_face[0]])
+                radius = sq_dist(center, self.points[mono_chrom_face[0]])
                 if any( (self.internal_labels[mono_chrom_face[0]] == self.internal_labels[v] and
-                         GeometricalUtils().sq_dist(center, self.points[v]) < radius)
+                         sq_dist(center, self.points[v]) < radius)
                         for v in vertices_to_check ):
                     return False
         return True

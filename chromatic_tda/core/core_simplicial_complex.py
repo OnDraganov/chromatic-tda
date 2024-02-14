@@ -1,7 +1,7 @@
 import numpy as np
 
-from chromatic_tda.utils.boundary_matrix_utils import BoundaryMatrixUtils
-from chromatic_tda.utils.floating_point_utils import FloatingPointUtils
+from chromatic_tda.utils import boundary_matrix_utils
+from chromatic_tda.utils import floating_point_utils
 
 
 class CoreSimplicialComplex:
@@ -23,8 +23,8 @@ class CoreSimplicialComplex:
     def __len__(self) -> int:
         return len(self.boundary)
 
-    def __contains__(self, element) -> bool:
-        return element in self.boundary
+    def __contains__(self, item) -> bool:
+        return item in self.boundary
 
     def clear(self) -> None:
         self.dim_simplex_dict = {}
@@ -46,12 +46,6 @@ class CoreSimplicialComplex:
                 clear_dims.append(dim)
         for dim in clear_dims:
             self.dim_simplex_dict.pop(dim)
-
-    def __len__(self) -> int:
-        return len(self.boundary)
-
-    def __contains__(self, item) -> bool:
-        return item in self.boundary
 
     def get_bars_list(self, group: str, dim: int = None, only_finite: bool = False) -> list:
         """
@@ -79,10 +73,10 @@ class CoreSimplicialComplex:
         dim_bars = dim_bars_finite + dim_bars_infinite
 
         if dim is None:
-            return sorted([b for b in dim_bars if not FloatingPointUtils().is_trivial_bar(b[1])])
+            return sorted([b for b in dim_bars if not floating_point_utils.is_trivial_bar(b[1])])
         else:
             bars: list[tuple] = [bar for bar_dim, bar in dim_bars if bar_dim == dim]
-            return sorted([b for b in bars if not FloatingPointUtils().is_trivial_bar(b)])
+            return sorted([b for b in bars if not floating_point_utils.is_trivial_bar(b)])
 
     def get_simplices(self) -> list:
         """Return list of all simplices sorted by dimension and then lexicographically."""
@@ -111,9 +105,9 @@ class CoreSimplicialComplex:
             if simplex_tuple not in self.boundary:
                 raise ValueError(f"Simplex {simplex} is not in the simplicial complex, cannot add its weight.")
             self.simplex_weights[simplex_tuple] = weight
-        co_boundary = self.co_boundary if len(self.co_boundary) > 0 \
-            else BoundaryMatrixUtils().make_co_boundary(self.boundary)
-        FloatingPointUtils().ensure_weights_monotonicity_and_equal_values(self.simplex_weights, co_boundary)
+        co_boundary = (self.co_boundary if len(self.co_boundary) > 0
+                       else boundary_matrix_utils.make_co_boundary(self.boundary))
+        floating_point_utils.ensure_weights_monotonicity_and_equal_values(self.simplex_weights, co_boundary)
 
     def get_weight_function_copy(self) -> dict:
         """Return copy of {simplex : weight} dictionary."""

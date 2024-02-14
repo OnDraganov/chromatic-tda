@@ -2,8 +2,7 @@ from chromatic_tda.utils.singleton import singleton
 
 from itertools import combinations
 from chromatic_tda.core.core_simplicial_complex import CoreSimplicialComplex
-from chromatic_tda.utils.simplex_utils import SimplexUtils
-from chromatic_tda.utils.boundary_matrix_utils import BoundaryMatrixUtils
+from chromatic_tda.utils import boundary_matrix_utils, simplex_utils
 
 
 @singleton
@@ -37,13 +36,13 @@ class CoreSimplicialComplexFactory:
 
     @staticmethod
     def find_maximal_dimension(simplex_list):
-        return max(SimplexUtils().dimension(simplex) for simplex in simplex_list)
+        return max(simplex_utils.dimension(simplex) for simplex in simplex_list)
 
     @staticmethod
     def build_dimension_dictionary(simplex_list, max_dimension):
         dim_simplex_dict = {dim : set() for dim in range(max_dimension, -1, -1)}
         for simplex in simplex_list:
-            simplex_dim = SimplexUtils().dimension(simplex)
+            simplex_dim = simplex_utils.dimension(simplex)
             dim_simplex_dict[simplex_dim].add(tuple(sorted(simplex)))
         return dim_simplex_dict
 
@@ -62,13 +61,14 @@ class CoreSimplicialComplexFactory:
         new_complex : CoreSimplicialComplex = CoreSimplicialComplex()
         restricted_simplices_set : set = set(restricted_simplices)
 
-        new_complex.dim_simplex_dict = {d : complex.dim_simplex_dict[d] & restricted_simplices_set for d in complex.dim_simplex_dict}
+        new_complex.dim_simplex_dict = {d : complex.dim_simplex_dict[d] & restricted_simplices_set
+                                        for d in complex.dim_simplex_dict}
         new_complex.clear_empty_dimensions()
         new_complex.dimension = max(new_complex.dim_simplex_dict)
 
         new_complex.boundary = {simplex: complex.boundary[simplex] & restricted_simplices_set
                                 for simplex in set(complex.boundary) & restricted_simplices_set}
-        new_complex.co_boundary = BoundaryMatrixUtils().make_co_boundary(new_complex.boundary)
+        new_complex.co_boundary = boundary_matrix_utils.make_co_boundary(new_complex.boundary)
         new_complex.simplex_weights = {simplex : complex.simplex_weights[simplex] for simplex in new_complex.boundary}
         new_complex.sub_complex = complex.sub_complex & restricted_simplices_set
 

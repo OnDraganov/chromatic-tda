@@ -1,3 +1,5 @@
+import numpy as np
+
 from chromatic_tda.algorithms.persistence_algorithm import PersistenceAlgorithm
 from chromatic_tda.core.core_simplicial_complex import CoreSimplicialComplex
 from chromatic_tda.core.simplicial_complex_factory import CoreSimplicialComplexFactory
@@ -135,7 +137,8 @@ class SimplicialComplex:
                                  allow_unused_labels=False):
         """Ignoring the current subcomplex, return a new SimplicialComplex as a chromatic subcomplex given by
         the parameters (see docstring of ChromaticAlphaComplex.get_simplicial_complex).
-        Argument labeling is a dictionary or a list such that labeling[vertex] = label"""
+        Argument labeling is a dictionary or a list such that labeling[vertex] = label;
+        A previously defined sub_complex of the complex is NOT preserved."""
         return SimplicialComplex(chromatic_subcomplex_utils.get_chromatic_subcomplex(
             internal_labeling=labeling, sub_complex=sub_complex, full_complex=full_complex, relative=relative,
             simplicial_complex=self.core_complex, allow_unused_labels=allow_unused_labels)

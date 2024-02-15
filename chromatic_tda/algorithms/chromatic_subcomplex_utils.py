@@ -7,39 +7,48 @@ from chromatic_tda.core.simplicial_complex_factory import CoreSimplicialComplexF
 def get_chromatic_subcomplex(sub_complex, full_complex, relative,
                              simplicial_complex: CoreSimplicialComplex, internal_labeling,
                              labels_user_to_internal=None, allow_unused_labels=False) -> CoreSimplicialComplex:
-    list_of_input_labels = internal_labeling if labels_user_to_internal is None else list(labels_user_to_internal)
+    list_of_input_labels = construct_list_of_labels(internal_labeling=internal_labeling,
+                                                    labels_user_to_internal=labels_user_to_internal)
     if full_complex is None or full_complex == '' or full_complex.lower().strip() == 'all':
         complex_simplices = set(simplicial_complex.boundary)
     else:
         pattern = read_pattern_input(full_complex, list_of_input_labels, check_labels=not allow_unused_labels)
         if labels_user_to_internal is not None:
-            pattern = pattern_translate_user_to_internal(pattern, labels_user_to_internal)
+            pattern = pattern_translate(pattern=pattern, translation_function=labels_user_to_internal)
         complex_simplices = select_simplices_with_chromatic_pattern(
-            simplicial_complex.boundary, internal_labeling, pattern)
+            simplices=simplicial_complex.boundary.keys(), labeling_function=internal_labeling, pattern=pattern)
 
     if relative is None or relative == '':
         relative_simplices = set()
     else:
         pattern = read_pattern_input(relative, list_of_input_labels, check_labels=not allow_unused_labels)
         if labels_user_to_internal is not None:
-            pattern = pattern_translate_user_to_internal(pattern, labels_user_to_internal)
+            pattern = pattern_translate(pattern=pattern, translation_function=labels_user_to_internal)
         relative_simplices = select_simplices_with_chromatic_pattern(
-            simplicial_complex.boundary, internal_labeling, pattern)
+            simplices=simplicial_complex.boundary.keys(), labeling_function=internal_labeling, pattern=pattern)
 
     if sub_complex is None or sub_complex == '':
-        sub_complex_simplices = set(simplicial_complex.boundary)
+        sub_complex_simplices = set()
     else:
         pattern = read_pattern_input(sub_complex, list_of_input_labels, check_labels=not allow_unused_labels)
         if labels_user_to_internal is not None:
-            pattern = pattern_translate_user_to_internal(pattern, labels_user_to_internal)
+            pattern = pattern_translate(pattern=pattern, translation_function=labels_user_to_internal)
         sub_complex_simplices = select_simplices_with_chromatic_pattern(
-            simplicial_complex.boundary, internal_labeling, pattern)
+            simplices=simplicial_complex.boundary.keys(), labeling_function=internal_labeling, pattern=pattern)
 
     restricted_complex : CoreSimplicialComplex = CoreSimplicialComplexFactory().create_restricted_instance(
         simplicial_complex, complex_simplices - relative_simplices)
     restricted_complex.set_sub_complex(sub_complex_simplices - relative_simplices)
 
     return restricted_complex
+
+
+def construct_list_of_labels(internal_labeling, labels_user_to_internal):
+    if labels_user_to_internal is not None:
+        return set(labels_user_to_internal.keys())
+    if isinstance(internal_labeling, dict):
+        return set(internal_labeling.values())
+    return set(internal_labeling)
 
 
 def read_pattern_input(parameter, labels=None, check_labels=True):
@@ -79,20 +88,20 @@ def read_pattern_input_string(parameter: str, labels=None):
     return pattern_list_of_sets
 
 
-def simplex_satisfies_pattern(simplex, labeling, pattern):
+def simplex_satisfies_pattern(simplex, labeling_function, pattern):
     """
     Return true iff the colors of the simplex are subset of one of the patterns.
     simplex ... sorted tuple of vertices
     labeling ... list or dictionary giving a label to each possible vertex
     pattern ... collection of sets of labels
     """
-    simplex_labels = {labeling[v] for v in simplex}
+    simplex_labels = {labeling_function[v] for v in simplex}
     return any(simplex_labels.issubset(s) for s in pattern)
 
 
-def select_simplices_with_chromatic_pattern(simplices, labeling, pattern):
-    return set(simplex for simplex in simplices if simplex_satisfies_pattern(simplex, labeling, pattern))
+def select_simplices_with_chromatic_pattern(simplices, labeling_function, pattern):
+    return set(simplex for simplex in simplices if simplex_satisfies_pattern(simplex, labeling_function, pattern))
 
 
-def pattern_translate_user_to_internal(pattern, labels_user_to_internal):
-    return [set(labels_user_to_internal[lab] for lab in face) for face in pattern]
+def pattern_translate(pattern, translation_function):
+    return [set(translation_function[lab] for lab in face) for face in pattern]

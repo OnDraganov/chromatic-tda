@@ -36,7 +36,9 @@ class CoreChromaticAlphaComplexFactory:
             raise ValueError("Points has to be an iterable of two-dimensional points.")
 
         alpha_complex.input_labels_to_internal_labels_dict = {lab : i for i, lab in enumerate(sorted(set(labels)))}
-        alpha_complex.internal_labels_to_input_labels_dict = {i : lab for lab, i in alpha_complex.input_labels_to_internal_labels_dict.items()}
+        alpha_complex.internal_labels_to_input_labels_dict = {
+            i : lab for lab, i in alpha_complex.input_labels_to_internal_labels_dict.items()
+        }
         alpha_complex.labels_number = len(alpha_complex.input_labels_to_internal_labels_dict)
         alpha_complex.internal_labels = [alpha_complex.input_labels_to_internal_labels_dict[lab] for lab in labels]
 

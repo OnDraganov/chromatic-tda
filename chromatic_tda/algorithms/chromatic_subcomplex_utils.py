@@ -7,10 +7,11 @@ from chromatic_tda.core.simplicial_complex_factory import CoreSimplicialComplexF
 def get_chromatic_subcomplex(sub_complex, full_complex, relative,
                              simplicial_complex: CoreSimplicialComplex, internal_labeling,
                              labels_user_to_internal=None, allow_unused_labels=False) -> CoreSimplicialComplex:
+    list_of_input_labels = internal_labeling if labels_user_to_internal is None else list(labels_user_to_internal)
     if full_complex is None or full_complex == '' or full_complex.lower().strip() == 'all':
         complex_simplices = set(simplicial_complex.boundary)
     else:
-        pattern = read_pattern_input(full_complex, labels_user_to_internal, check_labels=not allow_unused_labels)
+        pattern = read_pattern_input(full_complex, list_of_input_labels, check_labels=not allow_unused_labels)
         if labels_user_to_internal is not None:
             pattern = pattern_translate_user_to_internal(pattern, labels_user_to_internal)
         complex_simplices = select_simplices_with_chromatic_pattern(
@@ -19,7 +20,7 @@ def get_chromatic_subcomplex(sub_complex, full_complex, relative,
     if relative is None or relative == '':
         relative_simplices = set()
     else:
-        pattern = read_pattern_input(relative, labels_user_to_internal, check_labels=not allow_unused_labels)
+        pattern = read_pattern_input(relative, list_of_input_labels, check_labels=not allow_unused_labels)
         if labels_user_to_internal is not None:
             pattern = pattern_translate_user_to_internal(pattern, labels_user_to_internal)
         relative_simplices = select_simplices_with_chromatic_pattern(
@@ -28,7 +29,7 @@ def get_chromatic_subcomplex(sub_complex, full_complex, relative,
     if sub_complex is None or sub_complex == '':
         sub_complex_simplices = set(simplicial_complex.boundary)
     else:
-        pattern = read_pattern_input(sub_complex, labels_user_to_internal, check_labels=not allow_unused_labels)
+        pattern = read_pattern_input(sub_complex, list_of_input_labels, check_labels=not allow_unused_labels)
         if labels_user_to_internal is not None:
             pattern = pattern_translate_user_to_internal(pattern, labels_user_to_internal)
         sub_complex_simplices = select_simplices_with_chromatic_pattern(
@@ -43,7 +44,7 @@ def get_chromatic_subcomplex(sub_complex, full_complex, relative,
 
 def read_pattern_input(parameter, labels=None, check_labels=True):
     if isinstance(parameter, str):
-        pattern_list_of_sets = read_pattern_input_string(parameter)
+        pattern_list_of_sets = read_pattern_input_string(parameter, labels=labels)
     else:
         pattern_list_of_sets = [set(color_set) for color_set in parameter]
 
@@ -68,7 +69,7 @@ def read_pattern_input_string(parameter: str, labels=None):
         else:
             raise ValueError(f"The color pattern `{parameter}` is invalid")
         if labels is None:
-            labels = list(range(chromaticity))
+            raise ValueError(f"'k-chromatic' option given with labels=None. List of labels is needed for this option.")
         if labels and chromaticity > len(labels):
             chromaticity = len(labels)  # 4-chromatic subcomplex of 3-colored should still be the full complex
         pattern_list_of_sets = [set(x) for x in itertools.combinations(labels, chromaticity)]

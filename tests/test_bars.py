@@ -17,40 +17,52 @@ class TestBars(unittest.TestCase):
 
     data_folder = Path(__file__).parent / 'test_data'
 
-    def test_all(self, verbose=False, assertions=True):
-        if verbose:
-            print('=== Testing bars computation for all pre-computed tests ===')
-        # results = []
-        for data_name in ('line_sep',
-                          'one_circle_20_40',
-                          'two_circles',
-                          'two_circles_cc',
-                          'random',
-                          'random2',
-                          # 'one_circle_3col_back_split',
-                          # 'one_circle_3col_circ_split',
-                          'one_circle_3col_bi-circle_tri-filled'
-                          ):
-            test = self.single_test(data_name)
-            if assertions:
-                assert test
-            if verbose:
-                print(f'    {test}  ...  {data_name}')
+    def test_precomputed_line_sep(self, verbose=False, assertions=True):
+        self.single_test('line_sep', verbose, assertions)
 
+    def test_precomputed_one_circle_20_40(self, verbose=False, assertions=True):
+        self.single_test('one_circle_20_40', verbose, assertions)
+
+    def test_precomputed_two_circles(self, verbose=False, assertions=True):
+        self.single_test('two_circles', verbose, assertions)
+
+    def test_precomputed_two_circles_cc(self, verbose=False, assertions=True):
+        self.single_test('two_circles_cc', verbose, assertions)
+
+    def test_precomputed_random(self, verbose=False, assertions=True):
+        self.single_test('random', verbose, assertions)
+
+    def test_precomputed_random2(self, verbose=False, assertions=True):
+        self.single_test('random2', verbose, assertions)
+
+    # def test_precomputed_one_circle_3col_back_split(self, verbose=False, assertions=True):
+    #     self.single_test('one_circle_3col_back_split', verbose, assertions)
+    #
+    # def test_precomputed_one_circle_3col_circ_split(self, verbose=False, assertions=True):
+    #     self.single_test('one_circle_3col_circ_split', verbose, assertions)
+
+    def test_precomputed_one_circle_3col_bi_circle_tri_filled(self, verbose=False, assertions=True):
+        self.single_test('one_circle_3col_bi-circle_tri-filled', verbose, assertions)
+
+    def test_custom_colors(self, verbose=False, assertions=True):
         # an instance with labels 'blue', 'orange' instead of 0, 1
         data = self.load_data('one_circle_20_40')
         data['labels'] = ['blue' if lab == 0 else 'orange' for lab in data['labels']]
         for instance in data['persistence']:
             instance['map']['sub_complex'] = [
                 [{'0': 'blue', '1': 'orange'}[ch]] for ch in instance['map']['sub_complex'].split(',')]
-        self.single_test_data(data, return_detailed=False)
+        test = self.single_test_data(data, return_detailed=False)
         if assertions:
             assert test
         if verbose:
             print(f'    {test}  ...  one_circle_20_40 recolored')
 
-    def single_test(self, data_name, return_detailed=False):
-        return self.single_test_data(self.load_data(data_name), return_detailed=return_detailed)
+    def single_test(self, data_name, verbose=False, assertions=True):
+        test = self.single_test_data(self.load_data(data_name), return_detailed=False)
+        if assertions:
+            assert test
+        if verbose:
+            print(f'    {test}  ...  {data_name}')
 
     def load_data(self, data_name):
         with open(self.data_folder / f'{data_name}.json', 'r') as file:

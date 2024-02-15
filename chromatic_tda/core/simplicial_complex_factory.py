@@ -1,3 +1,6 @@
+import numpy as np
+from collections.abc import KeysView, ValuesView
+
 from chromatic_tda.utils.singleton import singleton
 
 from itertools import combinations
@@ -11,28 +14,27 @@ class CoreSimplicialComplexFactory:
     def create_instance(self, simplices) -> CoreSimplicialComplex:
         simplicial_complex = CoreSimplicialComplex()
         self.build_complex(simplicial_complex, simplices)
+
         return simplicial_complex
 
     def build_complex(self, simplicial_complex: CoreSimplicialComplex, simplices):
-        if str(type(simplices)) in (
-                "<class 'list'>", "<class 'tuple'>", "<class 'set'>",
-                "<class 'numpy.ndarray'>", "<class 'dict_keys'>"):  # TODO: fix to check properly
-            self.build_complex_from_list(simplicial_complex, simplices)
-
-        elif str(type(simplices)) == "<class 'dict'>":
+        if isinstance(simplices, dict):
             self.build_complex_from_dictionary(simplicial_complex, simplices)
+        elif isinstance(simplices, (list, tuple, set, np.ndarray, KeysView, ValuesView)):
+            self.build_complex_from_list(simplicial_complex, simplices)
         else:
             raise TypeError(f"Cannot build complex from type {type(simplices)}.")
+
+    def build_complex_from_dictionary(self, simplicial_complex: CoreSimplicialComplex, simplex_weights_dict):
+        self.build_complex_from_list(simplicial_complex, simplex_weights_dict.keys())
+        simplicial_complex.set_simplex_weights(simplex_weights_dict)
 
     def build_complex_from_list(self, simplicial_complex: CoreSimplicialComplex, simplex_list):
         simplicial_complex.dimension = self.find_maximal_dimension(simplex_list)
         simplicial_complex.dim_simplex_dict = self.build_dimension_dictionary(
             simplex_list, max_dimension=simplicial_complex.dimension)
         self.add_boundary_and_missing_simplices(simplicial_complex)
-
-    def build_complex_from_dictionary(self, simplicial_complex: CoreSimplicialComplex, simplex_weights_dict):
-        self.build_complex_from_list(simplicial_complex, simplex_weights_dict.keys())
-        simplicial_complex.set_simplex_weights(simplex_weights_dict)
+        simplicial_complex.set_simplex_weights({})
 
     @staticmethod
     def find_maximal_dimension(simplex_list):
@@ -56,7 +58,8 @@ class CoreSimplicialComplexFactory:
         for vertex in simplicial_complex.dim_simplex_dict[0]:
             simplicial_complex.boundary[vertex] = set()
 
-    def create_restricted_instance(self, complex: CoreSimplicialComplex, restricted_simplices) -> CoreSimplicialComplex:
+    @staticmethod
+    def create_restricted_instance(complex: CoreSimplicialComplex, restricted_simplices) -> CoreSimplicialComplex:
         """Return a new SimplicialComplex restricted to given simplices."""
         new_complex : CoreSimplicialComplex = CoreSimplicialComplex()
         restricted_simplices_set : set = set(restricted_simplices)

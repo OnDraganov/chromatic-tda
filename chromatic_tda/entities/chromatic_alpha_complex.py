@@ -86,3 +86,12 @@ class ChromaticAlphaComplex:
             return [self.core_alpha_complex.points[vertex] for vertex in sorted(simplex)]
         else:
             raise KeyError(f'{simplex} is not a simplex in the chromatic alpha complex.')
+
+    def points(self):
+        """Return the point cloud defining the complex."""
+        return self.core_alpha_complex.copy_points()
+
+    def labels(self):
+        """Return the labels for the points defining the complex."""
+        return [self.core_alpha_complex.internal_labels_to_input_labels_dict[lab]
+                for lab in self.core_alpha_complex.internal_labels]

@@ -7,10 +7,9 @@ from chromatic_tda.algorithms import chromatic_subcomplex_utils
 class SimplicialComplex:
 
     GROUPS = ['kernel', 'sub_complex', 'image', 'complex', 'cokernel', 'relative']
+    core_complex: CoreSimplicialComplex
 
     def __init__(self, data):
-        self.core_complex: CoreSimplicialComplex
-
         if isinstance(data, CoreSimplicialComplex):
             self.core_complex = data
         else:
@@ -132,7 +131,8 @@ class SimplicialComplex:
         change this, you need to manually run `compute_persistence` again."""
         self.core_complex.set_sub_complex(simplices)
 
-    def get_chromatic_subcomplex(self, labeling, sub_complex, full_complex, relative, allow_unused_labels=False):
+    def get_chromatic_subcomplex(self, labeling, sub_complex=None, full_complex=None, relative=None,
+                                 allow_unused_labels=False):
         """Ignoring the current subcomplex, return a new SimplicialComplex as a chromatic subcomplex given by
         the parameters (see docstring of ChromaticAlphaComplex.get_simplicial_complex).
         Argument labeling is a dictionary or a list such that labeling[vertex] = label"""

@@ -29,6 +29,10 @@ class CoreChromaticAlphaComplex:
     def __contains__(self, element) -> bool:
         return element in self.simplicial_complex
 
+    def copy_points(self):
+        """Return a copy of the points"""
+        return np.array(self.points)
+
     def simplex_labels_internal(self, simplex):
         return {self.internal_labels[v] for v in simplex}
 

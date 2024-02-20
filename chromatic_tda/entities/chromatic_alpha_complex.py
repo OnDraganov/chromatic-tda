@@ -5,7 +5,7 @@ from chromatic_tda.entities.simplicial_complex import SimplicialComplex
 
 class ChromaticAlphaComplex:
 
-    def __init__(self, points, labels, lift_perturbation=1e-9, point_perturbation=None, **kwargs) -> None:
+    def __init__(self, points, labels, lift_perturbation=1e-9, point_perturbation=None) -> None:
         """Create an instance of ChromaticAlphaComplex. The object contains the full chromatic Delaunay complex together
         with its alpha radius function.
 
@@ -22,7 +22,7 @@ class ChromaticAlphaComplex:
                                   non-generality itself. (default: 1e-9)
         """
         self.core_alpha_complex : CoreChromaticAlphaComplex = CoreChromaticAlphaComplexFactory().create_instance(
-            points, labels, lift_perturbation=lift_perturbation, point_perturbation=point_perturbation, **kwargs)
+            points, labels, lift_perturbation=lift_perturbation, point_perturbation=point_perturbation)
 
     def __iter__(self):
         yield from self.core_alpha_complex
@@ -33,7 +33,8 @@ class ChromaticAlphaComplex:
     def __contains__(self, element) -> bool:
         return element in self.core_alpha_complex
 
-    def get_simplicial_complex(self, sub_complex=None, complex=None, relative=None, allow_unused_labels=False) -> SimplicialComplex:
+    def get_simplicial_complex(self, sub_complex=None, full_complex=None, relative=None,
+                               allow_unused_labels=False) -> SimplicialComplex:
         """Generate a simplicial complex and sub-complex pair based on the parameters given.
         The parameter complex restricts the complex, the parameter sub_complex defines the sub-complex,
         and the parameter relative erases simplices from the complex to represent a relative simplicial complex.
@@ -60,7 +61,8 @@ class ChromaticAlphaComplex:
                                 contain a label that is not used. To suppress this behavior, set this parameter to True.
                                 In that case the unused labels make no difference on the result.
         """
-        return SimplicialComplex(self.core_alpha_complex.get_complex(sub_complex, complex, relative, allow_unused_labels))
+        return SimplicialComplex(self.core_alpha_complex.get_complex(sub_complex, full_complex, relative,
+                                                                     allow_unused_labels))
 
     def weight_function(self, simplex=None):
         """If simplex is given, return the weight/radius of the simplex.

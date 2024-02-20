@@ -7,6 +7,7 @@ from chromatic_tda.algorithms import chromatic_subcomplex_utils
 
 class CoreChromaticAlphaComplex:
     points: np.ndarray
+    points_dimension: int
     input_labels_to_internal_labels_dict: dict
     internal_labels_to_input_labels_dict: dict
     labels_number: int

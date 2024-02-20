@@ -7,8 +7,6 @@ from chromatic_tda.entities.simplicial_complex import SimplicialComplex
 class ComplexTest(unittest.TestCase):
 
     def test_custom_complex_without_weights_list(self) -> None:
-        print("===== Testing Simplicial Complex has been started =====")
-
         simplicial_complex = SimplicialComplex([(0, 2, 1), (3, 1, 2)])  # out of order to check sorting
 
         assert set(simplicial_complex.simplices()) == {(0,), (1,), (2,), (3,), (0, 1), (0, 2), (1, 2), (1, 3), (2, 3),
@@ -18,8 +16,6 @@ class ComplexTest(unittest.TestCase):
         assert set(simplicial_complex.simplices_of_dim(2)) == {(0, 1, 2), (1, 2, 3)}
 
     def test_custom_complex_without_weights_ndarray(self) -> None:
-        print("===== Testing Simplicial Complex has been started =====")
-
         simplicial_complex = SimplicialComplex(np.array([(0, 2, 1), (3, 1, 2)]))  # out of order to check sorting
 
         assert set(simplicial_complex.simplices()) == {(0,), (1,), (2,), (3,), (0, 1), (0, 2), (1, 2), (1, 3), (2, 3),
@@ -29,14 +25,7 @@ class ComplexTest(unittest.TestCase):
         assert set(simplicial_complex.simplices_of_dim(2)) == {(0, 1, 2), (1, 2, 3)}
 
     def test_custom_complex_with_weights(self) -> None:
-        print("===== Testing Simplicial Complex has been started =====")
-
         simplicial_complex = SimplicialComplex({
-            # (0,): 0,
-            # (1,): 0,
-            # (2,): 0,
-            # (0, 1): 0,
-            # (0, 2): 0,
             (1, 2): 1,
             (3,): 2,
             (1, 3): 2,

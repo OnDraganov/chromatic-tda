@@ -22,7 +22,7 @@ class ChromaticAlphaComplex:
                                   non-generality itself. (default: 1e-9)
         """
         self.core_alpha_complex : CoreChromaticAlphaComplex = CoreChromaticAlphaComplexFactory().create_instance(
-            points, labels, lift_perturbation, point_perturbation, **kwargs)
+            points, labels, lift_perturbation=lift_perturbation, point_perturbation=point_perturbation, **kwargs)
 
     def __iter__(self):
         yield from self.core_alpha_complex

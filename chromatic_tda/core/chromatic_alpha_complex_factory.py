@@ -16,7 +16,8 @@ class CoreChromaticAlphaComplexFactory:
 
     def create_instance(self, points, labels, lift_perturbation, point_perturbation, **kwargs) -> CoreChromaticAlphaComplex:
         alpha_complex = CoreChromaticAlphaComplex()
-        self.build_alpha_complex(alpha_complex, points, labels, lift_perturbation, point_perturbation, **kwargs)
+        self.build_alpha_complex(alpha_complex, points, labels,
+                                 lift_perturbation=lift_perturbation, point_perturbation=point_perturbation, **kwargs)
         return alpha_complex
 
     def build_alpha_complex(self, alpha_complex: CoreChromaticAlphaComplex, points, labels, lift_perturbation,
@@ -28,7 +29,9 @@ class CoreChromaticAlphaComplexFactory:
         TimingUtils().start("Build Alpha Complex")
 
         if point_perturbation:
-            alpha_complex.points = np.array([[p + point_perturbation * (random.random() - .5) for p in pt] for pt in points])
+            alpha_complex.points = np.array([
+                [p + point_perturbation * (random.random() - .5) for p in pt] for pt in points
+            ])
         else:
             alpha_complex.points = np.array(points)
             
@@ -59,7 +62,8 @@ class CoreChromaticAlphaComplexFactory:
 
         del_complex = Delaunay(self.chromatic_lift(alpha_complex, lift_perturbation))
         all_labels = set(alpha_complex.internal_labels)
-        simplices = [simplex for simplex in del_complex.simplices if set(alpha_complex.internal_labels[i] for i in simplex) == all_labels]
+        simplices = [simplex for simplex in del_complex.simplices
+                     if set(alpha_complex.internal_labels[i] for i in simplex) == all_labels]
         alpha_complex.simplicial_complex = CoreSimplicialComplexFactory().create_instance(simplices)
 
         TimingUtils().stop("Construct Chromatic Delaunay")

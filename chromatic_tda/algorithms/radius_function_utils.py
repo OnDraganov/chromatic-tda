@@ -25,13 +25,13 @@ class RadiusFunctionParallelUtils:
         dim = len(simplex) - 1
 
         if dim == 4:
-            return RadiusFunctionUtils()._compute_radius_function_pentachoron(self.alpha_complex, simplex)
+            return RadiusFunctionUtils._compute_radius_function_pentachoron(self.alpha_complex, simplex)
         elif dim == 3:
-            return RadiusFunctionUtils()._compute_radius_function_tetrahedron(self.alpha_complex, simplex)
+            return RadiusFunctionUtils._compute_radius_function_tetrahedron(self.alpha_complex, simplex)
         elif dim == 2:
-            return RadiusFunctionUtils()._compute_radius_function_triangle(self.alpha_complex, simplex)
+            return RadiusFunctionUtils._compute_radius_function_triangle(self.alpha_complex, simplex)
         elif dim == 1:
-            return RadiusFunctionUtils()._compute_radius_function_edge(self.alpha_complex, simplex)
+            return RadiusFunctionUtils._compute_radius_function_edge(self.alpha_complex, simplex)
         
         raise NotImplementedError()
 
@@ -78,20 +78,20 @@ class RadiusFunctionParallelUtils:
         TimingUtils().stop("Compute Radius Function Parallel")
 
 
-@singleton
 class RadiusFunctionUtils:
 
-    def compute_radius_function(self, alpha_complex: CoreChromaticAlphaComplex, **kwargs) -> None:
+    @staticmethod
+    def compute_radius_function(alpha_complex: CoreChromaticAlphaComplex, **kwargs) -> None:
         TimingUtils().start("Compute Radius Function")
 
         for simplex in alpha_complex.simplicial_complex.dim_simplex_dict.get(4, {}):
-            alpha_complex.sq_rad[simplex] = self._compute_radius_function_pentachoron(alpha_complex, simplex)
+            alpha_complex.sq_rad[simplex] = RadiusFunctionUtils._compute_radius_function_pentachoron(alpha_complex, simplex)
         for simplex in alpha_complex.simplicial_complex.dim_simplex_dict.get(3, {}):
-            alpha_complex.sq_rad[simplex] = self._compute_radius_function_tetrahedron(alpha_complex, simplex)
+            alpha_complex.sq_rad[simplex] = RadiusFunctionUtils._compute_radius_function_tetrahedron(alpha_complex, simplex)
         for simplex in alpha_complex.simplicial_complex.dim_simplex_dict.get(2, {}):
-            alpha_complex.sq_rad[simplex] = self._compute_radius_function_triangle(alpha_complex, simplex)
+            alpha_complex.sq_rad[simplex] = RadiusFunctionUtils._compute_radius_function_triangle(alpha_complex, simplex)
         for simplex in alpha_complex.simplicial_complex.dim_simplex_dict.get(1, {}):
-            alpha_complex.sq_rad[simplex] = self._compute_radius_function_edge(alpha_complex, simplex)
+            alpha_complex.sq_rad[simplex] = RadiusFunctionUtils._compute_radius_function_edge(alpha_complex, simplex)
         if 'round' in kwargs:
             alpha_complex.simplicial_complex.set_simplex_weights(
                 {s : np.round(np.sqrt(r), decimals=kwargs['round']) for s,r in alpha_complex.sq_rad.items()},
@@ -101,7 +101,8 @@ class RadiusFunctionUtils:
 
         TimingUtils().stop("Compute Radius Function")
 
-    def _compute_radius_function_pentachoron(self, alpha_complex: CoreChromaticAlphaComplex, simplex):
+    @staticmethod
+    def _compute_radius_function_pentachoron(alpha_complex: CoreChromaticAlphaComplex, simplex):
         TimingUtils().start("Compute Radius Function :: Pentachoron")
 
         red, grn, blu = (alpha_complex.points[list(s)] for s in alpha_complex.split_simplex_sort_by_size(simplex))
@@ -117,8 +118,8 @@ class RadiusFunctionUtils:
         TimingUtils().stop("Compute Radius Function :: Pentachoron")
         return res
 
-
-    def _compute_radius_function_tetrahedron(self, alpha_complex: CoreChromaticAlphaComplex, simplex):
+    @staticmethod
+    def _compute_radius_function_tetrahedron(alpha_complex: CoreChromaticAlphaComplex, simplex):
         TimingUtils().start("Compute Radius Function :: Tetrahedron")
 
         red, grn, blu = (alpha_complex.points[list(s)] for s in alpha_complex.split_simplex_sort_by_size(simplex))
@@ -162,7 +163,8 @@ class RadiusFunctionUtils:
         TimingUtils().stop("Compute Radius Function :: Tetrahedron")
         return res
 
-    def _compute_radius_function_triangle(self, alpha_complex: CoreChromaticAlphaComplex, simplex):
+    @staticmethod
+    def _compute_radius_function_triangle(alpha_complex: CoreChromaticAlphaComplex, simplex):
         TimingUtils().start("Compute Radius Function :: Triangle")
 
         red, grn, blu = (alpha_complex.points[list(s)] for s in alpha_complex.split_simplex_sort_by_size(simplex))
@@ -214,7 +216,8 @@ class RadiusFunctionUtils:
         TimingUtils().stop("Compute Radius Function :: Triangle")
         return res
 
-    def _compute_radius_function_edge(self, alpha_complex: CoreChromaticAlphaComplex, simplex):
+    @staticmethod
+    def _compute_radius_function_edge(alpha_complex: CoreChromaticAlphaComplex, simplex):
         TimingUtils().start("Compute Radius Function :: Edge")
 
         red, grn, blu = (alpha_complex.points[list(s)] for s in alpha_complex.split_simplex_sort_by_size(simplex))
@@ -236,5 +239,7 @@ class RadiusFunctionUtils:
         TimingUtils().stop("Compute Radius Function :: Edge")
         return res
 
-    def check_monotonicity_of_radius_function(self, complex: CoreSimplicialComplex):
-        return all(all(complex.simplex_weights[b] <= complex.simplex_weights[simplex] for b in boundary) for simplex, boundary in complex.boundary.items())
+    @staticmethod
+    def check_monotonicity_of_radius_function(complex: CoreSimplicialComplex):
+        return all(all(complex.simplex_weights[b] <= complex.simplex_weights[simplex] for b in boundary)
+                   for simplex, boundary in complex.boundary.items())

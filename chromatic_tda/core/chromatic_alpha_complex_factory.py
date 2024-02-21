@@ -3,9 +3,9 @@ import numpy as np
 import random
 from scipy.spatial import Delaunay
 
+from chromatic_tda.utils.boundary_matrix_utils import BoundaryMatrixUtils
 from chromatic_tda.utils.singleton import singleton
 from chromatic_tda.core.core_chromatic_alpha_complex import CoreChromaticAlphaComplex
-from chromatic_tda.utils import boundary_matrix_utils
 from chromatic_tda.algorithms.radius_function_utils import RadiusFunctionUtils
 from chromatic_tda.core.simplicial_complex_factory import CoreSimplicialComplexFactory
 from chromatic_tda.utils.timing import TimingUtils
@@ -72,7 +72,7 @@ class CoreChromaticAlphaComplexFactory:
         alpha_complex.simplicial_complex = CoreSimplicialComplexFactory().create_instance(colorful_maximal_simplices)
         TimingUtils().stop("Build Chro Del from Max Simplices")
 
-        alpha_complex.simplicial_complex.co_boundary = boundary_matrix_utils.make_co_boundary(
+        alpha_complex.simplicial_complex.co_boundary = BoundaryMatrixUtils.make_co_boundary(
             alpha_complex.simplicial_complex.boundary)
 
         RadiusFunctionUtils().compute_radius_function(alpha_complex)

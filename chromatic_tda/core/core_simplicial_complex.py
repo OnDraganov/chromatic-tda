@@ -1,7 +1,7 @@
 import numpy as np
 
-from chromatic_tda.utils import boundary_matrix_utils
-from chromatic_tda.utils import floating_point_utils
+from chromatic_tda.utils.boundary_matrix_utils import BoundaryMatrixUtils
+from chromatic_tda.utils.floating_point_utils import FloatingPointUtils
 
 
 class CoreSimplicialComplex:
@@ -73,10 +73,10 @@ class CoreSimplicialComplex:
         dim_bars = dim_bars_finite + dim_bars_infinite
 
         if dim is None:
-            return sorted([b for b in dim_bars if not floating_point_utils.is_trivial_bar(b[1])])
+            return sorted([b for b in dim_bars if not FloatingPointUtils.is_trivial_bar(b[1])])
         else:
             bars: list[tuple] = [bar for bar_dim, bar in dim_bars if bar_dim == dim]
-            return sorted([b for b in bars if not floating_point_utils.is_trivial_bar(b)])
+            return sorted([b for b in bars if not FloatingPointUtils.is_trivial_bar(b)])
 
     def get_simplices(self) -> list:
         """Return list of all simplices sorted by dimension and then lexicographically."""
@@ -108,8 +108,8 @@ class CoreSimplicialComplex:
                 raise Warning(f"Simplex {simplex_tuple} given weight lower than default.")
             self.simplex_weights[simplex_tuple] = weight
         co_boundary = (self.co_boundary if self.co_boundary
-                       else boundary_matrix_utils.make_co_boundary(self.boundary))
-        floating_point_utils.ensure_weights_monotonicity_and_equal_values(self.simplex_weights, co_boundary)
+                       else BoundaryMatrixUtils.make_co_boundary(self.boundary))
+        FloatingPointUtils.ensure_weights_monotonicity_and_equal_values(self.simplex_weights, co_boundary)
 
     def get_weight_function_copy(self) -> dict:
         """Return copy of {simplex : weight} dictionary."""

@@ -28,7 +28,7 @@ class CoreSimplicialComplex:
 
     def clear(self) -> None:
         self.dim_simplex_dict = {}
-        self.simplex_weights = {}
+        self.simplex_weights = {}  # radius values of simplices
 
         self.boundary = {}  # example: {(1,2,3) : {(1,2), (1,3), (2,3)}, (1,2) : {(1), (2)}, ...}
         self.co_boundary = {}  # example:  {(1,2) : {(1,2,3), (1,2,4)}, (1,3) : {(1,2,3), (1,3,4)}, ...}
@@ -103,9 +103,11 @@ class CoreSimplicialComplex:
         for simplex, weight in weight_function.items():
             simplex_tuple = tuple(sorted(simplex))
             if simplex_tuple not in self.boundary:
-                raise ValueError(f"Simplex {simplex} is not in the simplicial complex, cannot add its weight.")
+                raise ValueError(f"Simplex {simplex_tuple} is not in the simplicial complex, cannot add its weight.")
+            if weight < default_value:
+                raise Warning(f"Simplex {simplex_tuple} given weight lower than default.")
             self.simplex_weights[simplex_tuple] = weight
-        co_boundary = (self.co_boundary if len(self.co_boundary) > 0
+        co_boundary = (self.co_boundary if self.co_boundary
                        else boundary_matrix_utils.make_co_boundary(self.boundary))
         floating_point_utils.ensure_weights_monotonicity_and_equal_values(self.simplex_weights, co_boundary)
 

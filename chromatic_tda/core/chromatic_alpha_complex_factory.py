@@ -68,9 +68,9 @@ class CoreChromaticAlphaComplexFactory:
             raise ValueError("The list of labels must have the same length as the list of points.")
 
         colorful_maximal_simplices = self.compute_chromatic_delaunay(alpha_complex, lift_perturbation)
-        TimingUtils().start("Build Chromatic Delaunay from Max Simplices")
+        TimingUtils().start("Build Chro Del from Max Simplices")
         alpha_complex.simplicial_complex = CoreSimplicialComplexFactory().create_instance(colorful_maximal_simplices)
-        TimingUtils().stop("Build Chromatic Delaunay from Max Simplices")
+        TimingUtils().stop("Build Chro Del from Max Simplices")
 
         alpha_complex.simplicial_complex.co_boundary = boundary_matrix_utils.make_co_boundary(
             alpha_complex.simplicial_complex.boundary)

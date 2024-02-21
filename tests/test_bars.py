@@ -76,7 +76,7 @@ class TestBars(unittest.TestCase):
         for instance in data['persistence']:
             results_instance = {}
             simplicial_complex = alpha_complex.get_simplicial_complex(
-                complex = instance['map']['complex'],
+                full_complex = instance['map']['complex'],
                 sub_complex = instance['map']['sub_complex'],
                 relative = instance['map']['relative']
             )

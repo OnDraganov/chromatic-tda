@@ -70,7 +70,8 @@ class TestBars(unittest.TestCase):
 
         return data
 
-    def single_test_data(self, data, return_detailed=False):
+    @staticmethod
+    def single_test_data(data, return_detailed=False):
         results = []
         alpha_complex = ChromaticAlphaComplex(data['points'], data['labels'])
         for instance in data['persistence']:
@@ -99,7 +100,7 @@ class TestBars(unittest.TestCase):
 
 
 def main():
-    TestBars().test_all()
+    pass
 
 
 if __name__ == "__main__":

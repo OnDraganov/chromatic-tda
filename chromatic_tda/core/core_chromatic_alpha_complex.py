@@ -1,8 +1,8 @@
 import numpy as np
 
+from chromatic_tda.algorithms.chromatic_subcomplex_utils import ChromaticSubcomplexUtils
 from chromatic_tda.core.core_simplicial_complex import CoreSimplicialComplex
 from chromatic_tda.utils.geometrical_utils import sq_dist
-from chromatic_tda.algorithms import chromatic_subcomplex_utils
 
 
 class CoreChromaticAlphaComplex:
@@ -42,7 +42,7 @@ class CoreChromaticAlphaComplex:
         return {self.internal_labels_to_input_labels_dict[lab] for lab in self.simplex_labels_internal(simplex)}
 
     def get_complex(self, sub_complex, full_complex, relative, allow_unused_labels=False) -> CoreSimplicialComplex:
-        return chromatic_subcomplex_utils.get_chromatic_subcomplex(
+        return ChromaticSubcomplexUtils.get_chromatic_subcomplex(
             sub_complex=sub_complex, full_complex=full_complex, relative=relative,
             simplicial_complex=self.simplicial_complex, internal_labeling=self.internal_labels,
             labels_user_to_internal=self.input_labels_to_internal_labels_dict,

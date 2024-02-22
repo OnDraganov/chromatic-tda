@@ -21,12 +21,24 @@ class LinAlgUtils:
 
         pseudoinverse = LinAlgUtils.pseudoinverse_from_svd(svd)
         x = pseudoinverse @ b_vector
-        kernel = svd.Vh[rank + 1 :]  # the vectors that Vh sends to E_{rank+1}, ..., E_{n}: Vhh @ E_i is i-th row of Vh
+        kernel = svd.Vh[rank :]  # the vectors that Vh sends to E_{rank+1}, ..., E_{n}: Vhh @ E_i is i-th row of Vh
 
         if check_solution and not LinAlgUtils.check_solution(a_matrix, b_vector, x):
             raise np.linalg.LinAlgError("There is no exact solution to given Ax=b.")
 
         return x, kernel
+
+    @staticmethod
+    def orthogonalize_rows(array: np.ndarray) -> np.ndarray:
+        """Given m x n array A with m <= n,
+        return array whose rows are orthonormal basis of the row-space of A.
+        WARNING: for rank(A) < m might return smaller space if R in np.linalg.qr would skip a pivot and use it later"""
+        m, n = array.shape
+        if m > n:
+            raise ValueError("Only m x n arrays with m <= n allowed")
+        qr = np.linalg.qr(array.transpose(), mode='reduced')
+        non_zero_r_diagonal = ~np.isclose(qr.R.diagonal(), 0)
+        return qr.Q.transpose()[non_zero_r_diagonal]
 
     @staticmethod
     def count_nonzero(array: np.ndarray) -> int:

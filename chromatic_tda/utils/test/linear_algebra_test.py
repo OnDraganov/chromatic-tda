@@ -19,6 +19,7 @@ class LinearAlgebraTest(unittest.TestCase):
         x, ker = LinAlgUtils.solve(a_mat, b_vec)
 
         assert np.isclose(a_mat @ x, b_vec).all()
+        assert len(ker) == 5
         for v in ker:
             assert np.isclose(a_mat @ (x + v), b_vec).all()
 
@@ -28,6 +29,7 @@ class LinearAlgebraTest(unittest.TestCase):
         x, ker = LinAlgUtils.solve(a_mat, b_vec)
 
         assert np.isclose(a_mat @ x, b_vec).all()
+        assert len(ker) == 5
         for v in ker:
             assert np.isclose(a_mat @ (x + v), b_vec).all()
 
@@ -42,6 +44,7 @@ class LinearAlgebraTest(unittest.TestCase):
         x, ker = LinAlgUtils.solve(a_mat, b_vec)
 
         assert np.isclose(a_mat @ x, b_vec).all()
+        assert len(ker) == 5
         for v in ker:
             assert np.isclose(a_mat @ (x + v), b_vec).all()
 
@@ -56,6 +59,7 @@ class LinearAlgebraTest(unittest.TestCase):
         x, ker = LinAlgUtils.solve(a_mat, b_vec)
 
         assert np.isclose(a_mat @ x, b_vec).all()
+        assert len(ker) == 8
         for v in ker:
             assert np.isclose(a_mat @ (x + v), b_vec).all()
 
@@ -80,5 +84,41 @@ class LinearAlgebraTest(unittest.TestCase):
         x, ker = LinAlgUtils.solve(a_mat, b_vec)
 
         assert np.isclose(a_mat @ x, b_vec).all()
+        assert len(ker) == 3
         for v in ker:
             assert np.isclose(a_mat @ (x + v), b_vec).all()
+
+    def test_orthogonalize_4x9(self):
+        a_mat = self.a_mat
+        ortho = LinAlgUtils.orthogonalize_rows(a_mat)
+        rank_ortho = (~np.isclose(np.linalg.svd(ortho).S, 0)).sum()
+        rank_ortho_a_mat = (~np.isclose(np.linalg.svd(np.concatenate([a_mat, ortho])).S, 0)).sum()
+
+        assert ortho.shape == (4, 9)
+        assert rank_ortho == 4 and rank_ortho_a_mat == 4  # row spaces match
+        assert np.isclose(ortho @ ortho.transpose(), np.identity(4)).all()  # rows are orthonormal
+
+    def test_orthogonalize_2x9(self):
+        a_mat = self.a_mat[:2]
+        ortho = LinAlgUtils.orthogonalize_rows(a_mat)
+        rank_ortho = (~np.isclose(np.linalg.svd(ortho).S, 0)).sum()
+        rank_ortho_a_mat = (~np.isclose(np.linalg.svd(np.concatenate([a_mat, ortho])).S, 0)).sum()
+
+        assert ortho.shape == (2, 9)
+        assert rank_ortho == 2 and rank_ortho_a_mat == 2  # row spaces match
+        assert np.isclose(ortho @ ortho.transpose(), np.identity(2)).all()  # rows are orthonormal
+
+    def test_orthogonalize_singular_7x9(self):
+        coef_mat = np.array([
+            [1, 2, 3, 4],
+            [4, 3, 2, 1],
+            [0.3005, 0.6383, 0.6640, 0.9111]
+        ])
+        a_mat = np.concatenate([LinearAlgebraTest.a_mat, coef_mat @ LinearAlgebraTest.a_mat])
+        ortho = LinAlgUtils.orthogonalize_rows(a_mat)
+        rank_ortho = (~np.isclose(np.linalg.svd(ortho).S, 0)).sum()
+        rank_ortho_a_mat = (~np.isclose(np.linalg.svd(np.concatenate([a_mat, ortho])).S, 0)).sum()
+
+        assert ortho.shape == (4, 9)
+        assert rank_ortho == 4 and rank_ortho_a_mat == 4  # row spaces match
+        assert np.isclose(ortho @ ortho.transpose(), np.identity(4)).all()  # rows are orthonormal

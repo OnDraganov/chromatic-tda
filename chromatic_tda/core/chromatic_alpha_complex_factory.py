@@ -6,7 +6,7 @@ from scipy.spatial import Delaunay
 from chromatic_tda.utils.boundary_matrix_utils import BoundaryMatrixUtils
 from chromatic_tda.utils.singleton import singleton
 from chromatic_tda.core.core_chromatic_alpha_complex import CoreChromaticAlphaComplex
-from chromatic_tda.algorithms.radius_function_utils import RadiusFunctionUtils
+from chromatic_tda.algorithms.OLD_radius_function_utils import RadiusFunctionUtils
 from chromatic_tda.core.simplicial_complex_factory import CoreSimplicialComplexFactory
 from chromatic_tda.utils.timing import TimingUtils
 
@@ -61,7 +61,6 @@ class CoreChromaticAlphaComplexFactory:
 
         if alpha_complex.points.shape[1] != 2:
             raise ValueError("Points has to be an iterable of two-dimensional points.")
-
         if alpha_complex.labels_number > 3:
             raise ValueError(f"There can be at most 3 different labels, {alpha_complex.labels_number} given.")
         if len(alpha_complex.points) != len(alpha_complex.internal_labels):

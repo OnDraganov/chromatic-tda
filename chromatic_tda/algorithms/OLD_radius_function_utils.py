@@ -4,7 +4,7 @@ import math
 
 from chromatic_tda.utils.singleton import singleton
 from chromatic_tda.core.core_chromatic_alpha_complex import CoreChromaticAlphaComplex
-from chromatic_tda.utils.geometrical_utils import intersect_lines, project_to_line, bisector, \
+from chromatic_tda.utils.OLD_geometrical_utils import intersect_lines, project_to_line, bisector, \
     circum_center, sq_dist, sq_dist_max
 from chromatic_tda.core.core_simplicial_complex import CoreSimplicialComplex
 from chromatic_tda.utils.timing import TimingUtils

@@ -5,20 +5,24 @@ from chromatic_tda.utils.linear_algebra_utils import LinAlgUtils
 
 class GeometryUtils:
     @staticmethod
-    def construct_equispace(point_set_0: np.array, *point_sets_additional: np.ndarray):
+    def construct_equispace(*point_sets: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         """Return the 'point + vector space' representation of the affine space A of points
         equidistant to all points of each argument. That is for a in A and for each argument P,
-        all distances ||p - a|| for p in P are the same."""
-        dim: int = point_set_0.shape[0]
-        k: int = len(point_sets_additional) + 1
+        all distances ||p - a|| for p in P are the same.
 
-        for point_set in point_sets_additional:
+        :return: center `z`, list of generating vectors `ker`"""
+        if len(point_sets) < 1:
+            raise TypeError("At least one point set expected.")
+        dim: int = point_sets[0].shape[0]
+        k: int = len(point_sets)
+
+        for point_set in point_sets[1:]:
             if point_set.shape[0] != dim:
                 raise ValueError('All points need to be from the same dimension')
 
         a_mat_blocks: list[np.ndarray] = []
         b_vec_blocks: list[np.ndarray] = []
-        for i, points in enumerate((point_set_0,) + point_sets_additional):
+        for i, points in enumerate(point_sets):
             a_mat_blocks.append(GeometryUtils.one_hot_embedding(k, i, points))
             b_vec_blocks.append(np.array([(pt ** 2).sum() / 2 for pt in points]))
         a_mat = np.concatenate(a_mat_blocks)

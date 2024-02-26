@@ -14,7 +14,8 @@ class LinAlgUtils:
         :param check_solution:  if True, Ax == b check is performed for the particular solution x,
                                 and error raised if it fails
 
-        :return: A tuple (x, kernel) where x is a particular solution, and kernel is an orthonormal basis of Ker(A).
+        :return: A tuple (x, kernel) where x is a particular solution, and kernel is an orthonormal basis of Ker(A)
+        (vectors in rows).
         """
         svd : np.linalg.linalg.SVDResult = np.linalg.svd(a_matrix)  # svd.U @ diagonal from svd.S @ svd.Vh == A
         rank : int = LinAlgUtils.count_nonzero(svd.S)

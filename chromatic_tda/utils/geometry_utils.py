@@ -13,11 +13,11 @@ class GeometryUtils:
         :return: center `z`, list of generating vectors `ker`"""
         if len(point_sets) < 1:
             raise TypeError("At least one point set expected.")
-        dim: int = point_sets[0].shape[0]
+        dim: int = point_sets[0].shape[1]
         k: int = len(point_sets)
 
         for point_set in point_sets[1:]:
-            if point_set.shape[0] != dim:
+            if point_set.shape[1] != dim:
                 raise ValueError('All points need to be from the same dimension')
 
         a_mat_blocks: list[np.ndarray] = []
@@ -26,7 +26,7 @@ class GeometryUtils:
             a_mat_blocks.append(GeometryUtils.one_hot_embedding(k, i, points))
             b_vec_blocks.append(np.array([(pt ** 2).sum() / 2 for pt in points]))
         a_mat = np.concatenate(a_mat_blocks)
-        b_vec = np.concatenate(a_mat_blocks)
+        b_vec = np.concatenate(b_vec_blocks)
         z, ker = LinAlgUtils.solve(a_mat, b_vec)
 
         return z[:dim], ker[:, :dim]

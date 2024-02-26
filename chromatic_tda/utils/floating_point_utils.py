@@ -27,3 +27,9 @@ class FloatingPointUtils:
                 weight_function[simplex],
                 *(weight_function[co_face] for co_face in co_boundary[simplex])
             )
+
+    @staticmethod
+    def flag_duplicates_from_reference(reference: np.ndarray, to_check: np.ndarray) -> np.ndarray[bool, ...]:
+        """Return a boolean list of len(to_check) describing whether the corresponding element in to_check
+        is close to some element of the reference."""
+        return np.array([any(np.isclose(ref, x).all() for ref in reference) for x in to_check], dtype=bool)

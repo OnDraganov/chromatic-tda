@@ -35,9 +35,9 @@ class GeometryUtils:
     def one_hot_embedding(number_of_categories: int, category: int, points: np.ndarray) -> np.ndarray:
         if category >= number_of_categories:
             raise ValueError(f'Category out of range: need category < number_of_categories')
-        suffix = np.zeros(number_of_categories)
-        suffix[category] = 1
-        return np.array([np.concatenate([pt, suffix]) for pt in points])
+        suffix = np.zeros((len(points), number_of_categories))
+        suffix[:, category] = 1
+        return np.concatenate([points, suffix], axis=1)
 
     @staticmethod
     def reflect_points_through_affine_space(shift: np.ndarray, vector_space: np.ndarray, *points: np.ndarray):

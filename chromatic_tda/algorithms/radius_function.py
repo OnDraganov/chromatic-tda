@@ -17,10 +17,10 @@ class RadiusFunctionConstructor:
                 center, radii = RadiusFunctionConstructor.find_smallest_circumstack_of_simplex(alpha_complex, simplex)
                 extra_vertices = alpha_complex.simplicial_complex.get_extra_vertices_of_cofaces(simplex)
                 if RadiusFunctionConstructor.is_stack_empty_of_vertices(alpha_complex, extra_vertices, center, radii):
-                    radius_function[simplex] = max(radii)
+                    radius_function[simplex] = max(radii.values())
                 else:
                     co_faces = alpha_complex.simplicial_complex.co_boundary[simplex]
-                    radius_function[simplex] = max(radius_function[co_face] for co_face in co_faces)
+                    radius_function[simplex] = min(radius_function[co_face] for co_face in co_faces)
         for simplex in alpha_complex.simplicial_complex.get_simplices_of_dim(0):
             radius_function[simplex] = 0.
 
@@ -33,7 +33,7 @@ class RadiusFunctionConstructor:
         for all given vertices."""
         for v in vertices:
             distance = np.linalg.norm(alpha_complex.points[v] - center)
-            radius = radii[alpha_complex.internal_labeling[v]]
+            radius = radii.get(alpha_complex.internal_labeling[v], 0)
             if distance < radius and not np.isclose(distance, radius):
                 return False
         return True
@@ -41,7 +41,7 @@ class RadiusFunctionConstructor:
     @staticmethod
     def find_smallest_circumstack_of_simplex(alpha_complex: CoreChromaticAlphaComplex, simplex: tuple)\
             -> tuple[np.ndarray, dict]:
-        split = ChromaticComplexUtils.split_simplex_by_labels(simplex, CoreChromaticAlphaComplex.internal_labeling)
+        split = ChromaticComplexUtils.split_simplex_by_labels(simplex, alpha_complex.internal_labeling)
         labels, vertex_sets = zip(*split.items())
         point_sets = [alpha_complex.points[vertex_set] for vertex_set in vertex_sets]
         center, radii = RadiusFunctionConstructor.find_smallest_circumstack(*point_sets)

@@ -105,7 +105,7 @@ class RadiusFunctionUtils:
     def _compute_radius_function_pentachoron(alpha_complex: CoreChromaticAlphaComplex, simplex):
         TimingUtils().start("Compute Radius Function :: Pentachoron")
 
-        red, grn, blu = (alpha_complex.points[list(s)] for s in alpha_complex.split_simplex_sort_by_size(simplex))
+        red, grn, blu = (alpha_complex.points[list(s)] for s in alpha_complex.OLD_split_simplex_sort_by_size(simplex))
         if (len(red), len(grn), len(blu)) == (2,2,1):
             E_pt = intersect_lines(*bisector(*red), *bisector(*grn))
             res = sq_dist_max(E_pt, red[0], grn[0], blu[0])
@@ -122,7 +122,7 @@ class RadiusFunctionUtils:
     def _compute_radius_function_tetrahedron(alpha_complex: CoreChromaticAlphaComplex, simplex):
         TimingUtils().start("Compute Radius Function :: Tetrahedron")
 
-        red, grn, blu = (alpha_complex.points[list(s)] for s in alpha_complex.split_simplex_sort_by_size(simplex))
+        red, grn, blu = (alpha_complex.points[list(s)] for s in alpha_complex.OLD_split_simplex_sort_by_size(simplex))
         if (len(red), len(grn), len(blu)) == (3,1,0):
             E_pt = circum_center(*red)
             if alpha_complex.is_empty_stack(E_pt, simplex):
@@ -167,7 +167,7 @@ class RadiusFunctionUtils:
     def _compute_radius_function_triangle(alpha_complex: CoreChromaticAlphaComplex, simplex):
         TimingUtils().start("Compute Radius Function :: Triangle")
 
-        red, grn, blu = (alpha_complex.points[list(s)] for s in alpha_complex.split_simplex_sort_by_size(simplex))
+        red, grn, blu = (alpha_complex.points[list(s)] for s in alpha_complex.OLD_split_simplex_sort_by_size(simplex))
 
         if (len(red), len(grn), len(blu)) == (3,0,0):
             E_pt = circum_center(*red)
@@ -220,7 +220,7 @@ class RadiusFunctionUtils:
     def _compute_radius_function_edge(alpha_complex: CoreChromaticAlphaComplex, simplex):
         TimingUtils().start("Compute Radius Function :: Edge")
 
-        red, grn, blu = (alpha_complex.points[list(s)] for s in alpha_complex.split_simplex_sort_by_size(simplex))
+        red, grn, blu = (alpha_complex.points[list(s)] for s in alpha_complex.OLD_split_simplex_sort_by_size(simplex))
         if (len(red), len(grn), len(blu)) == (2,0,0):
             E_pt, _ = bisector(*red)
             if alpha_complex.is_empty_stack(E_pt, simplex):

@@ -4,44 +4,44 @@ from chromatic_tda.core.core_simplicial_complex import CoreSimplicialComplex
 from chromatic_tda.core.simplicial_complex_factory import CoreSimplicialComplexFactory
 
 
-class ChromaticSubcomplexUtils:
+class ChromaticComplexUtils:
     @staticmethod
     def get_chromatic_subcomplex(sub_complex, full_complex, relative,
                                  simplicial_complex: CoreSimplicialComplex, internal_labeling,
                                  labels_user_to_internal=None, allow_unused_labels=False) -> CoreSimplicialComplex:
-        list_of_input_labels = ChromaticSubcomplexUtils.construct_list_of_labels(
+        list_of_input_labels = ChromaticComplexUtils.construct_list_of_labels(
             internal_labeling=internal_labeling, labels_user_to_internal=labels_user_to_internal)
         if full_complex is None or full_complex == '' or full_complex.lower().strip() == 'all':
             complex_simplices = set(simplicial_complex.boundary)
         else:
-            pattern = ChromaticSubcomplexUtils.read_pattern_input(full_complex, list_of_input_labels,
-                                                                  check_labels=not allow_unused_labels)
+            pattern = ChromaticComplexUtils.read_pattern_input(full_complex, list_of_input_labels,
+                                                               check_labels=not allow_unused_labels)
             if labels_user_to_internal is not None:
-                pattern = ChromaticSubcomplexUtils.pattern_translate(pattern=pattern,
-                                                                     translation_function=labels_user_to_internal)
-            complex_simplices = ChromaticSubcomplexUtils.select_simplices_with_chromatic_pattern(
+                pattern = ChromaticComplexUtils.pattern_translate(pattern=pattern,
+                                                                  translation_function=labels_user_to_internal)
+            complex_simplices = ChromaticComplexUtils.select_simplices_with_chromatic_pattern(
                 simplices=simplicial_complex.boundary.keys(), labeling_function=internal_labeling, pattern=pattern)
 
         if relative is None or relative == '':
             relative_simplices = set()
         else:
-            pattern = ChromaticSubcomplexUtils.read_pattern_input(relative, list_of_input_labels,
-                                                                  check_labels=not allow_unused_labels)
+            pattern = ChromaticComplexUtils.read_pattern_input(relative, list_of_input_labels,
+                                                               check_labels=not allow_unused_labels)
             if labels_user_to_internal is not None:
-                pattern = ChromaticSubcomplexUtils.pattern_translate(pattern=pattern,
-                                                                     translation_function=labels_user_to_internal)
-            relative_simplices = ChromaticSubcomplexUtils.select_simplices_with_chromatic_pattern(
+                pattern = ChromaticComplexUtils.pattern_translate(pattern=pattern,
+                                                                  translation_function=labels_user_to_internal)
+            relative_simplices = ChromaticComplexUtils.select_simplices_with_chromatic_pattern(
                 simplices=simplicial_complex.boundary.keys(), labeling_function=internal_labeling, pattern=pattern)
 
         if sub_complex is None or sub_complex == '':
             sub_complex_simplices = set()
         else:
-            pattern = ChromaticSubcomplexUtils.read_pattern_input(sub_complex, list_of_input_labels,
-                                                                  check_labels=not allow_unused_labels)
+            pattern = ChromaticComplexUtils.read_pattern_input(sub_complex, list_of_input_labels,
+                                                               check_labels=not allow_unused_labels)
             if labels_user_to_internal is not None:
-                pattern = ChromaticSubcomplexUtils.pattern_translate(pattern=pattern,
-                                                                     translation_function=labels_user_to_internal)
-            sub_complex_simplices = ChromaticSubcomplexUtils.select_simplices_with_chromatic_pattern(
+                pattern = ChromaticComplexUtils.pattern_translate(pattern=pattern,
+                                                                  translation_function=labels_user_to_internal)
+            sub_complex_simplices = ChromaticComplexUtils.select_simplices_with_chromatic_pattern(
                 simplices=simplicial_complex.boundary.keys(), labeling_function=internal_labeling, pattern=pattern)
 
         restricted_complex: CoreSimplicialComplex = CoreSimplicialComplexFactory().create_restricted_instance(
@@ -61,7 +61,7 @@ class ChromaticSubcomplexUtils:
     @staticmethod
     def read_pattern_input(parameter, labels=None, check_labels=True):
         if isinstance(parameter, str):
-            pattern_list_of_sets = ChromaticSubcomplexUtils.read_pattern_input_string(parameter, labels=labels)
+            pattern_list_of_sets = ChromaticComplexUtils.read_pattern_input_string(parameter, labels=labels)
         else:
             pattern_list_of_sets = [set(color_set) for color_set in parameter]
 
@@ -110,8 +110,19 @@ class ChromaticSubcomplexUtils:
     @staticmethod
     def select_simplices_with_chromatic_pattern(simplices, labeling_function, pattern):
         return set(simplex for simplex in simplices
-                   if ChromaticSubcomplexUtils.simplex_satisfies_pattern(simplex, labeling_function, pattern))
+                   if ChromaticComplexUtils.simplex_satisfies_pattern(simplex, labeling_function, pattern))
 
     @staticmethod
     def pattern_translate(pattern, translation_function):
         return [set(translation_function[lab] for lab in face) for face in pattern]
+
+    @staticmethod
+    def split_simplex_by_labels(simplex: tuple, labeling) -> dict:
+        simplex_split = {}
+        for v in simplex:
+            lab = labeling[v]
+            if lab not in simplex_split:
+                simplex_split[lab] = []
+            simplex_split[lab].append(v)
+
+        return simplex_split

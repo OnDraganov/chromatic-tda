@@ -41,7 +41,7 @@ class CoreChromaticAlphaComplexFactory:
             i: lab for lab, i in alpha_complex.input_labels_to_internal_labels_dict.items()
         }
         alpha_complex.labels_number = len(alpha_complex.input_labels_to_internal_labels_dict)
-        alpha_complex.internal_labels = [alpha_complex.input_labels_to_internal_labels_dict[lab] for lab in labels]
+        alpha_complex.internal_labeling = [alpha_complex.input_labels_to_internal_labels_dict[lab] for lab in labels]
 
     @staticmethod
     def perturb_points(points, point_perturbation):
@@ -63,7 +63,7 @@ class CoreChromaticAlphaComplexFactory:
             raise ValueError("Points has to be an iterable of two-dimensional points.")
         if alpha_complex.labels_number > 3:
             raise ValueError(f"There can be at most 3 different labels, {alpha_complex.labels_number} given.")
-        if len(alpha_complex.points) != len(alpha_complex.internal_labels):
+        if len(alpha_complex.points) != len(alpha_complex.internal_labeling):
             raise ValueError("The list of labels must have the same length as the list of points.")
 
         colorful_maximal_simplices = self.compute_chromatic_delaunay(alpha_complex, lift_perturbation)
@@ -92,9 +92,9 @@ class CoreChromaticAlphaComplexFactory:
         TimingUtils().start("Compute Chromatic Delaunay")
 
         del_complex = Delaunay(self.chromatic_lift(alpha_complex, lift_perturbation))
-        all_labels = set(alpha_complex.internal_labels)
+        all_labels = set(alpha_complex.internal_labeling)
         colorful_maximal_simplices = [simplex for simplex in del_complex.simplices
-                                      if set(alpha_complex.internal_labels[i] for i in simplex) == all_labels]
+                                      if set(alpha_complex.internal_labeling[i] for i in simplex) == all_labels]
 
         TimingUtils().stop("Compute Chromatic Delaunay")
 
@@ -108,7 +108,7 @@ class CoreChromaticAlphaComplexFactory:
         """
         pts_lift = np.array([
             np.concatenate((point, [1 if i == label else 0 for i in range(1, alpha_complex.labels_number)]))
-            for point, label in zip(alpha_complex.points, alpha_complex.internal_labels)])
+            for point, label in zip(alpha_complex.points, alpha_complex.internal_labeling)])
         if lift_perturbation:
             prefix = [0] * alpha_complex.points_dimension
             for pt in pts_lift:

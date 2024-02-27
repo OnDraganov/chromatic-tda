@@ -96,4 +96,4 @@ class ChromaticAlphaComplex:
     def labels(self):
         """Return the labels for the points defining the complex."""
         return [self.core_alpha_complex.internal_labels_to_input_labels_dict[lab]
-                for lab in self.core_alpha_complex.internal_labels]
+                for lab in self.core_alpha_complex.internal_labeling]

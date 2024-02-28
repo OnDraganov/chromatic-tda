@@ -3,7 +3,7 @@ import numpy as np
 import random
 from scipy.spatial import Delaunay
 
-from chromatic_tda import RadiusFunctionConstructor
+from chromatic_tda.algorithms.radius_function import RadiusFunctionConstructor
 from chromatic_tda.utils.boundary_matrix_utils import BoundaryMatrixUtils
 from chromatic_tda.core.core_chromatic_alpha_complex import CoreChromaticAlphaComplex
 from chromatic_tda.algorithms.OLD_radius_function_utils import RadiusFunctionUtils

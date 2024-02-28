@@ -2,7 +2,6 @@ import unittest
 
 import numpy as np
 
-from chromatic_tda import ChromaticAlphaComplex
 from chromatic_tda.algorithms.radius_function import RadiusFunctionConstructor
 
 
@@ -83,10 +82,3 @@ class RadiusFunctionTest(unittest.TestCase):
         assert np.isclose((pt1 + pt2) / 2, c).all()
         assert np.isclose(np.linalg.norm(pt1 - pt2) / 2, r[0])
         assert np.isclose(np.linalg.norm(pt1 - pt2) / 2, r[1])
-
-    def test_random_TEMP(self):
-        points = np.random.random(size=(20, 2))
-        labels = [int(3 * np.random.random()) for _ in range(20)]
-
-        alpha_complex = ChromaticAlphaComplex(points, labels)
-        RadiusFunctionConstructor.construct_radius_function(alpha_complex.core_alpha_complex)

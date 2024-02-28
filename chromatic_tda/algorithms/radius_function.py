@@ -5,11 +5,14 @@ from chromatic_tda.algorithms.miniball_interface import MiniballAlgorithm
 from chromatic_tda.core.core_chromatic_alpha_complex import CoreChromaticAlphaComplex
 from chromatic_tda.utils.floating_point_utils import FloatingPointUtils
 from chromatic_tda.utils.geometry_utils import GeometryUtils
+from chromatic_tda.utils.timing import TimingUtils
 
 
 class RadiusFunctionConstructor:
     @staticmethod
     def construct_radius_function(alpha_complex: CoreChromaticAlphaComplex) -> dict[tuple[int, ...], float]:
+        TimingUtils().start("Construct Radius Function")
+
         radius_function = {}
         for dim in range(alpha_complex.simplicial_complex.dimension, 0, -1):
             simplices: list[tuple[int, ...]] = alpha_complex.simplicial_complex.get_simplices_of_dim(dim)
@@ -24,6 +27,7 @@ class RadiusFunctionConstructor:
         for simplex in alpha_complex.simplicial_complex.get_simplices_of_dim(0):
             radius_function[simplex] = 0.
 
+        TimingUtils().start("Construct Radius Function")
         return radius_function
 
     @staticmethod
@@ -31,11 +35,15 @@ class RadiusFunctionConstructor:
             -> bool:
         """Return True if the distance from center is greater or close to the corresponding color radius
         for all given vertices."""
+        TimingUtils().start("Check Stack Emptiness")
+
         for v in vertices:
             distance = np.linalg.norm(alpha_complex.points[v] - center)
             radius = radii.get(alpha_complex.internal_labeling[v], 0)
             if distance < radius and not np.isclose(distance, radius):
                 return False
+
+        TimingUtils().stop("Check Stack Emptiness")
         return True
 
     @staticmethod
@@ -51,6 +59,7 @@ class RadiusFunctionConstructor:
     def find_smallest_circumstack(*point_sets: np.ndarray) -> tuple[np.ndarray, tuple[float, ...]]:
         """For arguments B_0, ..., B_k, return the center z and radii r_0, ..., r_k defining a stack of spheres
         S_0, ..., S_k passing through B_0, ..., B_k, respectively."""
+        TimingUtils().start("Find Smallest Circumstack")
 
         lengths = [len(point_set) for point_set in point_sets]
         points = np.concatenate(point_sets)
@@ -64,12 +73,16 @@ class RadiusFunctionConstructor:
         center, _ = MiniballAlgorithm.find_smallest_enclosing_ball(np.concatenate([points, points_reflected_filtered]))
         radii = tuple(np.linalg.norm(point_set[0] - center) if len(point_set) > 0 else 0. for point_set in point_sets)
 
+        TimingUtils().stop("Find Smallest Circumstack")
         return center, radii
 
     @staticmethod
     def split_points(points: np.ndarray, lengths) -> list[np.ndarray, ...]:
+        TimingUtils().start("Split Points Into Colors")
+
         splits = np.zeros(len(lengths), dtype=int)
         for i, ln in enumerate(lengths):
             splits[i] = splits[i - 1] + ln
 
+        TimingUtils().stop("Split Points Into Colors")
         return np.split(points, splits)[:-1]

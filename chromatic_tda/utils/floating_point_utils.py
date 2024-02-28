@@ -1,5 +1,7 @@
 import numpy as np
 
+from chromatic_tda.utils.timing import TimingUtils
+
 
 class FloatingPointUtils:
 
@@ -32,4 +34,7 @@ class FloatingPointUtils:
     def flag_duplicates_from_reference(reference: np.ndarray, to_check: np.ndarray) -> np.ndarray[bool, ...]:
         """Return a boolean list of len(to_check) describing whether the corresponding element in to_check
         is close to some element of the reference."""
-        return np.array([any(np.isclose(ref, x).all() for ref in reference) for x in to_check], dtype=bool)
+        TimingUtils().start("Flag Duplicates Among Vectors")
+        flags = np.array([any(np.isclose(ref, x).all() for ref in reference) for x in to_check], dtype=bool)
+        TimingUtils().stop("Flag Duplicates Among Vectors")
+        return flags

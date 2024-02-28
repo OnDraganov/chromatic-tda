@@ -1,5 +1,7 @@
 import numpy as np
 
+from chromatic_tda.utils.timing import TimingUtils
+
 
 class LinAlgUtils:
     @staticmethod
@@ -17,6 +19,7 @@ class LinAlgUtils:
         :return: A tuple (x, kernel) where x is a particular solution, and kernel is an orthonormal basis of Ker(A)
         (vectors in rows).
         """
+        TimingUtils().start("LinAlg :: Solve Linear Equation With Kernel")
         svd : np.linalg.linalg.SVDResult = np.linalg.svd(a_matrix)  # svd.U @ diagonal from svd.S @ svd.Vh == A
         rank : int = LinAlgUtils.count_nonzero(svd.S)
 
@@ -27,6 +30,7 @@ class LinAlgUtils:
         if check_solution and not LinAlgUtils.check_solution(a_matrix, b_vector, x):
             raise np.linalg.LinAlgError("There is no exact solution to given Ax=b.")
 
+        TimingUtils().stop("LinAlg :: Solve Linear Equation With Kernel")
         return x, kernel
 
     @staticmethod
@@ -34,11 +38,13 @@ class LinAlgUtils:
         """Given m x n array A with m <= n,
         return array whose rows are orthonormal basis of the row-space of A.
         WARNING: for rank(A) < m might return smaller space if R in np.linalg.qr would skip a pivot and use it later"""
+        TimingUtils().start("LinAlg :: Orthogonalize Rows")
         m, n = array.shape
         if m > n:
             raise ValueError("Only m x n arrays with m <= n allowed")
         qr = np.linalg.qr(array.transpose(), mode='reduced')
         non_zero_r_diagonal = ~np.isclose(qr.R.diagonal(), 0)
+        TimingUtils().stop("LinAlg :: Orthogonalize Rows")
         return qr.Q.transpose()[non_zero_r_diagonal]
 
     @staticmethod
@@ -51,9 +57,12 @@ class LinAlgUtils:
 
     @staticmethod
     def pseudoinverse_from_svd(svd: np.linalg.linalg.SVDResult) -> np.ndarray:
+        TimingUtils().start("LinAlg :: Pseudoinverse From SVD")
         pseudo_s = np.zeros(shape=(svd.U.shape[1], svd.Vh.shape[0]))
         np.fill_diagonal(pseudo_s, LinAlgUtils.pseudoinverse_of_diagonal(svd.S))
-        return (svd.U @ pseudo_s @ svd.Vh).transpose()
+        pseudoinverse = (svd.U @ pseudo_s @ svd.Vh).transpose()
+        TimingUtils().stop("LinAlg :: Pseudoinverse From SVD")
+        return pseudoinverse
 
     @staticmethod
     def pseudoinverse_of_diagonal(diag: np.ndarray) -> np.ndarray:

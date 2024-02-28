@@ -1,6 +1,7 @@
 import numpy as np
 
 from chromatic_tda.utils.linear_algebra_utils import LinAlgUtils
+from chromatic_tda.utils.timing import TimingUtils
 
 
 class GeometryUtils:
@@ -11,6 +12,7 @@ class GeometryUtils:
         all distances ||p - a|| for p in P are the same.
 
         :return: center `z`, list of generating vectors `ker`"""
+        TimingUtils().start("Geom :: Construct Equispace")
         if len(point_sets) < 1:
             raise TypeError("At least one point set expected.")
         dim: int = point_sets[0].shape[1]
@@ -29,19 +31,25 @@ class GeometryUtils:
         b_vec = np.concatenate(b_vec_blocks)
         z, ker = LinAlgUtils.solve(a_mat, b_vec)
 
+        TimingUtils().stop("Geom :: Construct Equispace")
         return z[:dim], ker[:, :dim]
 
     @staticmethod
     def one_hot_embedding(number_of_categories: int, category: int, points: np.ndarray) -> np.ndarray:
+        TimingUtils().start("Geom :: One Hot Embedding")
         if category >= number_of_categories:
             raise ValueError(f'Category out of range: need category < number_of_categories')
         suffix = np.zeros((len(points), number_of_categories))
         suffix[:, category] = 1
-        return np.concatenate([points, suffix], axis=1)
+        one_hot_embedding = np.concatenate([points, suffix], axis=1)
+        TimingUtils().stop("Geom :: One Hot Embedding")
+        return one_hot_embedding
 
     @staticmethod
     def reflect_points_through_affine_space(shift: np.ndarray, vector_space: np.ndarray, *points: np.ndarray):
-        dim: int = vector_space.shape[1]
+        TimingUtils().start("Geom :: Reflect Points Through Aff")
         u_mat = LinAlgUtils.orthogonalize_rows(vector_space).transpose()  # matrix with orthogonal columns
         trans_mat = 2 * u_mat @ u_mat.transpose() - np.identity(u_mat.shape[0])
-        return np.array([trans_mat @ (pt - shift) + shift for pt in points])
+        reflected_points = np.array([trans_mat @ (pt - shift) + shift for pt in points])
+        TimingUtils().stop("Geom :: Reflect Points Through Aff")
+        return reflected_points

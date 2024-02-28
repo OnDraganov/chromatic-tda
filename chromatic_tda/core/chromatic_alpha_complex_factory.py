@@ -25,12 +25,14 @@ class CoreChromaticAlphaComplexFactory:
         Compute the chromatic alpha complex of given points and labels.
         At most three different labels allowed
         """
+        TimingUtils().start("AlphFac :: Create Alf Instance")
         self.alpha_complex = CoreChromaticAlphaComplex()
 
         self.init_points(point_perturbation)
         self.init_labels()
         self.build_alpha_complex_structure(lift_perturbation=lift_perturbation)
         self.add_radius_function(radius_method)
+        TimingUtils().start("AlphFac :: Create Alf Instance")
 
         return self.alpha_complex
 
@@ -63,17 +65,17 @@ class CoreChromaticAlphaComplexFactory:
         alpha_complex       CoreChromaticAlphaComplex with initialised points and labels
         lift_perturbation   amount by which to perturb the lifting (in order to make Delaunay computation easier)
         """
-        TimingUtils().start("Build Alpha Complex Structure")
+        TimingUtils().start("AlphFac :: Build Alpha Complex Structure")
 
         colorful_max_simplices = self.compute_chromatic_delaunay(lift_perturbation)
-        TimingUtils().start("Build Chro Del From Max Simplices")
+        TimingUtils().start("AlphFac :: Build Chro Del From Max Simplices")
         self.alpha_complex.simplicial_complex = CoreSimplicialComplexFactory().create_instance(colorful_max_simplices)
-        TimingUtils().stop("Build Chro Del From Max Simplices")
+        TimingUtils().stop("AlphFac :: Build Chro Del From Max Simplices")
 
         self.alpha_complex.simplicial_complex.co_boundary = BoundaryMatrixUtils.make_co_boundary(
             self.alpha_complex.simplicial_complex.boundary)
 
-        TimingUtils().stop("Build Alpha Complex Structure")
+        TimingUtils().stop("AlphFac :: Build Alpha Complex Structure")
 
     def compute_chromatic_delaunay(self, lift_perturbation: float):
         """
@@ -86,14 +88,14 @@ class CoreChromaticAlphaComplexFactory:
         -------
         List of maximal simplices of the chromatic Delaunay complex.
         """
-        TimingUtils().start("Compute Chromatic Delaunay")
+        TimingUtils().start("AlphFac :: Compute Chromatic Delaunay")
 
         del_complex = Delaunay(self.chromatic_lift(lift_perturbation))
         all_labels = set(self.alpha_complex.internal_labeling)
         colorful_maximal_simplices = [simplex for simplex in del_complex.simplices
                                       if set(self.alpha_complex.internal_labeling[i] for i in simplex) == all_labels]
 
-        TimingUtils().stop("Compute Chromatic Delaunay")
+        TimingUtils().stop("AlphFac :: Compute Chromatic Delaunay")
 
         return colorful_maximal_simplices
 

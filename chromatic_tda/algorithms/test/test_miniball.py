@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from chromatic_tda.algorithms.miniball import MiniballAlgorithm
+from chromatic_tda.algorithms.miniball_interface import MiniballAlgorithm
 
 
 class MiniballTest(unittest.TestCase):

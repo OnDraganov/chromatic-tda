@@ -34,7 +34,7 @@ class CoreChromaticAlphaComplexFactory:
 
         return self.alpha_complex
 
-    def init_points(self, point_perturbation: float) -> None:
+    def init_points(self, point_perturbation: float | None) -> None:
         if point_perturbation:
             self.alpha_complex.points = np.array(self.perturb_points(self.points, point_perturbation))
         else:

@@ -1,0 +1,3 @@
+[submodule "chromatic_tda/algorithms/miniball"]
+	path = chromatic_tda/algorithms/miniball
+	url = https://github.com/OnDraganov/miniball.git

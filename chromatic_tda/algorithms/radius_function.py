@@ -1,7 +1,7 @@
 import numpy as np
 
 from chromatic_tda.algorithms.chromatic_subcomplex_utils import ChromaticComplexUtils
-from chromatic_tda.algorithms.miniball import MiniballAlgorithm
+from chromatic_tda.algorithms.miniball_interface import MiniballAlgorithm
 from chromatic_tda.core.core_chromatic_alpha_complex import CoreChromaticAlphaComplex
 from chromatic_tda.utils.floating_point_utils import FloatingPointUtils
 from chromatic_tda.utils.geometry_utils import GeometryUtils

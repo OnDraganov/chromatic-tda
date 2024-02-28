@@ -3,6 +3,7 @@ import numpy as np
 import random
 from scipy.spatial import Delaunay
 
+from chromatic_tda import RadiusFunctionConstructor
 from chromatic_tda.utils.boundary_matrix_utils import BoundaryMatrixUtils
 from chromatic_tda.core.core_chromatic_alpha_complex import CoreChromaticAlphaComplex
 from chromatic_tda.algorithms.OLD_radius_function_utils import RadiusFunctionUtils
@@ -15,9 +16,11 @@ class CoreChromaticAlphaComplexFactory:
     def __init__(self, points, labels):
         self.points = points
         self.labels = labels
+        self.check_input()
         self.alpha_complex = None
 
-    def create_instance(self, lift_perturbation, point_perturbation) -> CoreChromaticAlphaComplex:
+    def create_instance(self, lift_perturbation: float, point_perturbation: float,
+                        radius_method: str = 'new') -> CoreChromaticAlphaComplex:
         """
         Compute the chromatic alpha complex of given points and labels.
         At most three different labels allowed
@@ -27,11 +30,11 @@ class CoreChromaticAlphaComplexFactory:
         self.init_points(point_perturbation)
         self.init_labels()
         self.build_alpha_complex_structure(lift_perturbation=lift_perturbation)
-        self.add_radius_function()
+        self.add_radius_function(radius_method)
 
         return self.alpha_complex
 
-    def init_points(self, point_perturbation) -> None:
+    def init_points(self, point_perturbation: float) -> None:
         if point_perturbation:
             self.alpha_complex.points = np.array(self.perturb_points(self.points, point_perturbation))
         else:
@@ -50,7 +53,7 @@ class CoreChromaticAlphaComplexFactory:
         self.alpha_complex.internal_labeling = [self.alpha_complex.input_labels_to_internal_labels_dict[lab]
                                                 for lab in self.labels]
 
-    def build_alpha_complex_structure(self, lift_perturbation) -> None:
+    def build_alpha_complex_structure(self, lift_perturbation: float) -> None:
         """
         Compute the simplicial complex and radius weight function for a CoreChromaticAlphaComplex
         with initialised points and labels. Adds the structure directly to the given alpha_complex.
@@ -62,13 +65,6 @@ class CoreChromaticAlphaComplexFactory:
         """
         TimingUtils().start("Build Alpha Complex Structure")
 
-        if self.alpha_complex.points.shape[1] != 2:
-            raise ValueError("Points has to be an iterable of two-dimensional points.")
-        if self.alpha_complex.labels_number > 3:
-            raise ValueError(f"There can be at most 3 different labels, {self.alpha_complex.labels_number} given.")
-        if len(self.alpha_complex.points) != len(self.alpha_complex.internal_labeling):
-            raise ValueError("The list of labels must have the same length as the list of points.")
-
         colorful_max_simplices = self.compute_chromatic_delaunay(lift_perturbation)
         TimingUtils().start("Build Chro Del From Max Simplices")
         self.alpha_complex.simplicial_complex = CoreSimplicialComplexFactory().create_instance(colorful_max_simplices)
@@ -79,7 +75,7 @@ class CoreChromaticAlphaComplexFactory:
 
         TimingUtils().stop("Build Alpha Complex Structure")
 
-    def compute_chromatic_delaunay(self, lift_perturbation):
+    def compute_chromatic_delaunay(self, lift_perturbation: float):
         """
         Parameters
         ----------
@@ -120,5 +116,13 @@ class CoreChromaticAlphaComplexFactory:
 
         return pts_lift
 
-    def add_radius_function(self):
-        RadiusFunctionUtils().compute_radius_function(self.alpha_complex)
+    def add_radius_function(self, method):
+        if method == 'old':
+            RadiusFunctionUtils().compute_radius_function(self.alpha_complex)
+        elif method == 'new':
+            self.alpha_complex.simplicial_complex.set_simplex_weights(
+                RadiusFunctionConstructor.construct_radius_function(self.alpha_complex))
+
+    def check_input(self):
+        if len(self.points) != len(self.labels):
+            raise ValueError("The length of points has to equal the length of labels.")

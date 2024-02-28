@@ -21,8 +21,9 @@ class ChromaticAlphaComplex:
                                   Generally leads to faster computation, as QHull does not need to deal with the
                                   non-generality itself. (default: 1e-9)
         """
-        self.core_alpha_complex : CoreChromaticAlphaComplex = CoreChromaticAlphaComplexFactory().create_instance(
-            points, labels, lift_perturbation=lift_perturbation, point_perturbation=point_perturbation)
+        factory = CoreChromaticAlphaComplexFactory(points, labels)
+        self.core_alpha_complex : CoreChromaticAlphaComplex = factory.create_instance(
+            lift_perturbation=lift_perturbation, point_perturbation=point_perturbation)
 
     def __iter__(self):
         yield from self.core_alpha_complex

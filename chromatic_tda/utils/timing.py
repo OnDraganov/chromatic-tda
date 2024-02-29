@@ -36,6 +36,6 @@ class TimingUtils:
 
     def print(self):
         for topic in self.total_time_dict:
-            print(f"Time [ {topic:<40} ] = {round(self.total_time_dict[topic], 2):<5} seconds "
+            print(f"Time[{topic:<50}] = {self.total_time_dict[topic]:6.2f} s "
                   f"(# calls : {self.call_count_dict[topic]:<6}, "
-                  f"average = {round(self.total_time_dict[topic]/self.call_count_dict[topic], 3):<6})")
+                  f"average = {self.total_time_dict[topic]/self.call_count_dict[topic]:7.4f})")

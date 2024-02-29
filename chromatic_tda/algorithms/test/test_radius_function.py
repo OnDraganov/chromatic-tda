@@ -87,27 +87,27 @@ class RadiusFunctionTest(unittest.TestCase):
         assert np.isclose(np.linalg.norm(pt1 - pt2) / 2, r[0])
         assert np.isclose(np.linalg.norm(pt1 - pt2) / 2, r[1])
 
-    # def test_DEBUG(self):  # DEBUGGING
-    #     points = np.array([[0.86612788, 0.76064003, 0.2206127],
-    #                        [0.84876439, 0.79726545, 0.86714721],
-    #                        [0.20728501, 0.50136939, 0.21464713],
-    #                        [0.58162985, 0.143189, 0.14376051],
-    #                        [0.89802104, 0.91300263, 0.77106463],
-    #                        [0.0349603, 0.60387839, 0.18334984],
-    #                        [0.20383641, 0.75088214, 0.32907584],
-    #                        [0.84219744, 0.83136685, 0.2111101],
-    #                        [0.71003468, 0.54130709, 0.74316814],
-    #                        [0.23472425, 0.40334776, 0.4148243]])
-    #     labels = [2, 2, 0, 2, 0, 2, 1, 2, 1, 0]
-    #
-    #     factory = CoreChromaticAlphaComplexFactory(points, labels)
-    #     factory.alpha_complex = CoreChromaticAlphaComplex()
-    #     factory.init_points(None)
-    #     factory.init_labels()
-    #     factory.build_alpha_complex_structure(lift_perturbation=1e-9)
-    #     factory.add_radius_function(method='new')
-    #     cplx = SimplicialComplex(
-    #         factory.alpha_complex.get_complex(sub_complex='mono-chromatic', full_complex=None, relative=None))
-    #     plot_six_pack(cplx)
-    #     plt.show()
+    def test_DEBUG(self):  # DEBUGGING
+        points = np.array([[0.86612788, 0.76064003, 0.2206127],
+                           [0.84876439, 0.79726545, 0.86714721],
+                           [0.20728501, 0.50136939, 0.21464713],
+                           [0.58162985, 0.143189, 0.14376051],
+                           [0.89802104, 0.91300263, 0.77106463],
+                           [0.0349603, 0.60387839, 0.18334984],
+                           [0.20383641, 0.75088214, 0.32907584],
+                           [0.84219744, 0.83136685, 0.2111101],
+                           [0.71003468, 0.54130709, 0.74316814],
+                           [0.23472425, 0.40334776, 0.4148243]])
+        labels = [2, 2, 0, 2, 0, 2, 1, 2, 1, 0]
+
+        factory = CoreChromaticAlphaComplexFactory(points, labels)
+        factory.alpha_complex = CoreChromaticAlphaComplex()
+        factory.init_points(None)
+        factory.init_labels()
+        factory.build_alpha_complex_structure(lift_perturbation=1e-9)
+        factory.add_radius_function(method='new', morse_optimization=True)
+        cplx = SimplicialComplex(
+            factory.alpha_complex.get_complex(sub_complex='mono-chromatic', full_complex=None, relative=None))
+        # plot_six_pack(cplx)
+        # plt.show()
 

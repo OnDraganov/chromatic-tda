@@ -8,6 +8,6 @@ class MiniballAlgorithm:
     def find_smallest_enclosing_ball(points: np.ndarray):
         """:return: center and radius of the smallest enclosing ball"""
         TimingUtils().start("Miniball")
-        center, rad2 = get_bounding_ball(points)
+        center, rad2 = get_bounding_ball(points, check_circumsphere_solutions=False)
         TimingUtils().stop("Miniball")
         return center, np.sqrt(rad2)

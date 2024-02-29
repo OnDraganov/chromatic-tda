@@ -37,7 +37,7 @@ class RadiusFunctionConstructor:
         for simplex in alpha_complex.simplicial_complex.get_simplices_of_dim(0):
             radius_function[simplex] = 0.
 
-        TimingUtils().start("Rad :: Construct Radius Function")
+        TimingUtils().stop("Rad :: Construct Radius Function")
         return radius_function
 
     @staticmethod
@@ -121,7 +121,7 @@ class RadiusFunctionConstructor:
 
         x, res, rk, s = np.linalg.lstsq(a_mat, b_vec, rcond=None)
 
-        TimingUtils().start("Rad :: Morse :: Compute KKT Solution")
+        TimingUtils().stop("Rad :: Morse :: Compute KKT Solution")
         if len(res) > 0 and not np.isclose(res[0], 0):
             return None
         else:
@@ -137,7 +137,7 @@ class RadiusFunctionConstructor:
         interval = [tuple(sorted(minimal_simplex.union(extra)))
                     for k in range(len(non_positive_vertices))
                     for extra in itertools.combinations(non_positive_vertices, k)]
-        TimingUtils().start("Rad :: Morse :: Generate Interval Simplices")
+        TimingUtils().stop("Rad :: Morse :: Generate Interval Simplices")
         return interval
 
     @staticmethod

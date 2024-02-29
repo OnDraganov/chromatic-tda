@@ -35,7 +35,7 @@ class TimingUtils:
                 self.total_time_dict[topic] = perf_counter() - self.started_at_dict[topic]
 
     def print(self):
-        for topic in self.total_time_dict:
+        for topic in sorted(self.total_time_dict):
             print(f"Time[{topic:<50}] = {self.total_time_dict[topic]:6.2f} s "
                   f"(# calls : {self.call_count_dict[topic]:<6}, "
                   f"average = {self.total_time_dict[topic]/self.call_count_dict[topic]:7.4f})")

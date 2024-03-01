@@ -109,3 +109,45 @@ class GeometryTestReflections(unittest.TestCase):
         reflected_points = GeometryUtils.reflect_points_through_affine_space(shift, vector_space, *points)
         for pt, pt_ref in zip(points, reflected_points):
             assert np.isclose(- (pt - (1, 1, 1)) + (1, 1, 1), pt_ref).all()
+
+    def test_circumcircle_of_weighted_basic_triangle(self):
+        points = np.array([
+            [1, 2, 3],
+            [1, 1, 1],
+            [4, 3, 2]
+        ])
+        weights = np.array([0, 0, 0])
+        x, rad2 = GeometryUtils.circumsphere_of_weighted_points(points, weights)
+        assert np.allclose(np.square(points - x).sum(axis=1), rad2)
+
+    def test_circumcircle_of_weighted_basic_weighted_triangle(self):
+        points = np.array([
+            [1, 2, 3],
+            [1, 1, 1],
+            [4, 3, 2]
+        ])
+        weights = np.array([.3, -1.1, 0])
+        x, rad2 = GeometryUtils.circumsphere_of_weighted_points(points, weights)
+        print(np.square(points[0] - x).sum() + weights[0])
+        print(np.square(points - x).sum(axis=1) + weights)
+        print(rad2)
+        assert np.allclose(np.square(points - x).sum(axis=1) + weights, rad2)
+
+    def test_circumcircle_of_weighted_4d_line(self):
+        points = np.array([
+            [1, 2, 3, 0],
+            [1, 0, 1, 1]
+        ])
+        weights = np.array([0, 0])
+        x, rad2 = GeometryUtils.circumsphere_of_weighted_points(points, weights)
+        assert np.allclose(np.square(points - x).sum(axis=1), rad2)
+        assert np.isclose(9 / 4, rad2)
+
+    def test_circumcircle_of_weighted_4d_weighted_line(self):
+        points = np.array([
+            [1, 2, 3, 0],
+            [1, 0, 1, 1]
+        ])
+        weights = np.array([2, 5])
+        x, rad2 = GeometryUtils.circumsphere_of_weighted_points(points, weights)
+        assert np.allclose(np.square(points - x).sum(axis=1) + weights, rad2)

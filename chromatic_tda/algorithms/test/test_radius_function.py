@@ -109,7 +109,7 @@ class RadiusFunctionTest(unittest.TestCase):
     # def test_DEBUG(self):  # DEBUGGING
     #     TimingUtils().log_times = True
     #     n = 50
-    #     points = np.random.random(size=(n, 4))
+    #     points = np.random.random(size=(n, 3))
     #     labels = [int(3 * np.random.random()) for _ in range(n)]
     #     factory = CoreChromaticAlphaComplexFactory(points, labels)
     #
@@ -158,14 +158,14 @@ class RadiusFunctionTest(unittest.TestCase):
     #     # print('-----------------------------------------')
     #     TimingUtils().print()
     #
-    #     # print()
-    #     # print('-----------------------------------------')
-    #     # same_keys = wf_mb.keys() == wf_wc.keys()
-    #     # print(f'Same keys: {same_keys}')
-    #     # same_vals = all(np.isclose(wf_mb[splx], wf_wc[splx]) for splx in wf_mb.keys())
-    #     # print(f'Same vals: {same_vals}')
-    #     # print('-----------------------------------------')
-    #     #
+    #     print()
+    #     print('-----------------------------------------')
+    #     same_keys = wf_mb.keys() == wf_wc.keys()
+    #     print(f'Same keys: {same_keys}')
+    #     same_vals = all(np.isclose(wf_mb[splx], wf_wc[splx]) for splx in wf_mb.keys())
+    #     print(f'Same vals: {same_vals}')
+    #     print('-----------------------------------------')
+    #
     #     # print()
     #     # print("simplices")
     #     # print({dim: len(simplices) for dim, simplices in alpha.simplicial_complex.dim_simplex_dict.items()})

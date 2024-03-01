@@ -2,6 +2,7 @@ import unittest
 
 import numpy as np
 from matplotlib import pyplot as plt  # DEBUGGING
+import time
 
 from chromatic_tda import plot_six_pack, SimplicialComplex  # DEBUGGING
 from chromatic_tda.algorithms.radius_function import RadiusFunctionConstructor
@@ -88,13 +89,102 @@ class RadiusFunctionTest(unittest.TestCase):
         assert np.isclose(np.linalg.norm(pt1 - pt2) / 2, r[0])
         assert np.isclose(np.linalg.norm(pt1 - pt2) / 2, r[1])
 
-    def test_DEBUG(self):  # DEBUGGING
-        TimingUtils().log_times = True
-        n = 300
-        points = np.random.random(size=(n, 2))
-        labels = [int(3 * np.random.random()) for _ in range(n)]
-        factory = CoreChromaticAlphaComplexFactory(points, labels)
-        TimingUtils().flush()
-        factory.create_instance(lift_perturbation=1e-9, point_perturbation=None, radius_method='new',
-                                morse_optimization=True)
-        TimingUtils().print()
+    # def test_DEBUG(self):  # DEBUGGING
+    #     TimingUtils().log_times = True
+    #     n = 50
+    #     points = np.random.random(size=(n, 4))
+    #     labels = [int(3 * np.random.random()) for _ in range(n)]
+    #     factory = CoreChromaticAlphaComplexFactory(points, labels)
+    #
+    #     # print('OLD')
+    #     # TimingUtils().flush()
+    #     # time_start = time.perf_counter()
+    #     # alpha = factory.create_instance(lift_perturbation=1e-9, point_perturbation=None,
+    #     #                                 use_morse_optimization=True,
+    #     #                                 circumstack_method='miniball',
+    #     #                                 old_new_switch='old', )
+    #     # print(f'Total time {time.perf_counter() - time_start:.2f} s')
+    #     # wf_old = alpha.simplicial_complex.simplex_weights
+    #     # TimingUtils().print()
+    #
+    #     # print()
+    #     # print()
+    #     print('NEW :: MINIBALL')
+    #     print('===============')
+    #     TimingUtils().flush()
+    #     time_start = time.perf_counter()
+    #     alpha = factory.create_instance(lift_perturbation=1e-9, point_perturbation=None,
+    #                                     use_morse_optimization=True,
+    #                                     circumstack_method='miniball',
+    #                                     old_new_switch='new')
+    #     print(f'Total time {time.perf_counter() - time_start:.2f} s')
+    #     wf_mb = alpha.simplicial_complex.simplex_weights
+    #     # print(f'Same keys: {wf_old.keys() == wf_mb.keys()}')
+    #     # print(f'Same vals: {all(np.isclose(wf_old[splx], wf_mb[splx]) for splx in wf_old.keys())}')
+    #     # print('-----------------------------------------')
+    #     TimingUtils().print()
+    #
+    #     print()
+    #     print()
+    #     print('NEW :: WEIGHTED CIRCUMSPHERES')
+    #     print('===============')
+    #     TimingUtils().flush()
+    #     time_start = time.perf_counter()
+    #     alpha = factory.create_instance(lift_perturbation=1e-9, point_perturbation=None,
+    #                                     use_morse_optimization=True,
+    #                                     circumstack_method='weighted_circumspheres',
+    #                                     old_new_switch='new')
+    #     print(f'Total time {time.perf_counter() - time_start:.2f} s')
+    #     wf_wc = alpha.simplicial_complex.simplex_weights
+    #     # print(f'Same keys: {wf_old.keys() == wf_wc.keys()}')
+    #     # print(f'Same vals: {all(np.isclose(wf_old[splx], wf_wc[splx]) for splx in wf_old.keys())}')
+    #     # print('-----------------------------------------')
+    #     TimingUtils().print()
+    #
+    #     # print()
+    #     # print('-----------------------------------------')
+    #     # same_keys = wf_mb.keys() == wf_wc.keys()
+    #     # print(f'Same keys: {same_keys}')
+    #     # same_vals = all(np.isclose(wf_mb[splx], wf_wc[splx]) for splx in wf_mb.keys())
+    #     # print(f'Same vals: {same_vals}')
+    #     # print('-----------------------------------------')
+    #     #
+    #     # print()
+    #     # print("simplices")
+    #     # print({dim: len(simplices) for dim, simplices in alpha.simplicial_complex.dim_simplex_dict.items()})
+    #     # print()
+    #     #
+    #     # print('agreed')
+    #     # agreed = {}
+    #     # disagreed = []
+    #     # for simplex in wf_mb:
+    #     #     dim = len(simplex) - 1
+    #     #     if np.isclose(wf_mb[simplex], wf_wc[simplex]):
+    #     #         if dim not in agreed:
+    #     #             agreed[dim] = 0
+    #     #         agreed[dim] += 1
+    #     #     else:
+    #     #         disagreed.append(simplex)
+    #     #
+    #     # print(agreed)
+    #     # print()
+    #     #
+    #     # if len(disagreed) > 0:
+    #     #     for i in [0, -1]:
+    #     #         simplex = disagreed[i]
+    #     #         print()
+    #     #         print(f'{simplex}  -->  {tuple(alpha.internal_labeling[v] for v in simplex)}')
+    #     #         print(wf_mb[simplex])
+    #     #         print(wf_wc[simplex])
+    #     #         print(alpha.simplicial_complex.co_boundary[simplex])
+    #     #
+    #     #     print()
+    #     #     print()
+    #     #     print('==POINTS==')
+    #     #     print(alpha.points)
+    #     #     print()
+    #     #     print()
+    #     #     print('==LABELS==')
+    #     #     print(alpha.internal_labeling)
+    #     #
+    #     # assert same_vals and same_keys

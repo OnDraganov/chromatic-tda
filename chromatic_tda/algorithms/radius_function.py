@@ -14,21 +14,23 @@ from chromatic_tda.utils.timing import TimingUtils
 
 class RadiusFunctionConstructor:
     @staticmethod
-    def construct_radius_function(alpha_complex: CoreChromaticAlphaComplex,
-                                  morse_optimization: bool = True) -> dict[tuple[int, ...], float]:
+    def construct_sq_radius_function(alpha_complex: CoreChromaticAlphaComplex,
+                                     circumstack_method: str,
+                                     use_morse_optimization: bool) -> dict[tuple[int, ...], float]:
         TimingUtils().start("Rad :: Construct Radius Function")
 
         radius_function = {}
         for dim in range(alpha_complex.simplicial_complex.dimension, 0, -1):
-            simplices: list[tuple[int, ...]] = alpha_complex.simplicial_complex.get_simplices_of_dim(dim)
+            simplices: set[tuple[int, ...]] = alpha_complex.simplicial_complex.dim_simplex_dict[dim]
             for simplex in simplices:
                 if radius_function.get(simplex, None) is not None:
                     continue  # if radius already found at an earlier step, skip the simplex
-                circumstack = RadiusFunctionConstructor.find_smallest_circumstack_of_simplex(alpha_complex, simplex)
+                circumstack = RadiusFunctionConstructor.find_smallest_circumstack_of_simplex(
+                    alpha_complex, simplex, circumstack_method=circumstack_method)
                 extra_vertices = alpha_complex.simplicial_complex.get_extra_vertices_of_cofaces(simplex)
                 if RadiusFunctionConstructor.is_stack_empty_of_vertices(alpha_complex, extra_vertices, circumstack):
                     radius_function[simplex] = circumstack.maximum_radius
-                    if morse_optimization:
+                    if use_morse_optimization:
                         RadiusFunctionConstructor.morse_optimization_fill_in_interval(radius_function, alpha_complex,
                                                                                       simplex, circumstack)
                 else:
@@ -42,12 +44,12 @@ class RadiusFunctionConstructor:
 
     @staticmethod
     def is_stack_empty_of_vertices(alpha_complex: CoreChromaticAlphaComplex, vertices, stack: StackOfSpheres) -> bool:
-        """Return True if the distance from center is greater or close to the corresponding color radius
+        """Return True if the squared distance from center is greater or close to the corresponding color squared radius
         for all given vertices."""
         TimingUtils().start("Rad :: Check Stack Emptiness")
 
         for v in vertices:
-            distance = np.linalg.norm(alpha_complex.points[v] - stack.center)
+            distance = np.square(alpha_complex.points[v] - stack.center).sum()
             radius = stack.radii.get(alpha_complex.internal_labeling[v], 0)
             if distance < radius and not np.isclose(distance, radius):
                 return False
@@ -57,34 +59,80 @@ class RadiusFunctionConstructor:
 
     @staticmethod
     def find_smallest_circumstack_of_simplex(alpha_complex: CoreChromaticAlphaComplex,
-                                             simplex: tuple) -> StackOfSpheres:
+                                             simplex: tuple,
+                                             circumstack_method: str) -> StackOfSpheres:
         split = ChromaticComplexUtils.split_simplex_by_labels(simplex, alpha_complex.internal_labeling)
         labels, vertex_sets = zip(*split.items())
         point_sets = [alpha_complex.points[vertex_set] for vertex_set in vertex_sets]
-        center, radii = RadiusFunctionConstructor.find_smallest_circumstack(*point_sets)
+        center, radii = RadiusFunctionConstructor.find_smallest_circumstack(*point_sets,
+                                                                            circumstack_method=circumstack_method)
         circumstack = StackOfSpheres(center, {lab: rad for lab, rad in zip(labels, radii)})
         return circumstack
 
     @staticmethod
-    def find_smallest_circumstack(*point_sets: np.ndarray) -> tuple[np.ndarray, tuple[float, ...]]:
+    def find_smallest_circumstack(*point_sets: np.ndarray, circumstack_method: str) -> tuple[np.ndarray, np.ndarray]:
         """For arguments B_0, ..., B_k, return the center z and radii r_0, ..., r_k defining a stack of spheres
         S_0, ..., S_k passing through B_0, ..., B_k, respectively."""
         TimingUtils().start("Rad :: Find Smallest Circumstack")
 
+        if any(len(point_set) == 0 for point_set in point_sets):
+            raise ValueError("Point sets need to be non-empty.")
+
+        if circumstack_method == 'miniball':
+            center = RadiusFunctionConstructor.find_smallest_circumstack_center_miniball(*point_sets)
+            radii2 = np.array([np.square(point_set[0] - center).sum() for point_set in point_sets])
+        elif circumstack_method == 'weighted_circumspheres':
+            center, radii2 = RadiusFunctionConstructor.find_smallest_circumstack_weighted_circumspheres(*point_sets)
+        else:
+            raise ValueError("Method can be 'miniball' or 'weighted_circumspheres'.")
+
+        TimingUtils().stop("Rad :: Find Smallest Circumstack")
+        return center, radii2
+
+    @staticmethod
+    def find_smallest_circumstack_center_miniball(*point_sets: np.ndarray) -> np.ndarray:
+        TimingUtils().start("Rad :: Find Smallest Circumstack :: Miniball")
         lengths = [len(point_set) for point_set in point_sets]
+        equispace = GeometryUtils.construct_equispace(*point_sets)
         points = np.concatenate(point_sets)
-        z, ker = GeometryUtils.construct_equispace(*point_sets)
-        points_reflected = GeometryUtils.reflect_points_through_affine_space(z, ker, *points)
+        points_reflected = GeometryUtils.reflect_points_through_affine_space(equispace, *points)
         points_reflected_filtered = np.concatenate([
             refl[~FloatingPointUtils.flag_duplicates_from_reference(orig, refl)]
             for orig, refl in zip(point_sets, RadiusFunctionConstructor.split_points(points_reflected, lengths))
         ])  # filter away duplicates
+        center, rad2 = MiniballAlgorithm.find_smallest_enclosing_ball(
+            np.concatenate([points, points_reflected_filtered]))
+        TimingUtils().stop("Rad :: Find Smallest Circumstack :: Miniball")
 
-        center, _ = MiniballAlgorithm.find_smallest_enclosing_ball(np.concatenate([points, points_reflected_filtered]))
-        radii = tuple(np.linalg.norm(point_set[0] - center) if len(point_set) > 0 else 0. for point_set in point_sets)
+        return center
 
-        TimingUtils().stop("Rad :: Find Smallest Circumstack")
-        return center, radii
+    @staticmethod
+    def find_smallest_circumstack_weighted_circumspheres(*point_sets: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+        TimingUtils().start("Rad :: Find Smallest Circumstack :: Weighted Circumspheres")
+        equispace = GeometryUtils.construct_equispace(*point_sets)
+
+        points = np.array([point_set[0] for point_set in point_sets])  # each point set projects to a single point
+
+        if equispace.dimension < 0:
+            center = equispace.shift
+            radii2 = np.square(points - center).sum(axis=1)
+            return center, radii2
+
+        points_projected = GeometryUtils.orthogonal_projection_onto_affine_space(equispace, *points)
+        weights = np.square(points - points_projected).sum(axis=1)
+        candidate = (np.array([]), np.array([]), float('inf'))  # center, radii, max_radius
+        for k in range(1, equispace.dimension + 2):  # if dim = 2, we want up to 3 points, and we need range(1, 4)
+            for choice in itertools.combinations(range(len(point_sets)), k):
+                center, _ = GeometryUtils.circumsphere_of_weighted_points(points_projected[list(choice)],
+                                                                          weights[list(choice)])
+                radii2 = np.square(points - center).sum(axis=1)
+                rad2 = max(radii2)
+                if rad2 < candidate[2]:
+                    candidate = (center, radii2, rad2)
+
+        TimingUtils().stop("Rad :: Find Smallest Circumstack :: Weighted Circumspheres")
+
+        return candidate[0], candidate[1]
 
     @staticmethod
     def split_points(points: np.ndarray, lengths) -> list[np.ndarray, ...]:

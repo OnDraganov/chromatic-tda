@@ -1,12 +1,27 @@
 import numpy as np
+from dataclasses import dataclass
 
 from chromatic_tda.utils.linear_algebra_utils import LinAlgUtils
 from chromatic_tda.utils.timing import TimingUtils
 
 
+@dataclass
+class AffineSpace:
+    shift: np.ndarray
+    vector_space: np.ndarray
+    dimension: int
+
+    def __init__(self, shift: np.ndarray, vector_space: np.ndarray):
+        if not (len(vector_space.shape) == 2 and len(shift.shape) == 1 and vector_space.shape[1] == shift.shape[0]):
+            raise ValueError("Shape mismatch: `vector_space` needs to be a 2D array, "
+                             "and `shift` a 1D array of the same dimension as the rows of `vector_space`")
+        self.shift = shift
+        self.vector_space = vector_space
+        self.dimension = len(vector_space)
+
 class GeometryUtils:
     @staticmethod
-    def construct_equispace(*point_sets: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    def construct_equispace(*point_sets: np.ndarray) -> AffineSpace:
         """Return the 'point + vector space' representation of the affine space A of points
         equidistant to all points of each argument. That is for a in A and for each argument P,
         all distances ||p - a|| for p in P are the same.
@@ -31,8 +46,10 @@ class GeometryUtils:
         b_vec = np.concatenate(b_vec_blocks)
         z, ker = LinAlgUtils.solve(a_mat, b_vec)
 
+        equispace = AffineSpace(z[:dim], ker[:, :dim])
+
         TimingUtils().stop("Geom :: Construct Equispace")
-        return z[:dim], ker[:, :dim]
+        return equispace
 
     @staticmethod
     def one_hot_embedding(number_of_categories: int, category: int, points: np.ndarray) -> np.ndarray:
@@ -46,12 +63,20 @@ class GeometryUtils:
         return one_hot_embedding
 
     @staticmethod
-    def reflect_points_through_affine_space(shift: np.ndarray, vector_space: np.ndarray, *points: np.ndarray):
-        TimingUtils().start("Geom :: Reflect Points Through Aff")
-        u_mat = LinAlgUtils.orthogonalize_rows(vector_space).transpose()  # matrix with orthogonal columns
-        trans_mat = 2 * u_mat @ u_mat.transpose() - np.identity(u_mat.shape[0])
-        reflected_points = np.array([trans_mat @ (pt - shift) + shift for pt in points])
-        TimingUtils().stop("Geom :: Reflect Points Through Aff")
+    def orthogonal_projection_onto_affine_space(affine_space: AffineSpace, *points: np.ndarray) -> np.ndarray:
+        TimingUtils().start("Geom :: Project Points To Affine Space")
+        u_mat_t = LinAlgUtils.orthogonalize_rows(affine_space.vector_space)  # matrix with orthogonal rows
+        trans_mat = u_mat_t.transpose() @ u_mat_t
+        projected_points = np.array([trans_mat @ (pt - affine_space.shift) + affine_space.shift for pt in points])
+        TimingUtils().stop("Geom :: Project Points To Affine Space")
+        return projected_points
+
+    @staticmethod
+    def reflect_points_through_affine_space(affine_space: AffineSpace, *points: np.ndarray):
+        TimingUtils().start("Geom :: Reflect Points Through Affine Space")
+        projected_points = GeometryUtils.orthogonal_projection_onto_affine_space(affine_space, *points)
+        reflected_points = 2 * projected_points - points  # == points + 2 * (projected_points - points)
+        TimingUtils().stop("Geom :: Reflect Points Through Affine Space")
         return reflected_points
 
     @staticmethod

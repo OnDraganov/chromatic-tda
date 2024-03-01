@@ -1,11 +1,12 @@
 import unittest
 import numpy as np
 
-from chromatic_tda.utils.geometry_utils import GeometryUtils
+from chromatic_tda.utils.geometry_utils import GeometryUtils, AffineSpace
 
 
 class GeometryTestReflections(unittest.TestCase):
     def test_reflection_3d_through_3d(self):  # identity
+        # Reflections also test orthogonal projection
         vector_space = np.array([
             [1, 1, 0],
             [2, 1, 0],
@@ -20,7 +21,7 @@ class GeometryTestReflections(unittest.TestCase):
             np.array([2, 1, -3]),
             np.array([1.2, 3.1, 2.789])
         ]
-        reflected_points = GeometryUtils.reflect_points_through_affine_space(shift, vector_space, *points)
+        reflected_points = GeometryUtils.reflect_points_through_affine_space(AffineSpace(shift, vector_space), *points)
         for pt, pt_ref in zip(points, reflected_points):
             assert np.isclose(pt, pt_ref).all()
 
@@ -38,7 +39,7 @@ class GeometryTestReflections(unittest.TestCase):
             np.array([2, 1, -3]),
             np.array([1.2, 3.1, 2.789])
         ]
-        reflected_points = GeometryUtils.reflect_points_through_affine_space(shift, vector_space, *points)
+        reflected_points = GeometryUtils.reflect_points_through_affine_space(AffineSpace(shift, vector_space), *points)
         for pt, pt_ref in zip(points, reflected_points):
             assert np.isclose((pt - (0, 0, 1)) * (1, 1, -1) + (0, 0, 1), pt_ref).all()
 
@@ -62,7 +63,7 @@ class GeometryTestReflections(unittest.TestCase):
             np.array([2, 1, -3]),
             np.array([1.2, 3.1, 2.789])
         ]
-        reflected_points = GeometryUtils.reflect_points_through_affine_space(shift, vector_space, *points)
+        reflected_points = GeometryUtils.reflect_points_through_affine_space(AffineSpace(shift, vector_space), *points)
         for pt, pt_ref in zip(points, reflected_points):
             assert np.isclose(rotation @ ((rotation.transpose() @ (pt - (1, 1, 1))) * (1, 1, -1)) + (1, 1, 1),
                               pt_ref).all()
@@ -74,7 +75,7 @@ class GeometryTestReflections(unittest.TestCase):
         ])
         shift = np.array([1, 1, 1])
         point = np.array([1, 0, 0])
-        reflected_points = GeometryUtils.reflect_points_through_affine_space(shift, vector_space, point)
+        reflected_points = GeometryUtils.reflect_points_through_affine_space(AffineSpace(shift, vector_space), point)
         assert len(reflected_points) == 1
         assert np.isclose(reflected_points[0], (0, 1, 0)).all()
 
@@ -91,7 +92,7 @@ class GeometryTestReflections(unittest.TestCase):
             np.array([2, 1, -3]),
             np.array([1.2, 3.1, 2.789])
         ]
-        reflected_points = GeometryUtils.reflect_points_through_affine_space(shift, vector_space, *points)
+        reflected_points = GeometryUtils.reflect_points_through_affine_space(AffineSpace(shift, vector_space), *points)
         for pt, pt_ref in zip(points, reflected_points):
             assert np.isclose((pt - (5, 6, 0)) * (-1, -1, 1) + (5, 6, 0), pt_ref).all()
 
@@ -106,7 +107,7 @@ class GeometryTestReflections(unittest.TestCase):
             np.array([2, 1, -3]),
             np.array([1.2, 3.1, 2.789])
         ]
-        reflected_points = GeometryUtils.reflect_points_through_affine_space(shift, vector_space, *points)
+        reflected_points = GeometryUtils.reflect_points_through_affine_space(AffineSpace(shift, vector_space), *points)
         for pt, pt_ref in zip(points, reflected_points):
             assert np.isclose(- (pt - (1, 1, 1)) + (1, 1, 1), pt_ref).all()
 

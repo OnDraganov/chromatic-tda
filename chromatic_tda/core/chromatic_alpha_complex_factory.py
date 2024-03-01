@@ -19,8 +19,9 @@ class CoreChromaticAlphaComplexFactory:
         self.check_input()
         self.alpha_complex = None
 
-    def create_instance(self, lift_perturbation: float, point_perturbation: float,
-                        radius_method: str = 'new', morse_optimization: bool = True) -> CoreChromaticAlphaComplex:
+    def create_instance(self, lift_perturbation: float | None, point_perturbation: float | None,
+                        circumstack_method: str = 'mixed', use_morse_optimization: bool = True,
+                        old_new_switch = 'new') -> CoreChromaticAlphaComplex:
         """
         Compute the chromatic alpha complex of given points and labels.
         At most three different labels allowed
@@ -30,8 +31,19 @@ class CoreChromaticAlphaComplexFactory:
 
         self.init_points(point_perturbation)
         self.init_labels()
+
+        if circumstack_method not in ('miniball', 'weighted_circumspheres', 'mixed'):
+            raise ValueError("Circumstack method has to be 'miniball', 'weighted_circumspheres' or 'mixed'.")
+
+        if circumstack_method == 'mixed':
+            if len(set(self.labels)) <= 8:
+                circumstack_method = 'weighted_circumspheres'
+            else:
+                circumstack_method = 'miniball'
+
         self.build_alpha_complex_structure(lift_perturbation=lift_perturbation)
-        self.add_radius_function(radius_method, morse_optimization=morse_optimization)
+        self.add_radius_function(use_morse_optimization=use_morse_optimization, circumstack_method=circumstack_method,
+                                 old_new_switch=old_new_switch)
         TimingUtils().start("AlphFac :: Create Alf Instance")
 
         return self.alpha_complex
@@ -118,13 +130,17 @@ class CoreChromaticAlphaComplexFactory:
 
         return pts_lift
 
-    def add_radius_function(self, method, morse_optimization):
-        if method == 'old':
+    def add_radius_function(self, circumstack_method, use_morse_optimization, old_new_switch):
+        if old_new_switch == 'old':
             RadiusFunctionUtils().compute_radius_function(self.alpha_complex)
-        elif method == 'new':
+        elif old_new_switch == 'new':
+            sq_radius_function = RadiusFunctionConstructor.construct_sq_radius_function(
+                self.alpha_complex,
+                use_morse_optimization=use_morse_optimization,
+                circumstack_method=circumstack_method
+            )
             self.alpha_complex.simplicial_complex.set_simplex_weights(
-                RadiusFunctionConstructor.construct_radius_function(self.alpha_complex,
-                                                                    morse_optimization=morse_optimization))
+                {simplex: np.sqrt(rad2) for simplex, rad2 in sq_radius_function.items()})
 
     def check_input(self):
         if len(self.points) != len(self.labels):

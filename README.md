@@ -1,6 +1,8 @@
 # chromatic_tda
 
-`chromatic_tda` is a package for computing six-packs of persistent diagrams of colored point clouds. Currently point clouds in R^2 with 2 or 3 colors are supported (see Future).
+`chromatic_tda` is a package for computing six-packs of persistent diagrams of colored point clouds.
+Currently, point clouds in R^2 with 2 or 3 colors are supported (see Future; an alpha version with support for higher
+dimension is already available!).
 
 # Installation
 
@@ -32,16 +34,16 @@ chro_alpha = chro.ChromaticAlphaComplex(points, labels) simplicial_complex = chr
              complex=‘all’
              relative=‘mono-chromatic’
 )  # these options make sense for three colors; for two use, e.g., just sub_complex='mono-chromatic'
-six_pack = simplicial_complex.bars_six_pack() chro.plot_six_pack(six_pack)
+six_pack = simplicial_complex.bars_six_pack()
+chro.plot_six_pack(six_pack)
 ```
 
 For more details check the docstrings of the methods and the jupyter notebook file `manual` (in [github repo](https://github.com/OnDraganov/chromatic-tda)). For more background on the theory, check the resources listed below.
 
 # Future
 
-The code is under active developement. The future plans include:
-- Adding support for points in R^3
-- Making persistence computation faster with clearing.
+The code is under active development. The future plans include:
+- Adding support for points in R^3 --> alpha version with a 3D support available in a separate branch: see https://github.com/OnDraganov/chromatic-tda/tree/general-radius-function
 
 # Resources
 

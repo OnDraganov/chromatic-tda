@@ -168,8 +168,8 @@ class PersistenceAlgorithm:  # why is this not a singleton? with complex as a pa
             order_function_row=self.filters.filter_function_rad_sub_first(),
             return_V=False)
 
-        R = self.complex.persistence_data['complex']['R']  # should be V_im, but coincides on cycles with V_f
-        V = self.complex.persistence_data['complex']['V']  # should be R_im, but coincides on cycles with R_f
+        R = self.complex.persistence_data['complex']['R']  # should be R_im, but coincides on cycles with R_f
+        V = self.complex.persistence_data['complex']['V']  # should be V_im, but coincides on cycles with V_f
         self.complex.persistence_data['kernel'] = MatrixReduction.reduce(
             {simplex: V[simplex] for simplex in V if len(R[simplex]) == 0},  # columns of V which represent cycles
             order_function=self.filters.filter_function_rad(),

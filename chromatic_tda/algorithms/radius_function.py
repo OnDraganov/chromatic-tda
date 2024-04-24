@@ -100,7 +100,7 @@ class RadiusFunctionConstructor:
             refl[~FloatingPointUtils.flag_duplicates_from_reference(orig, refl)]
             for orig, refl in zip(point_sets, RadiusFunctionConstructor.split_points(points_reflected, lengths))
         ])  # filter away duplicates
-        center, rad2 = MiniballAlgorithm.find_smallest_enclosing_ball(
+        center, rad = MiniballAlgorithm.find_smallest_enclosing_ball(
             np.concatenate([points, points_reflected_filtered]))
         TimingUtils().stop("Rad :: Find Smallest Circumstack :: Miniball")
 

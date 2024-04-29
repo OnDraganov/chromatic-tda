@@ -24,6 +24,8 @@ class ChromaticComplexUtils:
 
         if relative is None or relative == '':
             relative_simplices = set()
+        elif relative.lower().strip() == 'all':
+            relative_simplices = set(simplicial_complex.boundary)
         else:
             pattern = ChromaticComplexUtils.read_pattern_input(relative, list_of_input_labels,
                                                                check_labels=not allow_unused_labels)
@@ -35,6 +37,8 @@ class ChromaticComplexUtils:
 
         if sub_complex is None or sub_complex == '':
             sub_complex_simplices = set()
+        elif sub_complex.lower().strip() == 'all':
+            sub_complex_simplices = set(simplicial_complex.boundary)
         else:
             pattern = ChromaticComplexUtils.read_pattern_input(sub_complex, list_of_input_labels,
                                                                check_labels=not allow_unused_labels)

@@ -43,11 +43,37 @@ class ComplexTest(unittest.TestCase):
         assert set(chromatic_subcomplex.simplices()) == {(0,), (3,), (1,), (2,), (1, 2)}
         assert set(chromatic_subcomplex.simplices_sub_complex()) == set()
 
+    def test_chromatic_subcomplex_complex_mono_chromatic_list(self) -> None:
+        simplicial_complex = SimplicialComplex([(0, 1, 2), (1, 2, 3)])
+
+        chromatic_subcomplex = simplicial_complex.get_chromatic_subcomplex([0, 1, 1, 0], full_complex=[[0], [1]])
+
+        assert set(chromatic_subcomplex.simplices()) == {(0,), (3,), (1,), (2,), (1, 2)}
+        assert set(chromatic_subcomplex.simplices_sub_complex()) == set()
+
+    def test_chromatic_subcomplex_complex_all(self) -> None:
+        simplicial_complex = SimplicialComplex([(0, 1, 2), (1, 2, 3)])
+
+        chromatic_subcomplex = simplicial_complex.get_chromatic_subcomplex([0, 1, 1, 0], full_complex='all')
+
+        assert set(chromatic_subcomplex.simplices()) == {(0,), (1,), (2,), (3,), (0, 1), (0, 2), (1, 2), (1, 3), (2, 3),
+                                                         (0, 1, 2), (1, 2, 3)}
+        assert set(chromatic_subcomplex.simplices_sub_complex()) == set()
+
     def test_chromatic_subcomplex_relative_mono_chromatic(self) -> None:
         simplicial_complex = SimplicialComplex([(0, 1, 2), (1, 2, 3)])
         simplicial_complex.set_sub_complex([(0, 1, 2)])
 
         chromatic_subcomplex = simplicial_complex.get_chromatic_subcomplex([0, 1, 1, 0], relative='mono-chromatic')
+
+        assert set(chromatic_subcomplex.simplices()) == {(0, 1), (0, 2), (1, 3), (2, 3), (0, 1, 2), (1, 2, 3)}
+        assert set(chromatic_subcomplex.simplices_sub_complex()) == set()
+
+    def test_chromatic_subcomplex_relative_mono_chromatic_list(self) -> None:
+        simplicial_complex = SimplicialComplex([(0, 1, 2), (1, 2, 3)])
+        simplicial_complex.set_sub_complex([(0, 1, 2)])
+
+        chromatic_subcomplex = simplicial_complex.get_chromatic_subcomplex([0, 1, 1, 0], relative=[[0], [1]])
 
         assert set(chromatic_subcomplex.simplices()) == {(0, 1), (0, 2), (1, 3), (2, 3), (0, 1, 2), (1, 2, 3)}
         assert set(chromatic_subcomplex.simplices_sub_complex()) == set()
@@ -99,6 +125,15 @@ class ComplexTest(unittest.TestCase):
 
         chromatic_subcomplex = simplicial_complex.get_chromatic_subcomplex(['a', 'b', 'b', 'a', 'c', 'c'],
                                                                            sub_complex='ab,c')
+        assert set(chromatic_subcomplex.simplices_sub_complex()) == {(0,), (1,), (2,), (3,), (4,), (5,), (0, 1), (0, 2),
+                                                                     (1, 2), (1, 3), (2, 3), (4, 5), (0, 1, 2),
+                                                                     (1, 2, 3)}
+
+    def test_chromatic_subcomplex_ab_c_list(self) -> None:
+        simplicial_complex = SimplicialComplex([(0, 1, 2), (1, 2, 3), (2, 3, 4), (1, 3, 5), (4, 5)])
+
+        chromatic_subcomplex = simplicial_complex.get_chromatic_subcomplex(['a', 'b', 'b', 'a', 'c', 'c'],
+                                                                           sub_complex=[['a', 'b'], ['c']])
         assert set(chromatic_subcomplex.simplices_sub_complex()) == {(0,), (1,), (2,), (3,), (4,), (5,), (0, 1), (0, 2),
                                                                      (1, 2), (1, 3), (2, 3), (4, 5), (0, 1, 2),
                                                                      (1, 2, 3)}

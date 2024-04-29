@@ -11,7 +11,8 @@ class ChromaticComplexUtils:
                                  labels_user_to_internal=None, allow_unused_labels=False) -> CoreSimplicialComplex:
         list_of_input_labels = ChromaticComplexUtils.construct_list_of_labels(
             internal_labeling=internal_labeling, labels_user_to_internal=labels_user_to_internal)
-        if full_complex is None or full_complex == '' or full_complex.lower().strip() == 'all':
+        if (full_complex is None or full_complex == '' or
+                (isinstance(full_complex, str) and full_complex.lower().strip() == 'all')):
             complex_simplices = set(simplicial_complex.boundary)
         else:
             pattern = ChromaticComplexUtils.read_pattern_input(full_complex, list_of_input_labels,
@@ -24,7 +25,7 @@ class ChromaticComplexUtils:
 
         if relative is None or relative == '':
             relative_simplices = set()
-        elif relative.lower().strip() == 'all':
+        elif isinstance(relative, str) and relative.lower().strip() == 'all':
             relative_simplices = set(simplicial_complex.boundary)
         else:
             pattern = ChromaticComplexUtils.read_pattern_input(relative, list_of_input_labels,
@@ -37,7 +38,7 @@ class ChromaticComplexUtils:
 
         if sub_complex is None or sub_complex == '':
             sub_complex_simplices = set()
-        elif sub_complex.lower().strip() == 'all':
+        elif isinstance(sub_complex, str) and sub_complex.lower().strip() == 'all':
             sub_complex_simplices = set(simplicial_complex.boundary)
         else:
             pattern = ChromaticComplexUtils.read_pattern_input(sub_complex, list_of_input_labels,

@@ -41,7 +41,7 @@ class CoreChromaticAlphaComplex:
         """Return set of labels of the vertices of the given simplex"""
         return {self.internal_labels_to_input_labels_dict[lab] for lab in self.simplex_labels_internal(simplex)}
 
-    def get_complex(self, sub_complex, full_complex, relative, allow_unused_labels=False) -> CoreSimplicialComplex:
+    def get_complex(self, sub_complex, full_complex, relative, allow_unused_labels) -> CoreSimplicialComplex:
         return ChromaticComplexUtils.get_chromatic_subcomplex(
             sub_complex=sub_complex, full_complex=full_complex, relative=relative,
             simplicial_complex=self.simplicial_complex, internal_labeling=self.internal_labeling,

@@ -118,7 +118,7 @@ class ChromaticComplexUtils:
 
     @staticmethod
     def pattern_translate(pattern, translation_function):
-        return [set(translation_function[lab] for lab in face) for face in pattern]
+        return [set(translation_function[lab] for lab in face if lab in translation_function) for face in pattern]
 
     @staticmethod
     def split_simplex_by_labels(simplex: tuple, labeling) -> dict:

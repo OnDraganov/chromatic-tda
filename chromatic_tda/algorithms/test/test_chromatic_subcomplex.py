@@ -1,11 +1,12 @@
 import unittest
 
+from chromatic_tda import ChromaticAlphaComplex
 from chromatic_tda.entities.simplicial_complex import SimplicialComplex
 
 
 class ComplexTest(unittest.TestCase):
 
-    def test_chromatic_subcomplex_mono_chromatic(self) -> None:
+    def test_chromatic_subcomplex_subcomplex_mono_chromatic(self) -> None:
         simplicial_complex = SimplicialComplex([(0, 1, 2), (1, 2, 3)])
 
         chromatic_subcomplex = simplicial_complex.get_chromatic_subcomplex([0, 1, 1, 0], sub_complex='mono-chromatic')
@@ -13,6 +14,26 @@ class ComplexTest(unittest.TestCase):
         assert set(chromatic_subcomplex.simplices()) == {(0,), (1,), (2,), (3,), (0, 1), (0, 2), (1, 2), (1, 3), (2, 3),
                                                          (0, 1, 2), (1, 2, 3)}
         assert set(chromatic_subcomplex.simplices_sub_complex()) == {(0,), (3,), (1,), (2,), (1, 2)}
+
+    def test_chromatic_subcomplex_subcomplex_all(self) -> None:
+        simplicial_complex = SimplicialComplex([(0, 1, 2), (1, 2, 3)])
+
+        chromatic_subcomplex = simplicial_complex.get_chromatic_subcomplex([0, 1, 1, 0], sub_complex='all')
+
+        assert set(chromatic_subcomplex.simplices()) == {(0,), (1,), (2,), (3,), (0, 1), (0, 2), (1, 2), (1, 3), (2, 3),
+                                                         (0, 1, 2), (1, 2, 3)}
+        assert set(chromatic_subcomplex.simplices_sub_complex()) == {(0,), (1,), (2,), (3,), (0, 1), (0, 2), (1, 2), (1, 3), (2, 3),
+                                                         (0, 1, 2), (1, 2, 3)}
+
+    def test_chromatic_subcomplex_subcomplex_unused_label(self) -> None:
+        simplicial_complex = SimplicialComplex([(0, 1, 2), (1, 2, 3)])
+
+        chromatic_subcomplex = simplicial_complex.get_chromatic_subcomplex([0, 1, 1, 0], sub_complex='2',
+                                                                           allow_unused_labels=True)
+
+        assert set(chromatic_subcomplex.simplices()) == {(0,), (1,), (2,), (3,), (0, 1), (0, 2), (1, 2), (1, 3), (2, 3),
+                                                         (0, 1, 2), (1, 2, 3)}
+        assert set(chromatic_subcomplex.simplices_sub_complex()) == set()
 
     def test_chromatic_subcomplex_complex_mono_chromatic(self) -> None:
         simplicial_complex = SimplicialComplex([(0, 1, 2), (1, 2, 3)])
@@ -29,6 +50,14 @@ class ComplexTest(unittest.TestCase):
         chromatic_subcomplex = simplicial_complex.get_chromatic_subcomplex([0, 1, 1, 0], relative='mono-chromatic')
 
         assert set(chromatic_subcomplex.simplices()) == {(0, 1), (0, 2), (1, 3), (2, 3), (0, 1, 2), (1, 2, 3)}
+        assert set(chromatic_subcomplex.simplices_sub_complex()) == set()
+
+    def test_chromatic_subcomplex_relative_all(self) -> None:
+        simplicial_complex = SimplicialComplex([(0, 1, 2), (1, 2, 3)])
+
+        chromatic_subcomplex = simplicial_complex.get_chromatic_subcomplex([0, 1, 1, 0], relative='all')
+
+        assert set(chromatic_subcomplex.simplices()) == set()
         assert set(chromatic_subcomplex.simplices_sub_complex()) == set()
 
     def test_chromatic_subcomplex_bi_to_tri_over_mono(self) -> None:
@@ -84,3 +113,12 @@ class ComplexTest(unittest.TestCase):
         assert set(chromatic_subcomplex.simplices()) == {(0,), (1,), (2,), (3,), (0, 1), (0, 2), (1, 2), (1, 3), (2, 3),
                                                          (0, 1, 2), (1, 2, 3)}
         assert set(chromatic_subcomplex.simplices_sub_complex()) == {(0,), (3,), (1,), (2,), (1, 2)}
+
+    def test_chromatic_subcomplex_alpha_unused_label(self) -> None:
+        points = [[0, 0], [1.1, 1.2], [.9, -.1], [.3, .4], [.5, .7], [.123, .432]]
+        labels = [1, 1, 1, 1, 1, 1]
+        simplicial_complex = ChromaticAlphaComplex(points, labels).get_simplicial_complex(sub_complex='0',
+                                                                                          allow_unused_labels=True)
+
+        assert len(simplicial_complex.simplices()) > 0
+        assert len(simplicial_complex.simplices_sub_complex()) == 0

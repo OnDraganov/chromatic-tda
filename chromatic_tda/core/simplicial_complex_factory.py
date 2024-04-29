@@ -11,6 +11,7 @@ from chromatic_tda.core.core_simplicial_complex import CoreSimplicialComplex
 
 @singleton
 class CoreSimplicialComplexFactory:
+    EMPTY_COMPLEX_DIMENSION = -1
 
     def create_instance(self, simplices) -> CoreSimplicialComplex:
         simplicial_complex = CoreSimplicialComplex()
@@ -39,7 +40,8 @@ class CoreSimplicialComplexFactory:
 
     @staticmethod
     def find_maximal_dimension(simplex_list):
-        return max(SimplexUtils.dimension(simplex) for simplex in simplex_list)
+        return max((SimplexUtils.dimension(simplex) for simplex in simplex_list),
+                   default = CoreSimplicialComplexFactory().EMPTY_COMPLEX_DIMENSION)
 
     @staticmethod
     def build_dimension_dictionary(simplex_list, max_dimension):
@@ -69,7 +71,8 @@ class CoreSimplicialComplexFactory:
         new_complex.dim_simplex_dict = {d : simplicial_complex.dim_simplex_dict[d] & restricted_simplices_set
                                         for d in simplicial_complex.dim_simplex_dict}
         new_complex.clear_empty_dimensions()
-        new_complex.dimension = max(new_complex.dim_simplex_dict)
+        new_complex.dimension = max(new_complex.dim_simplex_dict,
+                                    default = CoreSimplicialComplexFactory().EMPTY_COMPLEX_DIMENSION)
 
         new_complex.boundary = {simplex: simplicial_complex.boundary[simplex] & restricted_simplices_set
                                 for simplex in set(simplicial_complex.boundary) & restricted_simplices_set}

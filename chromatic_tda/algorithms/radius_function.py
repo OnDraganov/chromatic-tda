@@ -4,7 +4,6 @@ import numpy as np
 from collections.abc import Iterable
 
 from chromatic_tda.algorithms.chromatic_subcomplex_utils import ChromaticComplexUtils
-from chromatic_tda.algorithms.miniball_interface import MiniballAlgorithm
 from chromatic_tda.core.core_chromatic_alpha_complex import CoreChromaticAlphaComplex
 from chromatic_tda.core.stack import StackOfSpheres
 from chromatic_tda.utils.floating_point_utils import FloatingPointUtils
@@ -15,7 +14,6 @@ from chromatic_tda.utils.timing import TimingUtils
 class RadiusFunctionConstructor:
     @staticmethod
     def construct_sq_radius_function(alpha_complex: CoreChromaticAlphaComplex,
-                                     circumstack_method: str,
                                      use_morse_optimization: bool) -> dict[tuple[int, ...], float]:
         TimingUtils().start("Rad :: Construct Radius Function")
 
@@ -26,7 +24,7 @@ class RadiusFunctionConstructor:
                 if radius_function.get(simplex, None) is not None:
                     continue  # if radius already found at an earlier step, skip the simplex
                 circumstack = RadiusFunctionConstructor.find_smallest_circumstack_of_simplex(
-                    alpha_complex, simplex, circumstack_method=circumstack_method)
+                    alpha_complex, simplex)
                 extra_vertices = alpha_complex.simplicial_complex.get_extra_vertices_of_cofaces(simplex)
                 if RadiusFunctionConstructor.is_stack_empty_of_vertices(alpha_complex, extra_vertices, circumstack):
                     radius_function[simplex] = circumstack.maximum_radius
@@ -59,33 +57,22 @@ class RadiusFunctionConstructor:
 
     @staticmethod
     def find_smallest_circumstack_of_simplex(alpha_complex: CoreChromaticAlphaComplex,
-                                             simplex: tuple,
-                                             circumstack_method: str) -> StackOfSpheres:
+                                             simplex: tuple) -> StackOfSpheres:
         split = ChromaticComplexUtils.split_simplex_by_labels(simplex, alpha_complex.internal_labeling)
         labels, vertex_sets = zip(*split.items())
         point_sets = [alpha_complex.points[vertex_set] for vertex_set in vertex_sets]
-        center, radii = RadiusFunctionConstructor.find_smallest_circumstack(*point_sets,
-                                                                            circumstack_method=circumstack_method)
+        center, radii = RadiusFunctionConstructor.find_smallest_circumstack(*point_sets)
         circumstack = StackOfSpheres(center, {lab: rad for lab, rad in zip(labels, radii)})
         return circumstack
 
     @staticmethod
-    def find_smallest_circumstack(*point_sets: np.ndarray, circumstack_method: str) -> tuple[np.ndarray, np.ndarray]:
+    def find_smallest_circumstack(*point_sets: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         """For arguments B_0, ..., B_k, return the center z and radii r_0, ..., r_k defining a stack of spheres
         S_0, ..., S_k passing through B_0, ..., B_k, respectively."""
         TimingUtils().start("Rad :: Find Smallest Circumstack")
-
         if any(len(point_set) == 0 for point_set in point_sets):
             raise ValueError("Point sets need to be non-empty.")
-
-        if circumstack_method == 'miniball':
-            center = RadiusFunctionConstructor.find_smallest_circumstack_center_miniball(*point_sets)
-            radii2 = np.array([np.square(point_set[0] - center).sum() for point_set in point_sets])
-        elif circumstack_method == 'weighted_circumspheres':
-            center, radii2 = RadiusFunctionConstructor.find_smallest_circumstack_weighted_circumspheres(*point_sets)
-        else:
-            raise ValueError("Method can be 'miniball' or 'weighted_circumspheres'.")
-
+        center, radii2 = RadiusFunctionConstructor.find_smallest_circumstack_weighted_circumspheres(*point_sets)
         TimingUtils().stop("Rad :: Find Smallest Circumstack")
         return center, radii2
 

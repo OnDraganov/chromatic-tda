@@ -62,8 +62,9 @@ class ChromaticAlphaComplex:
                                 contain a label that is not used. To suppress this behavior, set this parameter to True.
                                 In that case the unused labels make no difference on the result.
         """
-        return SimplicialComplex(self.core_alpha_complex.get_complex(sub_complex, full_complex, relative,
-                                                                     allow_unused_labels))
+        return SimplicialComplex(self.core_alpha_complex.get_simplicial_complex(
+            sub_complex=sub_complex, full_complex=full_complex, relative=relative,
+            allow_unused_labels=allow_unused_labels))
 
     def weight_function(self, simplex=None):
         """If simplex is given, return the weight/radius of the simplex.

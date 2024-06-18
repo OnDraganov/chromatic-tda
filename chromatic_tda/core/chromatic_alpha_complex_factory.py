@@ -5,7 +5,7 @@ from scipy.spatial import Delaunay
 from chromatic_tda.algorithms.radius_function import RadiusFunctionConstructor
 from chromatic_tda.utils.boundary_matrix_utils import BoundaryMatrixUtils
 from chromatic_tda.core.core_chromatic_alpha_complex import CoreChromaticAlphaComplex
-from chromatic_tda.algorithms.OLD_radius_function_utils import RadiusFunctionUtils
+from chromatic_tda.algorithms.legacy_radius_function_utils import LegacyRadiusFunctionUtils
 from chromatic_tda.core.simplicial_complex_factory import CoreSimplicialComplexFactory
 from chromatic_tda.utils.timing import TimingUtils
 
@@ -122,7 +122,7 @@ class CoreChromaticAlphaComplexFactory:
 
     def add_radius_function(self, use_morse_optimization: bool, legacy_radius_function: bool):
         if legacy_radius_function:
-            RadiusFunctionUtils().compute_radius_function(self.alpha_complex)
+            LegacyRadiusFunctionUtils().compute_radius_function(self.alpha_complex)
         else:
             sq_radius_function = RadiusFunctionConstructor.construct_sq_radius_function(
                 self.alpha_complex, use_morse_optimization=use_morse_optimization)

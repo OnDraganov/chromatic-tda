@@ -2,7 +2,7 @@ import numpy as np
 
 from chromatic_tda.algorithms.chromatic_subcomplex_utils import ChromaticComplexUtils
 from chromatic_tda.core.core_simplicial_complex import CoreSimplicialComplex
-from chromatic_tda.utils.OLD_geometrical_utils import sq_dist
+from chromatic_tda.utils.legacy_geometrical_utils import sq_dist
 
 
 class CoreChromaticAlphaComplex:

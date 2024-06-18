@@ -1,3 +1,4 @@
+from chromatic_tda.algorithms.radius_function import RadiusFunctionConstructor
 from tests.test_bars import TestBars
 from chromatic_tda import ChromaticAlphaComplex, plot_six_pack
 import numpy as np
@@ -5,7 +6,7 @@ from matplotlib import pyplot as plt
 
 
 def run_test():
-    TestBars().test_all(verbose=True, assertions=False)
+    pass
     # for embedding in TestBars().single_test('two_circles_cc', return_detailed=True):
     #     for group, result in embedding.items():
     #         print(group.ljust(12), result)

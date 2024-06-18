@@ -4,7 +4,7 @@ import json
 import numpy as np
 
 from chromatic_tda import ChromaticAlphaComplex
-from chromatic_tda.utils import floating_point_utils
+from chromatic_tda.utils.floating_point_utils import FloatingPointUtils
 
 
 # class TestClass(unittest.TestCase):
@@ -85,7 +85,7 @@ class TestBars(unittest.TestCase):
             for group in ('kernel', 'sub_complex', 'image', 'complex', 'cokernel', 'relative'):
                 bars = simplicial_complex.bars(group, return_as='list')
                 bars_test = [(dim, bar) for dim, bar in instance['bars'][group]
-                             if not floating_point_utils.is_trivial_bar(bar)]
+                             if not FloatingPointUtils.is_trivial_bar(bar)]
                 results_instance[group] = all(
                     dim == dim_test and np.isclose(birth, birth_test) and np.isclose(death, death_test)
                     for (dim, (birth, death)), (dim_test, (birth_test, death_test)) in

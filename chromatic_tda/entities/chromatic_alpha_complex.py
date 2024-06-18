@@ -21,8 +21,9 @@ class ChromaticAlphaComplex:
                                   Generally leads to faster computation, as QHull does not need to deal with the
                                   non-generality itself. (default: 1e-9)
         """
-        self.core_alpha_complex : CoreChromaticAlphaComplex = CoreChromaticAlphaComplexFactory().create_instance(
-            points, labels, lift_perturbation=lift_perturbation, point_perturbation=point_perturbation)
+        factory = CoreChromaticAlphaComplexFactory(points, labels)
+        self.core_alpha_complex : CoreChromaticAlphaComplex = factory.create_instance(
+            lift_perturbation=lift_perturbation, point_perturbation=point_perturbation)
 
     def __iter__(self):
         yield from self.core_alpha_complex
@@ -61,8 +62,9 @@ class ChromaticAlphaComplex:
                                 contain a label that is not used. To suppress this behavior, set this parameter to True.
                                 In that case the unused labels make no difference on the result.
         """
-        return SimplicialComplex(self.core_alpha_complex.get_complex(sub_complex, full_complex, relative,
-                                                                     allow_unused_labels))
+        return SimplicialComplex(self.core_alpha_complex.get_simplicial_complex(
+            sub_complex=sub_complex, full_complex=full_complex, relative=relative,
+            allow_unused_labels=allow_unused_labels))
 
     def weight_function(self, simplex=None):
         """If simplex is given, return the weight/radius of the simplex.
@@ -96,4 +98,4 @@ class ChromaticAlphaComplex:
     def labels(self):
         """Return the labels for the points defining the complex."""
         return [self.core_alpha_complex.internal_labels_to_input_labels_dict[lab]
-                for lab in self.core_alpha_complex.internal_labels]
+                for lab in self.core_alpha_complex.internal_labeling]

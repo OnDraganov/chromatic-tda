@@ -33,9 +33,8 @@ class ChromaticAlphaComplexConstructionTest(unittest.TestCase):
 
     def single_test(self, data_name, data_folder=None):
         data = self.load_data(data_name, data_folder)
-        factory = CoreChromaticAlphaComplexFactory()
-        alpha = factory.create_instance(points=data['points'], labels=data['labels'], lift_perturbation=1e-9,
-                                        point_perturbation=None)
+        factory = CoreChromaticAlphaComplexFactory(points=data['points'], labels=data['labels'])
+        alpha = factory.create_instance(lift_perturbation=1e-9, point_perturbation=None)
         return self.compare_complex(alpha, data['weight_function'])
 
     def load_data(self, data_name, data_folder):

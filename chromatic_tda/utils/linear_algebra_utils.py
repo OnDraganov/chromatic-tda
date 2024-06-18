@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.linalg._linalg import SVDResult
 
 from chromatic_tda.utils.timing import TimingUtils
 
@@ -20,7 +21,7 @@ class LinAlgUtils:
         (vectors in rows).
         """
         TimingUtils().start("LinAlg :: Solve Linear Equation With Kernel")
-        svd : np.linalg.linalg.SVDResult = np.linalg.svd(a_matrix)  # svd.U @ diagonal from svd.S @ svd.Vh == A
+        svd : SVDResult = np.linalg.svd(a_matrix)  # svd.U @ diagonal from svd.S @ svd.Vh == A
         rank : int = LinAlgUtils.count_nonzero(svd.S)
 
         pseudoinverse = LinAlgUtils.pseudoinverse_from_svd(svd)
@@ -56,7 +57,7 @@ class LinAlgUtils:
         return np.isclose(a_matrix @ x_vector, b_vector)
 
     @staticmethod
-    def pseudoinverse_from_svd(svd: np.linalg.linalg.SVDResult) -> np.ndarray:
+    def pseudoinverse_from_svd(svd: SVDResult) -> np.ndarray:
         TimingUtils().start("LinAlg :: Pseudoinverse From SVD")
         pseudo_s = np.zeros(shape=(svd.U.shape[1], svd.Vh.shape[0]))
         np.fill_diagonal(pseudo_s, LinAlgUtils.pseudoinverse_of_diagonal(svd.S))

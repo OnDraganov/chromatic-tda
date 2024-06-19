@@ -1,5 +1,6 @@
 import numpy as np
 import numpy.typing as npt
+import math
 
 from chromatic_tda.utils.timing import TimingUtils
 
@@ -12,7 +13,10 @@ class FloatingPointUtils:
         Return True if a should be considered equal to b.
         The default method used to compare whether two floats are close.
         """
-        return bool(np.isclose(a, b))
+        if abs(b) > .01:
+            return bool(np.isclose(a, b))
+        else:
+            return bool(np.isclose(a, b, atol=1e-12))
 
     @staticmethod
     def is_all_close(avec, bvec):

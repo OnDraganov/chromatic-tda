@@ -57,6 +57,29 @@ class TestBars(unittest.TestCase):
         if verbose:
             print(f'    {test}  ...  one_circle_20_40 recolored')
 
+    def test_close_stack_radii_artifact_2hom(self):
+        points = (
+            [0.09459416951153077, 0.11232276848750489],  # 0
+            [0.9680112771867585, 0.15811534146081496],   # 1
+            [0.9658547896521128, 0.1702045941509115],    # 2
+            [0.8312718291955721, 0.6406528236300497],    # 3
+            [0.09659691184397712, 0.11313859402162363],  # 4
+            [0.9595099529549772, 0.15846022651540637],   # 5
+            [0.8425246776313106, 0.635219429110198],     # 6
+            [0.9701160920689117, 0.16062702956075603],   # 7
+            [0.8384241285861569, 0.6479053787601031],    # 8
+            [0.10089735680674439, 0.12333065671267851],  # 9
+            [0.831030327917524, 0.6343887895213592],     # 10
+            [0.08917225973887621, 0.1294156525294371]    # 11
+        )
+        labels = (0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1)
+        cplx = ChromaticAlphaComplex(points, labels).get_simplicial_complex(sub_complex='0')
+        cplx.compute_persistence()
+        cplx_2_bars = [(b, d) for b, d in cplx.core_complex.birth_death['complex']['pairs']
+                       if cplx.weight_function(b) < cplx.weight_function(d)
+                       and len(b) == 3]
+        assert len(cplx_2_bars) == 0
+
     def single_test(self, data_name, verbose=False, assertions=True):
         test = self.single_test_data(self.load_data(data_name), return_detailed=False)
         if assertions:

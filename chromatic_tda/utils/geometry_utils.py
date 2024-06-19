@@ -21,6 +21,7 @@ class AffineSpace:
         self.vector_space = vector_space
         self.dimension = len(vector_space)
 
+
 class GeometryUtils:
     @staticmethod
     def construct_equispace(*point_sets: npt.NDArray) -> AffineSpace:

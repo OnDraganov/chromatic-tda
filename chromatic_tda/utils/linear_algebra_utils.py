@@ -52,11 +52,11 @@ class LinAlgUtils:
 
     @staticmethod
     def count_nonzero(array: npt.NDArray) -> int:
-        return int(np.prod(array.shape)) - sum(int(FloatingPointUtils.is_close(a, 0)) for a in array)
+        return int(np.prod(array.shape)) - sum(int(FloatingPointUtils.is_close(0, x)) for x in array)
 
     @staticmethod
     def check_solution(a_matrix: npt.NDArray, b_vector: npt.NDArray, x_vector: npt.NDArray):
-        return FloatingPointUtils.is_close(a_matrix @ x_vector, b_vector)
+        return FloatingPointUtils.is_all_close(a_matrix @ x_vector, b_vector)
 
     @staticmethod
     def pseudoinverse_from_svd(svd: SVDResult) -> npt.NDArray:

@@ -1,4 +1,5 @@
 import numpy as np
+import numpy.typing as npt
 from collections.abc import KeysView, ValuesView
 
 from chromatic_tda.utils.boundary_matrix_utils import BoundaryMatrixUtils

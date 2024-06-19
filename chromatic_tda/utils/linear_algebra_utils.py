@@ -1,19 +1,21 @@
 import numpy as np
+import numpy.typing as npt
 from numpy.linalg._linalg import SVDResult
 
+from chromatic_tda.utils.floating_point_utils import FloatingPointUtils
 from chromatic_tda.utils.timing import TimingUtils
 
 
 class LinAlgUtils:
     @staticmethod
-    def solve(a_matrix: np.ndarray, b_vector: np.ndarray, check_solution=False) -> tuple[np.ndarray, np.ndarray]:
+    def solve(a_matrix: npt.NDArray, b_vector: npt.NDArray, check_solution=False) -> tuple[npt.NDArray, npt.NDArray]:
         """
         Solve a general linear equation Ax=b using singular value decomposition.
         Particular solution computed via pseudo-inverse A^+ as A^+ @ b. This makes sense even if the equation
         has no solution, and returns the least squares solution. By default, no warning is given -- see check_solution.
 
-        :param a_matrix:        the matrix A
-        :param b_vector:        the right side b
+        :param a_matrix:        matrix A
+        :param b_vector:        right side b
         :param check_solution:  if True, Ax == b check is performed for the particular solution x,
                                 and error raised if it fails
 
@@ -35,7 +37,7 @@ class LinAlgUtils:
         return x, kernel
 
     @staticmethod
-    def orthogonalize_rows(array: np.ndarray) -> np.ndarray:
+    def orthogonalize_rows(array: npt.NDArray) -> npt.NDArray:
         """Given m x n array A with m <= n,
         return array whose rows are orthonormal basis of the row-space of A.
         WARNING: for rank(A) < m might return smaller space if R in np.linalg.qr would skip a pivot and use it later"""
@@ -44,20 +46,20 @@ class LinAlgUtils:
         if m > n:
             raise ValueError("Only m x n arrays with m <= n allowed")
         qr = np.linalg.qr(array.transpose(), mode='reduced')
-        non_zero_r_diagonal = ~np.isclose(qr.R.diagonal(), 0)
+        non_zero_r_diagonal = ~np.array([FloatingPointUtils.is_close(x, 0) for x in qr.R.diagonal()], dtype=bool)
         TimingUtils().stop("LinAlg :: Orthogonalize Rows")
         return qr.Q.transpose()[non_zero_r_diagonal]
 
     @staticmethod
-    def count_nonzero(array: np.ndarray) -> int:
-        return np.prod(array.shape) - np.isclose(array, 0).sum()
+    def count_nonzero(array: npt.NDArray) -> int:
+        return int(np.prod(array.shape)) - sum(int(FloatingPointUtils.is_close(a, 0)) for a in array)
 
     @staticmethod
-    def check_solution(a_matrix: np.ndarray, b_vector: np.ndarray, x_vector: np.ndarray):
-        return np.isclose(a_matrix @ x_vector, b_vector)
+    def check_solution(a_matrix: npt.NDArray, b_vector: npt.NDArray, x_vector: npt.NDArray):
+        return FloatingPointUtils.is_close(a_matrix @ x_vector, b_vector)
 
     @staticmethod
-    def pseudoinverse_from_svd(svd: SVDResult) -> np.ndarray:
+    def pseudoinverse_from_svd(svd: SVDResult) -> npt.NDArray:
         TimingUtils().start("LinAlg :: Pseudoinverse From SVD")
         pseudo_s = np.zeros(shape=(svd.U.shape[1], svd.Vh.shape[0]))
         np.fill_diagonal(pseudo_s, LinAlgUtils.pseudoinverse_of_diagonal(svd.S))
@@ -66,5 +68,5 @@ class LinAlgUtils:
         return pseudoinverse
 
     @staticmethod
-    def pseudoinverse_of_diagonal(diag: np.ndarray) -> np.ndarray:
-        return np.array([s ** -1 if not np.isclose(s, 0) else 0 for s in diag])
+    def pseudoinverse_of_diagonal(diagonal: npt.NDArray) -> npt.NDArray:
+        return np.array([s ** -1 if not FloatingPointUtils.is_close(s, 0) else 0 for s in diagonal])

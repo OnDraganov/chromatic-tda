@@ -1,4 +1,5 @@
 import numpy as np
+import numpy.typing as npt
 
 from chromatic_tda.algorithms.chromatic_subcomplex_utils import ChromaticComplexUtils
 from chromatic_tda.core.core_simplicial_complex import CoreSimplicialComplex
@@ -6,7 +7,7 @@ from chromatic_tda.utils.legacy_geometrical_utils import sq_dist
 
 
 class CoreChromaticAlphaComplex:
-    points: np.ndarray
+    points: npt.NDArray
     points_dimension: int
     input_labels_to_internal_labels_dict: dict
     internal_labels_to_input_labels_dict: dict

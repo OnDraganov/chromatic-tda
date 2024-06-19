@@ -1,6 +1,7 @@
 import itertools
 
 import numpy as np
+import numpy.typing as npt
 from collections.abc import Iterable
 
 from chromatic_tda.algorithms.chromatic_subcomplex_utils import ChromaticComplexUtils
@@ -49,7 +50,7 @@ class RadiusFunctionConstructor:
         for v in vertices:
             distance = np.square(alpha_complex.points[v] - stack.center).sum()
             radius = stack.radii.get(alpha_complex.internal_labeling[v], 0)
-            if distance < radius and not np.isclose(distance, radius):
+            if distance < radius and not FloatingPointUtils.is_close(distance, radius):
                 return False
 
         TimingUtils().stop("Rad :: Check Stack Emptiness")
@@ -66,7 +67,7 @@ class RadiusFunctionConstructor:
         return circumstack
 
     @staticmethod
-    def find_smallest_circumstack(*point_sets: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    def find_smallest_circumstack(*point_sets: npt.NDArray) -> tuple[npt.NDArray, npt.NDArray]:
         """For arguments B_0, ..., B_k, return the center z and radii r_0, ..., r_k defining a stack of spheres
         S_0, ..., S_k passing through B_0, ..., B_k, respectively."""
         TimingUtils().start("Rad :: Find Smallest Circumstack")
@@ -77,7 +78,7 @@ class RadiusFunctionConstructor:
         return center, radii2
 
     @staticmethod
-    def find_smallest_circumstack_center_miniball(*point_sets: np.ndarray) -> np.ndarray:
+    def find_smallest_circumstack_center_miniball(*point_sets: npt.NDArray) -> npt.NDArray:
         TimingUtils().start("Rad :: Find Smallest Circumstack :: Miniball")
         lengths = [len(point_set) for point_set in point_sets]
         equispace = GeometryUtils.construct_equispace(*point_sets)
@@ -94,7 +95,7 @@ class RadiusFunctionConstructor:
         return center
 
     @staticmethod
-    def find_smallest_circumstack_weighted_circumspheres(*point_sets: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    def find_smallest_circumstack_weighted_circumspheres(*point_sets: npt.NDArray) -> tuple[npt.NDArray, npt.NDArray]:
         TimingUtils().start("Rad :: Find Smallest Circumstack :: Weighted Circumspheres")
         equispace = GeometryUtils.construct_equispace(*point_sets)
 
@@ -122,7 +123,7 @@ class RadiusFunctionConstructor:
         return candidate[0], candidate[1]
 
     @staticmethod
-    def split_points(points: np.ndarray, lengths) -> list[np.ndarray, ...]:
+    def split_points(points: npt.NDArray, lengths) -> list[npt.NDArray, ...]:
         TimingUtils().start("Rad :: Split Points Into Colors")
 
         splits = np.zeros(len(lengths), dtype=int)
@@ -133,8 +134,8 @@ class RadiusFunctionConstructor:
         return np.split(points, splits)[:-1]
 
     @staticmethod
-    def compute_kkt_solution(points: Iterable[np.ndarray], labels: Iterable, circumstack: StackOfSpheres) \
-            -> np.ndarray | None:
+    def compute_kkt_solution(points: Iterable[npt.NDArray], labels: Iterable, circumstack: StackOfSpheres) \
+            -> npt.NDArray | None:
         """Return vector of lambdas ordered as simplex if valid solution exists, otherwise return None.
         WARNING: `circumstack` is assumed to be a circumstack of `points`, `labels`, condition not checked
         WARNING: Emptiness is *not* checked.
@@ -157,7 +158,7 @@ class RadiusFunctionConstructor:
         x, res, rk, s = np.linalg.lstsq(a_mat, b_vec, rcond=None)
 
         TimingUtils().stop("Rad :: Morse :: Compute KKT Solution")
-        if len(res) > 0 and not np.isclose(res[0], 0):
+        if len(res) > 0 and not FloatingPointUtils.is_close(res[0], 0):
             return None
         else:
             return x[:len(point_part)]

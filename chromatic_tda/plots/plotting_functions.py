@@ -2,6 +2,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from chromatic_tda.entities.simplicial_complex import SimplicialComplex
+from chromatic_tda.utils.floating_point_utils import FloatingPointUtils
 from chromatic_tda.utils.singleton import singleton
 
 
@@ -36,9 +37,9 @@ def plot_persistence_diagram(bars, ax=None, **kwargs):
     else:
         plt.figure(figsize=(kwargs.get('size', 5), kwargs.get('size', 5)),
                    facecolor=kwargs.get('facecolor', 'white'))
-    if not np.isclose(*xlim):  # to avoid passing identical low and high xlim to pyplot
+    if not FloatingPointUtils.is_close(*xlim):  # to avoid passing identical low and high xlim to pyplot
         plt.xlim(xlim)
-    if not np.isclose(*ylim):  # to avoid passing identical low and high ylim to pyplot
+    if not FloatingPointUtils.is_close(*ylim):  # to avoid passing identical low and high ylim to pyplot
         plt.ylim(ylim)
     plt.gca().set_aspect(kwargs.get('aspect', 'equal'))
     plt.xticks(fontsize=kwargs.get('ticks_fontsize', 9))

@@ -1,4 +1,5 @@
 import numpy as np
+import numpy.typing as npt
 
 from chromatic_tda.utils.timing import TimingUtils
 
@@ -6,8 +7,25 @@ from chromatic_tda.utils.timing import TimingUtils
 class FloatingPointUtils:
 
     @staticmethod
-    def is_trivial_bar(bar):
-        return np.isclose(bar[0], bar[1])
+    def is_close(a, b) -> bool:
+        """
+        Return True if a should be considered equal to b.
+        The default method used to compare whether two floats are close.
+        """
+        return bool(np.isclose(a, b))
+
+    @staticmethod
+    def is_all_close(avec, bvec):
+        """
+        Return true if lists avec and bvec are close, i.e., if all elements are close.
+        """
+        if len(avec) != len(bvec):
+            raise ValueError("The parameters need to be of the same length.")
+        return all(FloatingPointUtils.is_close(a, b) for a, b in zip(avec, bvec))
+
+    @staticmethod
+    def is_trivial_bar(bar) -> bool:
+        return FloatingPointUtils.is_close(bar[0], bar[1])
 
     @staticmethod
     def ensure_smaller_or_equal(value: float, *coboundary_values) -> float:
@@ -16,7 +34,7 @@ class FloatingPointUtils:
         Otherwise, return the minimum of the other passed values
         """
         minimum_above = min(coboundary_values, default=float('inf'))
-        if (np.isclose(value, minimum_above) and value != minimum_above) or value > minimum_above:
+        if (FloatingPointUtils.is_close(value, minimum_above) and value != minimum_above) or value > minimum_above:
             return minimum_above
         else:
             return value
@@ -31,10 +49,11 @@ class FloatingPointUtils:
             )
 
     @staticmethod
-    def flag_duplicates_from_reference(reference: np.ndarray, to_check: np.ndarray) -> np.ndarray[bool, ...]:
+    def flag_duplicates_from_reference(reference: npt.NDArray, to_check: npt.NDArray) -> npt.NDArray[bool]:
         """Return a boolean list of len(to_check) describing whether the corresponding element in to_check
         is close to some element of the reference."""
         TimingUtils().start("Flag Duplicates Among Vectors")
-        flags = np.array([any(np.isclose(ref, x).all() for ref in reference) for x in to_check], dtype=bool)
+        flags = np.array([any(FloatingPointUtils.is_all_close(ref, x) for ref in reference) for x in to_check],
+                         dtype=bool)
         TimingUtils().stop("Flag Duplicates Among Vectors")
         return flags

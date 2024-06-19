@@ -1,6 +1,8 @@
 import numpy as np
 from dataclasses import dataclass
 
+from chromatic_tda.utils.floating_point_utils import FloatingPointUtils
+
 
 @dataclass
 class StackOfSpheres:
@@ -13,4 +15,5 @@ class StackOfSpheres:
         self.center = center
         self.radii = radii
         self.maximum_radius = max(radii.values())
-        self.maximum_labels = {label for label, radius in self.radii.items() if np.isclose(radius, self.maximum_radius)}
+        self.maximum_labels = {label for label, radius in self.radii.items()
+                               if FloatingPointUtils.is_close(radius, self.maximum_radius)}

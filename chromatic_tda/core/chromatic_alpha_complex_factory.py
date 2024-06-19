@@ -1,4 +1,5 @@
 import numpy as np
+import numpy.typing as npt
 import random
 from scipy.spatial import Delaunay
 
@@ -79,7 +80,7 @@ class CoreChromaticAlphaComplexFactory:
 
         TimingUtils().stop("AlphFac :: Build Alpha Complex Structure")
 
-    def compute_chromatic_delaunay(self, lift_perturbation: float):
+    def compute_chromatic_delaunay(self, lift_perturbation: float) -> list[tuple[int]]:
         """
         Parameters
         ----------
@@ -92,25 +93,30 @@ class CoreChromaticAlphaComplexFactory:
         """
         TimingUtils().start("AlphFac :: Compute Chromatic Delaunay")
 
-        del_complex = Delaunay(self.chromatic_lift(lift_perturbation))
-        all_labels = set(self.alpha_complex.internal_labeling)
-        colorful_maximal_simplices = [simplex for simplex in del_complex.simplices
-                                      if set(self.alpha_complex.internal_labeling[i] for i in simplex) == all_labels]
+        simplices = Delaunay(self.chromatic_lift(lift_perturbation)).simplices
+        colorful_maximal_simplices = self.filter_colorful_simplices(simplices)
 
         TimingUtils().stop("AlphFac :: Compute Chromatic Delaunay")
 
-        return colorful_maximal_simplices
+        return [tuple(sorted(int(v) for v in simplex)) for simplex in colorful_maximal_simplices]
+
+    def filter_colorful_simplices(self, simplices):
+        """Generator. Given labels and simplices, yields only those simplices that span all colors."""
+        all_labels = set(self.alpha_complex.internal_labeling)
+        for simplex in simplices:
+            if set(self.alpha_complex.internal_labeling[i] for i in simplex) == all_labels:
+                yield simplex
 
     @staticmethod
     def perturb_points(points, point_perturbation):
         return [[p + point_perturbation * (random.random() - .5) for p in pt] for pt in points]
 
-    def chromatic_lift(self, lift_perturbation):
+    def chromatic_lift(self, lift_perturbation) -> npt.NDArray:
         """
         Add extra coordinates to lift points to the chromatic simplex. Here we choose one-hot embedding without
         the first coordinate. That is, 0 --> (0,0,0,...), 1 --> (1,0,0,...), 2 --> (0,1,0,...), etc.
         """
-        pts_lift = np.array([
+        pts_lift: npt.NDArray = np.array([
             np.concatenate((point, [1 if i == label else 0 for i in range(1, self.alpha_complex.labels_number)]))
             for point, label in zip(self.alpha_complex.points, self.alpha_complex.internal_labeling)])
         if lift_perturbation:

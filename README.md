@@ -52,8 +52,8 @@ If you have any questions to the code, do not hesitate to contat us. We are also
 # Timing
 
 For a rough idea on the performance, see the two plots below showing times the code took on my laptop.
-<img src="img/timing_1.1.1.png" width="200px">
-<img src="img/timing_2d_2c_200exp.png" width="200px">
+<img src="img/timing_1.1.1.png" width="500px">
+<img src="img/timing_2d_2c_200exp.png" width="500px">
 # License
 
 Copyright ©2023. Institute of Science and Technology Austria (IST Austria). All Rights Reserved.  

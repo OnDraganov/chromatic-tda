@@ -52,8 +52,8 @@ If you have any questions to the code, do not hesitate to contat us. We are also
 # Timing
 
 For a rough idea on the performance, see the two plots below showing times the code took on my laptop.
-![timing](img/timing_1.1.1.pdf)
-![timing_2d_2c_200](img/timing_2d_2c_200exp.pdf)
+![timing](img/timing_1.1.1.png)
+![timing_2d_2c_200](img/timing_2d_2c_200exp.png)
 
 # License
 

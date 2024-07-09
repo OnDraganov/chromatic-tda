@@ -49,6 +49,12 @@ A presentation about the main concepts used in this package can be viewed on You
 
 If you have any questions to the code, do not hesitate to contat us. We are also eager to hear from you if you try the code out, and happy to chat about how you can use it on your data. Use, e.g., the mail in my [github profile](https://github.com/OnDraganov).
 
+# Timing
+
+For a rough idea on the performance, see the two plots below showing times the code took on my laptop.
+![timing](img/timing_1.1.1.pdf)
+![timing_2d_2c_200](img/timing_2d_2c_200exp.pdf)
+
 # License
 
 Copyright ©2023. Institute of Science and Technology Austria (IST Austria). All Rights Reserved.  

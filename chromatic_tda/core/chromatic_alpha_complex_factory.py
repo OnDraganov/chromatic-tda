@@ -170,6 +170,7 @@ class CoreChromaticAlphaComplexTorus2DFactory(CoreChromaticAlphaComplexFactory):
         self.build_alpha_complex_structure_torus(lift_perturbation=lift_perturbation)
         self.add_radius_function(use_morse_optimization=use_morse_optimization,
                                  legacy_radius_function=legacy_radius_function)
+        self.restrict_to_torus_simplices()
 
         TimingUtils().start("AlphFac :: Create Alf Instance Torus")
 
@@ -235,6 +236,9 @@ class CoreChromaticAlphaComplexTorus2DFactory(CoreChromaticAlphaComplexFactory):
 
     def is_torus_simplex(self, simplex):
         """Return True if the given simplex is the single representative of a torus simplex."""
-        return min(simplex) == min([v % self.n for v in simplex])
+        if len(simplex) == 1:
+            return simplex[0] < self.n
+        else:
+            return min(simplex) == min([v % self.n for v in simplex])
 
 

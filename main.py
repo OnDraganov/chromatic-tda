@@ -1,6 +1,6 @@
 from chromatic_tda.algorithms.radius_function import RadiusFunctionConstructor
 from tests.test_bars import TestBars
-from chromatic_tda import ChromaticAlphaComplex, plot_six_pack
+from chromatic_tda import ChromaticAlphaComplex, plot_six_pack, plot_labeled_point_set
 import numpy as np
 from matplotlib import pyplot as plt
 
@@ -40,7 +40,25 @@ def run_test_plot():
 
 
 def main():
-    run_test_plot()
+    # run_test_plot()
+    points = np.random.random((50, 2))
+    labels = list(map(int, 2 * np.random.random(len(points))))
+    plot_labeled_point_set(points, labels)
+
+    cplx = ChromaticAlphaComplex(points, labels).get_simplicial_complex(sub_complex='mono-chromatic')
+    plot_six_pack(cplx)
+
+    cplx_torus = ChromaticAlphaComplex(points, labels,
+                                       torus=True, xrange=(0, 1), yrange=(0, 1),
+                                       ).get_simplicial_complex(sub_complex='mono-chromatic')
+    plot_six_pack(cplx_torus)
+
+
+
+
+    plt.show()
+
+
 
 
 if __name__ == "__main__":

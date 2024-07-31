@@ -84,6 +84,8 @@ class LegacyRadiusFunctionUtils:
     def compute_radius_function(alpha_complex: CoreChromaticAlphaComplex, **kwargs) -> None:
         TimingUtils().start("Compute Radius Function")
 
+        alpha_complex.sq_rad = {}
+
         for simplex in alpha_complex.simplicial_complex.dim_simplex_dict.get(4, {}):
             alpha_complex.sq_rad[simplex] = LegacyRadiusFunctionUtils._compute_radius_function_pentachoron(alpha_complex, simplex)
         for simplex in alpha_complex.simplicial_complex.dim_simplex_dict.get(3, {}):

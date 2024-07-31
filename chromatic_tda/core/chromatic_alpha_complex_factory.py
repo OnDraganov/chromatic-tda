@@ -14,7 +14,7 @@ from chromatic_tda.utils.timing import TimingUtils
 class CoreChromaticAlphaComplexFactory:
 
     def __init__(self, points, labels):
-        self.points = points
+        self.points = np.array(points)
         self.labels = labels
         self.check_input()
         self.alpha_complex = None
@@ -25,13 +25,12 @@ class CoreChromaticAlphaComplexFactory:
                         legacy_radius_function: bool = False) -> CoreChromaticAlphaComplex:
         """
         Compute the chromatic alpha complex of given points and labels.
-        At most three different labels allowed
         """
         TimingUtils().start("AlphFac :: Create Alf Instance")
         self.alpha_complex = CoreChromaticAlphaComplex()
 
-        self.init_points(point_perturbation)
-        self.init_labels()
+        self.init_points(self.points, point_perturbation)
+        self.init_labels(self.labels)
         self.build_alpha_complex_structure(lift_perturbation=lift_perturbation)
         self.add_radius_function(use_morse_optimization=use_morse_optimization,
                                  legacy_radius_function=legacy_radius_function)
@@ -39,28 +38,28 @@ class CoreChromaticAlphaComplexFactory:
 
         return self.alpha_complex
 
-    def init_points(self, point_perturbation: float | None) -> None:
+    def init_points(self, points, point_perturbation: float | None) -> None:
         if point_perturbation:
-            self.alpha_complex.points = np.array(self.perturb_points(self.points, point_perturbation))
+            self.alpha_complex.points = np.array(self.perturb_points(points, point_perturbation))
         else:
-            self.alpha_complex.points = np.array(self.points)
+            self.alpha_complex.points = np.array(points)
         self.alpha_complex.points_dimension = (self.alpha_complex.points.shape[1]
                                                if len(self.alpha_complex.points.shape) > 1
                                                else 0)
 
-    def init_labels(self) -> None:
-        sorted_labels = sorted(set(self.labels))
+    def init_labels(self, labels) -> None:
+        sorted_labels = sorted(set(labels))
         self.alpha_complex.input_labels_to_internal_labels_dict = {lab: i for i, lab in enumerate(sorted_labels)}
         self.alpha_complex.internal_labels_to_input_labels_dict = {
             i: lab for lab, i in self.alpha_complex.input_labels_to_internal_labels_dict.items()
         }
         self.alpha_complex.labels_number = len(self.alpha_complex.input_labels_to_internal_labels_dict)
         self.alpha_complex.internal_labeling = [self.alpha_complex.input_labels_to_internal_labels_dict[lab]
-                                                for lab in self.labels]
+                                                for lab in labels]
 
-    def build_alpha_complex_structure(self, lift_perturbation: float) -> None:
+    def build_alpha_complex_structure(self, lift_perturbation: float, make_co_boundary: bool = True) -> None:
         """
-        Compute the simplicial complex and radius weight function for a CoreChromaticAlphaComplex
+        Compute the simplicial complex for a CoreChromaticAlphaComplex
         with initialised points and labels. Adds the structure directly to the given alpha_complex.
 
         Parameters
@@ -75,8 +74,9 @@ class CoreChromaticAlphaComplexFactory:
         self.alpha_complex.simplicial_complex = CoreSimplicialComplexFactory().create_instance(colorful_max_simplices)
         TimingUtils().stop("AlphFac :: Build Chro Del From Max Simplices")
 
-        self.alpha_complex.simplicial_complex.co_boundary = BoundaryMatrixUtils.make_co_boundary(
-            self.alpha_complex.simplicial_complex.boundary)
+        if make_co_boundary:
+            self.alpha_complex.simplicial_complex.co_boundary = BoundaryMatrixUtils.make_co_boundary(
+                self.alpha_complex.simplicial_complex.boundary)
 
         TimingUtils().stop("AlphFac :: Build Alpha Complex Structure")
 
@@ -138,3 +138,103 @@ class CoreChromaticAlphaComplexFactory:
     def check_input(self):
         if len(self.points) != len(self.labels):
             raise ValueError("The length of points has to equal the length of labels.")
+
+
+class CoreChromaticAlphaComplexTorus2DFactory(CoreChromaticAlphaComplexFactory):
+
+    def __init__(self, points, labels, xrange=None, yrange=None):
+        super().__init__(points, labels)
+        if self.points.shape[1] != 2:
+            raise ValueError(f"ChromaticAlphaComplexTorus2D expects 2-dimensional"
+                             f" point sets ({self.alpha_complex.points_dimension}-dimensional given).")
+        if xrange is None or yrange is None:
+            raise TypeError("ChromaticAlphaComplexTorus2D missing required argument xrange or yrange")
+        self.check_frame(xrange, yrange)
+        self.xrange = np.array(xrange)
+        self.yrange = np.array(yrange)
+        self.xshift, self.yshift = self.get_shifts()
+        self.n = len(points)
+
+    def create_instance(self, lift_perturbation: float | None,
+                        point_perturbation: float | None,
+                        use_morse_optimization: bool = True,
+                        legacy_radius_function: bool = False) -> CoreChromaticAlphaComplex:
+        """
+        Compute the chromatic alpha complex of given points and labels.
+        """
+        TimingUtils().start("AlphFac :: Create Alf Instance Torus")
+        self.alpha_complex = CoreChromaticAlphaComplex()
+
+        self.init_points_torus(self.points, point_perturbation=None)
+        self.init_labels(list(self.labels) * 9)
+        self.build_alpha_complex_structure_torus(lift_perturbation=lift_perturbation)
+        self.add_radius_function(use_morse_optimization=use_morse_optimization,
+                                 legacy_radius_function=legacy_radius_function)
+
+        TimingUtils().start("AlphFac :: Create Alf Instance Torus")
+
+        return self.alpha_complex
+
+    def check_frame(self, xrange: npt.NDArray, yrange: npt.NDArray):
+        """Check whether the points fit into the frame."""
+        if (xrange[0] >= xrange[1]) or (yrange[0] >= yrange[1]):
+            raise ValueError("xrange and yrange need to be non-trivial intervals (a, b) with a < b.")
+        if ((xrange[0] <= self.points[:, 0]) * (self.points[:, 0] <= xrange[1])
+                * (yrange[0] <= self.points[:, 1]) * (self.points[:, 1] <= yrange[1])).all():
+            return True
+        else:
+            raise ValueError("The points do not fit into the given (xrange, yrange) frame.")
+
+    def get_shifts(self):
+        """Return the shifting constants"""
+        return self.xrange[1] - self.xrange[0], self.yrange[1] - self.yrange[0]
+
+    def get_3x3grid(self, points):
+        return np.concatenate((
+            points,
+            points + [0, self.yshift],
+            points + [self.xshift, self.yshift],
+            points + [self.xshift, 0],
+            points + [self.xshift, - self.yshift],
+            points + [0, - self.yshift],
+            points + [- self.xshift, - self.yshift],
+            points + [- self.xshift, 0],
+            points + [- self.xshift, self.yshift],
+        ))
+
+    def init_points_torus(self, points, point_perturbation: float | None) -> None:
+        if point_perturbation:
+            points = np.array(self.perturb_points(points, point_perturbation))
+        else:
+            points = np.array(points)
+        self.alpha_complex.points = self.get_3x3grid(points)
+        self.alpha_complex.points_dimension = 2
+
+    def build_alpha_complex_structure_torus(self, lift_perturbation: float, make_co_boundary: bool = True) -> None:
+        colorful_max_simplices = self.compute_chromatic_delaunay(lift_perturbation)
+        colorful_max_simplices = self.purge_outer_simplices(colorful_max_simplices)
+        self.alpha_complex.simplicial_complex = CoreSimplicialComplexFactory().create_instance(colorful_max_simplices)
+
+        if make_co_boundary:
+            self.alpha_complex.simplicial_complex.co_boundary = BoundaryMatrixUtils.make_co_boundary(
+                self.alpha_complex.simplicial_complex.boundary)
+
+    def purge_outer_simplices(self, simplices):
+        """Return list of only those simplices that have at least one vertex in the inner square of the 3x3 grid.
+        The check is done by vertex index: a vertex is in the inner region iff its index is less than the length of
+        the original given point set."""
+        return [simplex for simplex in simplices if any(v < self.n for v in simplex)]
+
+    def restrict_to_torus_simplices(self):
+        """Restricts the alpha_complex with computed radius function to just the torus simplices."""
+        self.alpha_complex.simplicial_complex = CoreSimplicialComplexFactory().create_instance(
+            {tuple(sorted(v % self.n for v in simplex)): radius
+             for simplex, radius in self.alpha_complex.simplicial_complex.simplex_weights.items()
+             if self.is_torus_simplex(simplex)}
+        )
+
+    def is_torus_simplex(self, simplex):
+        """Return True if the given simplex is the single representative of a torus simplex."""
+        return min(simplex) == min([v % self.n for v in simplex])
+
+

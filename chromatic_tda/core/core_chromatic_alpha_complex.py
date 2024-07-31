@@ -14,7 +14,6 @@ class CoreChromaticAlphaComplex:
     labels_number: int
     internal_labeling: list
     simplicial_complex: CoreSimplicialComplex
-    sq_rad: dict
 
     def __init__(self) -> None:
         self.input_labels_to_internal_labels_dict = {}

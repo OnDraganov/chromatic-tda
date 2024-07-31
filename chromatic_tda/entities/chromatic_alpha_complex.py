@@ -1,11 +1,12 @@
 from chromatic_tda.core.core_chromatic_alpha_complex import CoreChromaticAlphaComplex
-from chromatic_tda.core.chromatic_alpha_complex_factory import CoreChromaticAlphaComplexFactory
+from chromatic_tda.core.chromatic_alpha_complex_factory import CoreChromaticAlphaComplexFactory, \
+    CoreChromaticAlphaComplexTorus2DFactory
 from chromatic_tda.entities.simplicial_complex import SimplicialComplex
 
 
 class ChromaticAlphaComplex:
 
-    def __init__(self, points, labels, lift_perturbation=1e-9, point_perturbation=None) -> None:
+    def __init__(self, points, labels, lift_perturbation=1e-9, point_perturbation=None, **kwargs) -> None:
         """Create an instance of ChromaticAlphaComplex. The object contains the full chromatic Delaunay complex together
         with its alpha radius function.
 
@@ -21,7 +22,12 @@ class ChromaticAlphaComplex:
                                   Generally leads to faster computation, as QHull does not need to deal with the
                                   non-generality itself. (default: 1e-9)
         """
-        factory = CoreChromaticAlphaComplexFactory(points, labels)
+        if kwargs.get('torus', False):
+            factory = CoreChromaticAlphaComplexTorus2DFactory(points, labels,
+                                                              xrange = kwargs.get('xrange', None),
+                                                              yrange = kwargs.get('yrange', None))
+        else:
+            factory = CoreChromaticAlphaComplexFactory(points, labels)
         self.core_alpha_complex : CoreChromaticAlphaComplex = factory.create_instance(
             lift_perturbation=lift_perturbation, point_perturbation=point_perturbation)
 

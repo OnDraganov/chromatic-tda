@@ -147,6 +147,23 @@ def plot_six_pack(data, axs=None, **kwargs):
     return plt.gcf(), axs
 
 
+def plot_labeled_point_set(points, labels, **kwargs):
+    """A simple plot of points and labels"""
+    if len(points) > 0 and len(points[0]) != 2:
+        raise ValueError('Only two-dimensional point sets can be plotted.')
+    colors = kwargs.get('colors', {})
+    markers = {0: 'o', 1: 's', 2: '^'}
+    for i, current_label in enumerate(sorted(set(labels))):
+        plt.plot(*zip(*[pt for pt, lab in zip(points, labels) if lab == current_label]),
+                 linestyle='none',
+                 marker=markers.get(i, 'o'),
+                 color=colors.get(i, None),
+                 label=str(current_label))
+    plt.gca().set_aspect('equal')
+    if kwargs.get('legend', False):
+        plt.legend()
+    return plt.gcf(), plt.gca()
+
 
 @singleton
 class PlottingUtils:

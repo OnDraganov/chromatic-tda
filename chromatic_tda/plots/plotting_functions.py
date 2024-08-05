@@ -147,8 +147,13 @@ def plot_six_pack(data, axs=None, **kwargs):
     return plt.gcf(), axs
 
 
-def plot_labeled_point_set(points, labels, **kwargs):
+def plot_labeled_point_set(points, labels, ax=None, **kwargs):
     """A simple plot of points and labels"""
+    if ax:
+        plt.sca(ax)
+    else:
+        plt.figure(figsize=(kwargs.get('size', 7), kwargs.get('size', 7)),
+                   facecolor=kwargs.get('facecolor', 'white'))
     if len(points) > 0 and len(points[0]) != 2:
         raise ValueError('Only two-dimensional point sets can be plotted.')
     colors = kwargs.get('colors', {})
@@ -165,7 +170,6 @@ def plot_labeled_point_set(points, labels, **kwargs):
     return plt.gcf(), plt.gca()
 
 
-@singleton
 class PlottingUtils:
 
     X_AXIS_EXTRA_RELATIVE_SPACE = 0.03
@@ -179,31 +183,34 @@ class PlottingUtils:
     def find_max_finite_death_single_diagram(bars):
         return max((death for birth, death in bars if death < float('inf')), default=0)
 
-    def find_max_finite_death_dictionary(self, bars_dict):
-        return max((self.find_max_finite_death_single_diagram(bars) for bars in bars_dict.values()), default=0)
+    @staticmethod
+    def find_max_finite_death_dictionary(bars_dict):
+        return max((PlottingUtils.find_max_finite_death_single_diagram(bars) for bars in bars_dict.values()), default=0)
 
-    def find_plot_limits(self, bars_dict, **kwargs):
+    @staticmethod
+    def find_plot_limits(bars_dict, **kwargs):
         maxdeath = PlottingUtils().find_max_finite_death_dictionary(bars_dict)
-        lim_left = -self.X_AXIS_EXTRA_RELATIVE_SPACE * maxdeath
-        xlim = (lim_left, maxdeath * (1 + self.Y_AXIS_EXTRA_RELATIVE_SPACE))
+        lim_left = -PlottingUtils.X_AXIS_EXTRA_RELATIVE_SPACE * maxdeath
+        xlim = (lim_left, maxdeath * (1 + PlottingUtils.Y_AXIS_EXTRA_RELATIVE_SPACE))
         if kwargs.get('only_finite', False):
-            ylim = (lim_left, maxdeath * (1 + self.Y_AXIS_EXTRA_RELATIVE_SPACE))
+            ylim = (lim_left, maxdeath * (1 + PlottingUtils.Y_AXIS_EXTRA_RELATIVE_SPACE))
         else:
-            ylim = (lim_left, maxdeath * (1 + self.Y_AXIS_EXTRA_RELATIVE_SPACE_WITH_INFINITY))
+            ylim = (lim_left, maxdeath * (1 + PlottingUtils.Y_AXIS_EXTRA_RELATIVE_SPACE_WITH_INFINITY))
 
         return xlim, ylim
 
-    def parse_plot_limit_argument(self, lim) -> tuple[tuple[float, float], tuple[float, float]]:
+    @staticmethod
+    def parse_plot_limit_argument(lim) -> tuple[tuple[float, float], tuple[float, float]]:
         if isinstance(lim, list) or isinstance(lim, tuple):
             if isinstance(lim[0], list) or isinstance(lim[0], tuple):
                 xlim = lim[0]
                 ylim = lim[1]
             else:  # is (xmax, ymax) tuple
-                lim_left = -self.X_AXIS_EXTRA_RELATIVE_SPACE * max(lim[0], lim[1])
+                lim_left = -PlottingUtils.X_AXIS_EXTRA_RELATIVE_SPACE * max(lim[0], lim[1])
                 xlim = (lim_left, lim[0])
                 ylim = (lim_left, lim[1])
         else:  # is just one number
-            lim_left = -self.X_AXIS_EXTRA_RELATIVE_SPACE * lim
+            lim_left = -PlottingUtils.X_AXIS_EXTRA_RELATIVE_SPACE * lim
             xlim = (lim_left, lim)
             ylim = (lim_left, lim)
 
@@ -218,7 +225,8 @@ class PlottingUtils:
             bars_dict_form[dim].append(bar)
         return bars_dict_form
 
-    def process_input_to_dict_form(self, input_form):
+    @staticmethod
+    def process_input_to_dict_form(input_form):
         if len(input_form) == 0:
             return {}
         if isinstance(input_form, dict):
@@ -231,7 +239,7 @@ class PlottingUtils:
                 except TypeError:
                     second_coordinate_length = -1
                 if second_coordinate_length == 2:
-                    return self.convert_tuple_form_to_dict_form(list_form)
+                    return PlottingUtils.convert_tuple_form_to_dict_form(list_form)
             return {'' : list_form}
         raise TypeError("Bars given in an invalid format. Should be either a dim -> list_of_bars dictionary"
                         " or a (dim, (birth, death)) list.")
@@ -241,9 +249,10 @@ class PlottingUtils:
         return ([bar for bar in bars_list if bar[1] < float('inf')],
                 [bar for bar in bars_list if bar[1] == float('inf')])
 
-    def split_finite_infinite_dictionary(self, bars_dict):
+    @staticmethod
+    def split_finite_infinite_dictionary(bars_dict):
         bars_finite = {}
         bars_infinite = {}
         for dim in bars_dict:
-            bars_finite[dim], bars_infinite[dim] = self.split_finite_infinite_single_diagram(bars_dict[dim])
+            bars_finite[dim], bars_infinite[dim] = PlottingUtils.split_finite_infinite_single_diagram(bars_dict[dim])
         return bars_finite, bars_infinite

@@ -180,22 +180,31 @@ class PlottingUtils:
         pass
 
     @staticmethod
-    def find_max_finite_death_single_diagram(bars):
+    def find_max_birth_single_diagram(bars) -> float:
+        return max((birth for birth, death in bars), default=0)
+
+    @staticmethod
+    def find_max_birth_dictionary(bars_dict) -> float:
+        return max((PlottingUtils.find_max_birth_single_diagram(bars) for bars in bars_dict.values()), default=0)
+
+    @staticmethod
+    def find_max_finite_death_single_diagram(bars) -> float:
         return max((death for birth, death in bars if death < float('inf')), default=0)
 
     @staticmethod
-    def find_max_finite_death_dictionary(bars_dict):
+    def find_max_finite_death_dictionary(bars_dict) -> float:
         return max((PlottingUtils.find_max_finite_death_single_diagram(bars) for bars in bars_dict.values()), default=0)
 
     @staticmethod
     def find_plot_limits(bars_dict, **kwargs):
-        maxdeath = PlottingUtils().find_max_finite_death_dictionary(bars_dict)
+        maxdeath = PlottingUtils.find_max_finite_death_dictionary(bars_dict)
+        maxbirthdeath = max(maxdeath, PlottingUtils.find_max_birth_dictionary(bars_dict))
         lim_left = -PlottingUtils.X_AXIS_EXTRA_RELATIVE_SPACE * maxdeath
         xlim = (lim_left, maxdeath * (1 + PlottingUtils.Y_AXIS_EXTRA_RELATIVE_SPACE))
         if kwargs.get('only_finite', False):
             ylim = (lim_left, maxdeath * (1 + PlottingUtils.Y_AXIS_EXTRA_RELATIVE_SPACE))
         else:
-            ylim = (lim_left, maxdeath * (1 + PlottingUtils.Y_AXIS_EXTRA_RELATIVE_SPACE_WITH_INFINITY))
+            ylim = (lim_left, maxbirthdeath * (1 + PlottingUtils.Y_AXIS_EXTRA_RELATIVE_SPACE_WITH_INFINITY))
 
         return xlim, ylim
 

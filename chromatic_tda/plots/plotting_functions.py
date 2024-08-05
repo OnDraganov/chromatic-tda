@@ -199,11 +199,13 @@ class PlottingUtils:
     def find_plot_limits(bars_dict, **kwargs):
         maxdeath = PlottingUtils.find_max_finite_death_dictionary(bars_dict)
         maxbirthdeath = max(maxdeath, PlottingUtils.find_max_birth_dictionary(bars_dict))
-        lim_left = -PlottingUtils.X_AXIS_EXTRA_RELATIVE_SPACE * maxdeath
-        xlim = (lim_left, maxdeath * (1 + PlottingUtils.Y_AXIS_EXTRA_RELATIVE_SPACE))
         if kwargs.get('only_finite', False):
+            lim_left = -PlottingUtils.X_AXIS_EXTRA_RELATIVE_SPACE * maxdeath
+            xlim = (lim_left, maxdeath * (1 + PlottingUtils.Y_AXIS_EXTRA_RELATIVE_SPACE))
             ylim = (lim_left, maxdeath * (1 + PlottingUtils.Y_AXIS_EXTRA_RELATIVE_SPACE))
         else:
+            lim_left = -PlottingUtils.X_AXIS_EXTRA_RELATIVE_SPACE * maxbirthdeath
+            xlim = (lim_left, maxbirthdeath * (1 + PlottingUtils.Y_AXIS_EXTRA_RELATIVE_SPACE))
             ylim = (lim_left, maxbirthdeath * (1 + PlottingUtils.Y_AXIS_EXTRA_RELATIVE_SPACE_WITH_INFINITY))
 
         return xlim, ylim

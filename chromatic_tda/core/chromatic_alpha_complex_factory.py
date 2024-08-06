@@ -182,7 +182,7 @@ class CoreChromaticAlphaComplexTorus2DFactory(CoreChromaticAlphaComplexFactory):
         if (xrange[0] >= xrange[1]) or (yrange[0] >= yrange[1]):
             raise ValueError("xrange and yrange need to be non-trivial intervals (a, b) with a < b.")
         if ((xrange[0] <= self.points[:, 0]) * (self.points[:, 0] <= xrange[1])
-            * (yrange[0] <= self.points[:, 1]) * (self.points[:, 1] <= yrange[1])).all():
+                * (yrange[0] <= self.points[:, 1]) * (self.points[:, 1] <= yrange[1])).all():
             return True
         else:
             raise ValueError("The points do not fit into the given (xrange, yrange) frame.")

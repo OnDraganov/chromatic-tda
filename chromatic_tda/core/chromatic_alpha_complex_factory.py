@@ -142,7 +142,7 @@ class CoreChromaticAlphaComplexFactory:
 
 class CoreChromaticAlphaComplexTorus2DFactory(CoreChromaticAlphaComplexFactory):
 
-    def __init__(self, points, labels, xrange=None, yrange=None):
+    def __init__(self, points, labels, xrange=None, yrange=None, check_wrapping=True):
         super().__init__(points, labels)
         if self.points.shape[1] != 2:
             raise ValueError(f"ChromaticAlphaComplexTorus2D expects 2-dimensional"
@@ -152,6 +152,7 @@ class CoreChromaticAlphaComplexTorus2DFactory(CoreChromaticAlphaComplexFactory):
         self.check_frame(xrange, yrange)
         self.xrange = np.array(xrange)
         self.yrange = np.array(yrange)
+        self.check_wrapping = check_wrapping
         self.xshift, self.yshift = self.get_shifts()
         self.n = len(points)
 
@@ -226,12 +227,21 @@ class CoreChromaticAlphaComplexTorus2DFactory(CoreChromaticAlphaComplexFactory):
         the original given point set."""
         return [simplex for simplex in simplices if any(v < self.n for v in simplex)]
 
-    def restrict_to_torus_simplices(self):
+    def restrict_to_torus_simplices(self, check_wrapping):
         """Restricts the alpha_complex with computed radius function to just the torus simplices."""
+        torus_simplices_transform = {simplex: self.transform_simplex_to_torus(simplex)
+                                     for simplex in self.alpha_complex.simplicial_complex.simplex_weights.keys()
+                                     if self.is_torus_simplex(simplex)}
+        if self.check_wrapping:  # keyword parameter of the factory
+            if len(set(torus_simplices_transform.keys())) != len(set(torus_simplices_transform.values())):
+                raise UserWarning("Multiple simplices wrap around the torus to became the same simplex. "
+                                  "This can happen if there is not enough points of any one color. "
+                                  "The computed six-pack will NOT be the desired six-pack on torus!")
         self.alpha_complex.simplicial_complex = CoreSimplicialComplexFactory().create_instance(
-            {tuple(sorted(v % self.n for v in simplex)): radius
-             for simplex, radius in self.alpha_complex.simplicial_complex.simplex_weights.items()
-             if self.is_torus_simplex(simplex)}
+            {
+                simplex_transformed: self.alpha_complex.simplicial_complex.simplex_weights[simplex]
+                for simplex, simplex_transformed in torus_simplices_transform.items()
+            }
         )
 
     def is_torus_simplex(self, simplex):
@@ -240,5 +250,9 @@ class CoreChromaticAlphaComplexTorus2DFactory(CoreChromaticAlphaComplexFactory):
             return simplex[0] < self.n
         else:
             return min(simplex) == min([v % self.n for v in simplex])
+
+    def transform_simplex_to_torus(self, simplex):
+        """Given a simplex on 3x3 grid, return the simplex on the torus using only original vertices."""
+        return tuple(sorted(v % self.n for v in simplex))
 
 

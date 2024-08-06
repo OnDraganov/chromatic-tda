@@ -24,8 +24,9 @@ class ChromaticAlphaComplex:
         """
         if kwargs.get('torus', False):
             factory = CoreChromaticAlphaComplexTorus2DFactory(points, labels,
-                                                              xrange = kwargs.get('xrange', None),
-                                                              yrange = kwargs.get('yrange', None))
+                                                              xrange= kwargs.get('xrange', None),
+                                                              yrange= kwargs.get('yrange', None),
+                                                              check_wrapping= kwargs.get('check_wrapping', True))
         else:
             factory = CoreChromaticAlphaComplexFactory(points, labels)
         self.core_alpha_complex : CoreChromaticAlphaComplex = factory.create_instance(

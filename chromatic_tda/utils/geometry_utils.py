@@ -103,7 +103,8 @@ class GeometryUtils:
         except np.linalg.LinAlgError:
             x, *_ = np.linalg.lstsq(eq_mat, b_vec)
             if not FloatingPointUtils.is_all_close(eq_mat @ x, b_vec):
-                raise np.linalg.LinAlgError('Linear equation has no solution; check for degeneracies in the point set.')
+                raise np.linalg.LinAlgError('Linear equation has no solution; check for degeneracies in the point set.'
+                                            ' Try passing a small number, e.g., 1e-7, as `point_perturbation` argument')
         y = a_mat @ x
         rad2 = np.square(y).sum() + weights[0]
         z = y + points[0]

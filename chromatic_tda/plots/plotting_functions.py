@@ -1,9 +1,9 @@
 import numpy as np
 from matplotlib import pyplot as plt
+from matplotlib.axes import Axes
 
 from chromatic_tda.entities.simplicial_complex import SimplicialComplex
 from chromatic_tda.utils.floating_point_utils import FloatingPointUtils
-from chromatic_tda.utils.singleton import singleton
 
 
 def plot_persistence_diagram(bars, ax=None, **kwargs):
@@ -157,13 +157,14 @@ def plot_labeled_point_set(points, labels, ax=None, **kwargs):
     if len(points) > 0 and len(points[0]) != 2:
         raise ValueError('Only two-dimensional point sets can be plotted.')
     colors = kwargs.get('colors', {})
-    markers = {0: 'o', 1: 's', 2: '^'}
+    markers = kwargs.get('markers', {0: 'o', 1: 's', 2: '^'})
     for i, current_label in enumerate(sorted(set(labels))):
         plt.plot(*zip(*[pt for pt, lab in zip(points, labels) if lab == current_label]),
                  linestyle='none',
                  marker=markers.get(i, 'o'),
                  color=colors.get(i, None),
-                 label=str(current_label))
+                 label=str(current_label),
+                 alpha=kwargs.get('alpha', 1))
     plt.gca().set_aspect('equal')
     if kwargs.get('legend', False):
         plt.legend()
@@ -267,3 +268,35 @@ class PlottingUtils:
         for dim in bars_dict:
             bars_finite[dim], bars_infinite[dim] = PlottingUtils.split_finite_infinite_single_diagram(bars_dict[dim])
         return bars_finite, bars_infinite
+
+    @staticmethod
+    def add_counts_text_to_markers(axs, rtol=1e-5, atol=1e-8):
+        """Given axes, counts markers close to each other and adds the counts texts"""
+        if isinstance(axs, Axes):
+            axs = [axs]
+        axs = np.array(axs).flatten()
+
+        xlim, ylim = axs[0].get_xlim()[1] - axs[0].get_xlim()[0], axs[0].get_ylim()[1] - axs[0].get_ylim()[0]
+
+        for ax in axs.flatten():
+            for child in ax.get_children():
+                if str(child.get_label()).isnumeric():
+                    # extract points with frequencies
+                    data = {}
+                    for point in zip(*child.get_data()):
+                        for key in data:
+                            if (np.isclose(point[0], key[0], rtol=rtol, atol=atol)
+                                    and np.isclose(point[1], key[1], rtol=rtol, atol=atol)):
+                                data[key] += 1
+                                break
+                        else:
+                            data[point] = 1
+                    # print texts
+                    for point, frequency in data.items():
+                        if point[0] < .0 or point[1] > .9 * ylim:
+                            posx = point[0] + .01 * xlim if point[0] < .9 * xlim else point[0] - .035 * xlim
+                            posy = point[1] - .04 * ylim
+                        else:
+                            posx = point[0] + .005 * xlim
+                            posy = point[1] + .015 * ylim
+                        ax.text(posx, posy, frequency, fontdict={'color': child.get_color()})

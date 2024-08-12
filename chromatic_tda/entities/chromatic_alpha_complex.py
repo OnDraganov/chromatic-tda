@@ -27,7 +27,9 @@ class ChromaticAlphaComplex:
                                                               xrange= kwargs.get('xrange', None),
                                                               yrange= kwargs.get('yrange', None),
                                                               suppress_wrapping_check= kwargs.get(
-                                                                  'suppress_wrapping_check', False))
+                                                                  'suppress_wrapping_check', False),
+                                                              suppress_boundary_consistency_check= kwargs.get(
+                                                                  'suppress_boundary_consistency_check', False))
         else:
             factory = CoreChromaticAlphaComplexFactory(points, labels)
         self.core_alpha_complex : CoreChromaticAlphaComplex = factory.create_instance(

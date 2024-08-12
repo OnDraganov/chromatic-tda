@@ -142,7 +142,8 @@ class CoreChromaticAlphaComplexFactory:
 
 class CoreChromaticAlphaComplexTorus2DFactory(CoreChromaticAlphaComplexFactory):
 
-    def __init__(self, points, labels, xrange=None, yrange=None, suppress_wrapping_check=False):
+    def __init__(self, points, labels, xrange=None, yrange=None,
+                 suppress_wrapping_check=False, suppress_boundary_consistency_check=False):
         super().__init__(points, labels)
         if self.points.shape[1] != 2:
             raise ValueError(f"ChromaticAlphaComplexTorus2D expects 2-dimensional"
@@ -153,6 +154,7 @@ class CoreChromaticAlphaComplexTorus2DFactory(CoreChromaticAlphaComplexFactory):
         self.xrange = np.array(xrange)
         self.yrange = np.array(yrange)
         self.suppress_wrapping_check = suppress_wrapping_check
+        self.suppress_boundary_consistency_check = suppress_boundary_consistency_check
         self.xshift, self.yshift = self.get_shifts()
         self.n = len(points)
 
@@ -215,6 +217,11 @@ class CoreChromaticAlphaComplexTorus2DFactory(CoreChromaticAlphaComplexFactory):
     def build_alpha_complex_structure_torus(self, lift_perturbation: float, make_co_boundary: bool = True) -> None:
         colorful_max_simplices = self.compute_chromatic_delaunay(lift_perturbation)
         colorful_max_simplices = self.purge_outer_simplices(colorful_max_simplices)
+
+        if not self.suppress_boundary_consistency_check:
+            if not self.check_fibers_of_maximal_simplices(colorful_max_simplices):
+                self._error_boundary_consistency()
+
         self.alpha_complex.simplicial_complex = CoreSimplicialComplexFactory().create_instance(colorful_max_simplices)
 
         if make_co_boundary:
@@ -233,12 +240,8 @@ class CoreChromaticAlphaComplexTorus2DFactory(CoreChromaticAlphaComplexFactory):
                                      for simplex in self.alpha_complex.simplicial_complex.simplex_weights.keys()
                                      if self.is_torus_simplex(simplex)}
         if not self.suppress_wrapping_check:  # keyword parameter of the factory
-            if len(set(torus_simplices_transform.keys())) != len(set(torus_simplices_transform.values())):
-                raise ValueError("Multiple simplices wrap around the torus to became the same simplex. "
-                                 "This can happen if there is not enough points of any one color. "
-                                 "The computed six-pack would NOT be the desired six-pack on torus! "
-                                 "You can suppress this error by passing suppress_wrapping_check=True "
-                                 "to ChromaticAlphaComplex.")
+            if not self.check_unique_preimages(torus_simplices_transform):
+                self._error_wrapping()
         self.alpha_complex.simplicial_complex = CoreSimplicialComplexFactory().create_instance(
             {
                 simplex_transformed: self.alpha_complex.simplicial_complex.simplex_weights[simplex]
@@ -256,3 +259,41 @@ class CoreChromaticAlphaComplexTorus2DFactory(CoreChromaticAlphaComplexFactory):
     def transform_simplex_to_torus(self, simplex):
         """Given a simplex on 3x3 grid, return the simplex on the torus using only original vertices."""
         return tuple(sorted(v % self.n for v in simplex))
+
+    @staticmethod
+    def check_unique_preimages(torus_simplices_transform):
+        return len(set(torus_simplices_transform.keys())) == len(set(torus_simplices_transform.values()))
+
+    def _error_wrapping(self):
+        raise ValueError("Multiple simplices wrap around the torus to became the same simplex. "
+                         "This can happen if there is not enough points of any one color. "
+                         "The computed six-pack would NOT be the desired six-pack on torus! "
+                         "You can suppress this error by passing suppress_wrapping_check=True "
+                         "to ChromaticAlphaComplex.")
+
+    def check_fibers_of_maximal_simplices(self, max_simplices):
+        """Return True if, in the set of maximal simplices mapped to the same center simplex, each center vertex
+        is present exactly once."""
+        fibers = {}
+        for simplex in max_simplices:
+            simplex_center = self.transform_simplex_to_torus(simplex)
+            if simplex_center not in fibers:
+                fibers[simplex_center] = set()
+            fibers[simplex_center].add(simplex)
+
+        for simplex_center, fiber in fibers.items():
+            vertex_counter = [0] * len(simplex_center)
+            for i, v in enumerate(simplex_center):
+                for fiber_simplex in fiber:
+                    if v in fiber_simplex:
+                        vertex_counter[i] += 1
+            if any(count != 1 for count in vertex_counter):
+                return False
+        return True
+
+    def _error_boundary_consistency(self):
+        raise ValueError("Inconsistency in the Delaunay complex at the boundary of the torus region. "
+                         "Likely due to position close to non-generic. Try perturbing the point set, "
+                         "e.g., by passing `point_perturbation=1e-5` argument to the constructor. "
+                         "You can suppress this error by passing suppress_boundary_consistency_check=True "
+                         "to ChromaticAlphaComplex.")

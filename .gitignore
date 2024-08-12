@@ -5,6 +5,7 @@
 
 # IDE
 .idea
+.python_venv
 venv
 
 # mac files

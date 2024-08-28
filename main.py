@@ -1,5 +1,3 @@
-from chromatic_tda.algorithms.radius_function import RadiusFunctionConstructor
-from tests.test_bars import TestBars
 from chromatic_tda import ChromaticAlphaComplex, plot_six_pack, plot_labeled_point_set
 import numpy as np
 from matplotlib import pyplot as plt

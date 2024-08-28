@@ -1,3 +1,5 @@
+from typing import Optional
+
 import numpy as np
 import numpy.typing as npt
 import random
@@ -19,8 +21,8 @@ class CoreChromaticAlphaComplexFactory:
         self.check_input()
         self.alpha_complex = None
 
-    def create_instance(self, lift_perturbation: float | None,
-                        point_perturbation: float | None,
+    def create_instance(self, lift_perturbation: Optional[float],
+                        point_perturbation: Optional[float],
                         use_morse_optimization: bool = True,
                         legacy_radius_function: bool = False) -> CoreChromaticAlphaComplex:
         """
@@ -38,7 +40,7 @@ class CoreChromaticAlphaComplexFactory:
 
         return self.alpha_complex
 
-    def init_points(self, points, point_perturbation: float | None) -> None:
+    def init_points(self, points, point_perturbation: Optional[float]) -> None:
         if point_perturbation:
             self.alpha_complex.points = np.array(self.perturb_points(points, point_perturbation))
         else:
@@ -158,8 +160,8 @@ class CoreChromaticAlphaComplexTorus2DFactory(CoreChromaticAlphaComplexFactory):
         self.xshift, self.yshift = self.get_shifts()
         self.n = len(points)
 
-    def create_instance(self, lift_perturbation: float | None,
-                        point_perturbation: float | None,
+    def create_instance(self, lift_perturbation: Optional[float],
+                        point_perturbation: Optional[float],
                         use_morse_optimization: bool = True,
                         legacy_radius_function: bool = False) -> CoreChromaticAlphaComplex:
         """
@@ -206,7 +208,7 @@ class CoreChromaticAlphaComplexTorus2DFactory(CoreChromaticAlphaComplexFactory):
             points + [- self.xshift, self.yshift],
         ))
 
-    def init_points_torus(self, points, point_perturbation: float | None) -> None:
+    def init_points_torus(self, points, point_perturbation: Optional[float]) -> None:
         if point_perturbation:
             points = np.array(self.perturb_points(points, point_perturbation))
         else:

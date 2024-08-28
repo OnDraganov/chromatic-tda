@@ -1,4 +1,5 @@
 import itertools
+from typing import Optional
 
 import numpy as np
 import numpy.typing as npt
@@ -135,7 +136,7 @@ class RadiusFunctionConstructor:
 
     @staticmethod
     def compute_kkt_solution(points: Iterable[npt.NDArray], labels: Iterable, circumstack: StackOfSpheres) \
-            -> npt.NDArray | None:
+            -> Optional[npt.NDArray]:
         """Return vector of lambdas ordered as simplex if valid solution exists, otherwise return None.
         WARNING: `circumstack` is assumed to be a circumstack of `points`, `labels`, condition not checked
         WARNING: Emptiness is *not* checked.

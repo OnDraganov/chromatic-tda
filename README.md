@@ -1,6 +1,6 @@
 # chromatic_tda
 
-`chromatic_tda` is a package for computing six-packs of persistent diagrams of colored point clouds. Currently point clouds in R^2 with 2 or 3 colors are supported (see Future).
+`chromatic_tda` is a package for computing six-packs of persistent diagrams of colored point clouds.
 
 # Installation
 

@@ -1,6 +1,8 @@
 # chromatic_tda
 
-`chromatic_tda` is a package for computing six-packs of persistent diagrams of colored point clouds.
+`chromatic_tda` is a package for computing six-packs of persistent diagrams of colored point clouds, such as cells on a tissue slide with an information about their type or 3D stucture of a material composed of different atoms. The six-pack is a topological summary of capturing many aspects of how the different types of point mingle. It consists of kernel, domain, image, codomain, cokernel and relative persistence diagrams.
+
+The main purpose of the code is to provide implementation to experiment with chromatic topological data analysis. Although not completely naive, many aspects of the code can be optimised, especially if only part of the infomration from the six-packs turns out to be interesting in a given application.
 
 # Installation
 
@@ -9,6 +11,10 @@
 The package is uploaded to [PyPI](https://pypi.org/project/chromatic-tda/), so it can be installed with `pip`.
 
 Run `pip install chromatic_tda`.
+
+## Install from a file from [github project](https://github.com/OnDraganov/chromatic-tda)
+
+From the `dist` folder of the project, you can download the file `chromatic_tda-<version>.tar.gz`, and install it using `pip` as `pip install <path to the file>`.
 
 ## Install from [github project](https://github.com/OnDraganov/chromatic-tda)
 
@@ -19,7 +25,7 @@ The project uses `poetry` for Python dependecy management, which allows you to e
 - Go to the repository folder in terminal
 - Run `poetry shell`
 - Run `poetry install`
-- [optional] Run `poetry run pytest` to check that the code runs
+- [optional] Run `poetry run pytest` to check that the code runs correctly
 
 # How to use
 
@@ -41,7 +47,7 @@ For more details check the docstrings of the methods and the jupyter notebook fi
 
 # Resources
 
-The code is based on research done at Institute of Science and Technology by Ranita Biswas, Sebastiano Cultrera di Montesano, Ondřej Draganov, Herbert Edelsbrunner and Morteza Saghafian. A draft write up can be found on [arxiv](https://arxiv.org/abs/2212.03128).
+The code is based on research done at Institute of Science and Technology by Ranita Biswas, Sebastiano Cultrera di Montesano, Ondřej Draganov, Herbert Edelsbrunner and Morteza Saghafian. A preprint of the full paper can be found on arXiv: [Chromatic Alpha Complexes](https://arxiv.org/abs/2212.03128). A shorter introduction to the main ideas can be found in a preprint [Chromatic Topological Data Analysis](https://arxiv.org/abs/2406.04102).
 
 A presentation about the main concepts used in this package can be viewed on YouTube: [AATRN Online Seminar: TDA for Chromatic Point Clouds](https://youtu.be/HIqiF00yKaw). A recording of a complementary talk focusing more on the motivations of the work and the combinatorial structures underlying it is accessible through [google drive](https://drive.google.com/file/d/1RBiGlgY4mlRL59eAVmMLrgBCZYN97QnZ/view).
 

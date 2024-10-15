@@ -4,6 +4,8 @@
 
 The main purpose of the code is to provide implementation to experiment with chromatic topological data analysis. Although not completely naive, many aspects of the code can be optimised, especially if only part of the infomration from the six-packs turns out to be interesting in a given application.
 
+The code gives no restriction on the dimension of points or number of colors, but the complexity quickly grows in both parameters. The expected use is points in 2D or 3D with 2 or 3 colors for hundreds to a few thousand points, but both can be increased for toy examples with small numbers of points.
+
 # Installation
 
 ## Install with `pip`

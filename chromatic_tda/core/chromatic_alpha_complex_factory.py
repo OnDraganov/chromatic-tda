@@ -16,7 +16,7 @@ from chromatic_tda.utils.timing import TimingUtils
 class CoreChromaticAlphaComplexFactory:
 
     def __init__(self, points, labels):
-        self.points = np.array(points)
+        self.points = np.array(points, dtype='d')
         self.labels = labels
         self.check_input()
         self.alpha_complex = None
@@ -82,7 +82,7 @@ class CoreChromaticAlphaComplexFactory:
 
         TimingUtils().stop("AlphFac :: Build Alpha Complex Structure")
 
-    def compute_chromatic_delaunay(self, lift_perturbation: float) -> list[tuple[int]]:
+    def compute_chromatic_delaunay(self, lift_perturbation: float) -> list[tuple[int, ...]]:
         """
         Parameters
         ----------

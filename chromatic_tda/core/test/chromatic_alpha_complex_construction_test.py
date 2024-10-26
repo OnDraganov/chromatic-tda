@@ -31,6 +31,10 @@ class ChromaticAlphaComplexConstructionTest(unittest.TestCase):
         result = self.single_test(data_name='chralph_random_15_8_7')
         assert result
 
+    def test_chromatic_alpha_integer_2_2(self):
+        result = self.single_test(data_name='chralph_integer_2_2')
+        assert result
+
     def single_test(self, data_name, data_folder=None):
         data = self.load_data(data_name, data_folder)
         factory = CoreChromaticAlphaComplexFactory(points=data['points'], labels=data['labels'])
@@ -56,4 +60,3 @@ class ChromaticAlphaComplexConstructionTest(unittest.TestCase):
             if not np.isclose(computed_weight, reference_weight):
                 return False
         return True  # simplices identical to the reference, and all the weights are close to the reference
-

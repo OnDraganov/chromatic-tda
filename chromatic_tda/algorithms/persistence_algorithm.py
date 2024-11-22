@@ -32,8 +32,8 @@ class PersistenceAlgorithm:  # why is this not a singleton? with complex as a pa
         self._compute_persistence_relative()
 
     def _compute_birth_death_complex(self) -> None:
-        Rf = self.complex.persistence_data['complex']['R']
-        low_inv_f = self.complex.persistence_data['complex']['low_inv']
+        Rf = self.complex.persistence_data['complex']['reduced_matrix']
+        low_inv_f = self.complex.persistence_data['complex']['pivots']
 
         birth = set(s for s in Rf if len(Rf[s]) == 0)
         death = set(s for s in Rf if len(Rf[s]) != 0)
@@ -49,8 +49,8 @@ class PersistenceAlgorithm:  # why is this not a singleton? with complex as a pa
         }
 
     def _compute_birth_death_sub_complex(self) -> None:
-        Rg = self.complex.persistence_data['sub_complex']['R']
-        low_inv_g = self.complex.persistence_data['sub_complex']['low_inv']
+        Rg = self.complex.persistence_data['sub_complex']['reduced_matrix']
+        low_inv_g = self.complex.persistence_data['sub_complex']['pivots']
 
         birth = set(s for s in Rg if len(Rg[s]) == 0)
         death = set(s for s in Rg if len(Rg[s]) != 0)
@@ -66,8 +66,8 @@ class PersistenceAlgorithm:  # why is this not a singleton? with complex as a pa
         }
 
     def _compute_birth_death_image(self) -> None:
-        Rg = self.complex.persistence_data['sub_complex']['R']
-        low_inv_im = self.complex.persistence_data['image']['low_inv']
+        Rg = self.complex.persistence_data['sub_complex']['reduced_matrix']
+        low_inv_im = self.complex.persistence_data['image']['pivots']
 
         birth = set(s for s in Rg if len(Rg[s]) == 0)
         pairs = set((k, v) for k, v in low_inv_im.items() if k in self.complex.sub_complex)
@@ -83,10 +83,10 @@ class PersistenceAlgorithm:  # why is this not a singleton? with complex as a pa
         }
 
     def _compute_birth_death_kernel(self) -> None:
-        Rf = self.complex.persistence_data['complex']['R']
-        Rg = self.complex.persistence_data['sub_complex']['R']
-        low_inv_im = self.complex.persistence_data['image']['low_inv']
-        low_inv_ker = self.complex.persistence_data['kernel']['low_inv']
+        Rf = self.complex.persistence_data['complex']['reduced_matrix']
+        Rg = self.complex.persistence_data['sub_complex']['reduced_matrix']
+        low_inv_im = self.complex.persistence_data['image']['pivots']
+        low_inv_ker = self.complex.persistence_data['kernel']['pivots']
 
         birth = set(v for k, v in low_inv_im.items() if (v not in self.complex.sub_complex and
                                                          k in self.complex.sub_complex))
@@ -105,10 +105,10 @@ class PersistenceAlgorithm:  # why is this not a singleton? with complex as a pa
         }
 
     def _compute_birth_death_cokernel(self) -> None:
-        Rim = self.complex.persistence_data['image']['R']
-        low_im = {v: k for k, v in self.complex.persistence_data['image']['low_inv'].items()}
-        Rg = self.complex.persistence_data['sub_complex']['R']
-        low_inv_cok = self.complex.persistence_data['cokernel']['low_inv']
+        Rim = self.complex.persistence_data['image']['reduced_matrix']
+        low_im = {v: k for k, v in self.complex.persistence_data['image']['pivots'].items()}
+        Rg = self.complex.persistence_data['sub_complex']['reduced_matrix']
+        low_inv_cok = self.complex.persistence_data['cokernel']['pivots']
 
         birth = set(s for s in Rim if len(Rim[s]) == 0 and (s not in self.complex.sub_complex or len(Rg[s]) != 0))
         pairs = set((k, v) for k, v in low_inv_cok.items()
@@ -124,8 +124,8 @@ class PersistenceAlgorithm:  # why is this not a singleton? with complex as a pa
         }
 
     def _compute_persistence_relative(self) -> None:
-        R = self.complex.persistence_data['relative']['R']
-        low_inv = self.complex.persistence_data['relative']['low_inv']
+        R = self.complex.persistence_data['relative']['reduced_matrix']
+        low_inv = self.complex.persistence_data['relative']['pivots']
 
         birth = set(s for s in R if len(R[s]) == 0)
         death = set(s for s in R if len(R[s]) != 0)
@@ -155,44 +155,44 @@ class PersistenceAlgorithm:  # why is this not a singleton? with complex as a pa
         self.complex.persistence_data['complex'] = MatrixReduction.reduce(
             self.complex.boundary,
             order_function=self.filters.filter_function_rad(),
-            return_V=True)
+            return_reduction_matrix=True)
 
         self.complex.persistence_data['sub_complex'] = MatrixReduction.reduce(
             {simplex: self.complex.boundary[simplex] for simplex in self.complex.sub_complex},  # bnd mat of subcomplex
             order_function=self.filters.filter_function_rad(),
-            return_V=True)
+            return_reduction_matrix=True)
 
         self.complex.persistence_data['image'] = MatrixReduction.reduce(
-            self.complex.persistence_data['complex']['R'],  # instead of (self.complex.boundary) for performance
+            self.complex.persistence_data['complex']['reduced_matrix'],  # instead of (self.complex.boundary) for performance
             order_function=self.filters.filter_function_rad(),
             order_function_row=self.filters.filter_function_rad_sub_first(),
-            return_V=False)
+            return_reduction_matrix=False)
 
-        R = self.complex.persistence_data['complex']['R']  # should be R_im, but coincides on cycles with R_f
-        V = self.complex.persistence_data['complex']['V']  # should be V_im, but coincides on cycles with V_f
+        R = self.complex.persistence_data['complex']['reduced_matrix']  # should be R_im, but coincides on cycles with R_f
+        V = self.complex.persistence_data['complex']['reduction_matrix']  # should be V_im, but coincides on cycles with V_f
         self.complex.persistence_data['kernel'] = MatrixReduction.reduce(
             {simplex: V[simplex] for simplex in V if len(R[simplex]) == 0},  # columns of V which represent cycles
             order_function=self.filters.filter_function_rad(),
             order_function_row=self.filters.filter_function_rad_sub_first(),
-            return_V=False)
+            return_reduction_matrix=False)
 
-        Vg = self.complex.persistence_data['sub_complex']['V']
-        Rg = self.complex.persistence_data['sub_complex']['R']
-        Df = self.complex.persistence_data['complex']['R']  # We can take R rather than D, because we only replace
-                                                            # cycle columns, so all reductions are still valid.
+        Vg = self.complex.persistence_data['sub_complex']['reduction_matrix']
+        Rg = self.complex.persistence_data['sub_complex']['reduced_matrix']
+        Df = self.complex.persistence_data['complex']['reduced_matrix']  # We can take R rather than D, because we only replace
+                                                                         # cycle columns, so all reductions are still valid.
         D_cok = {simplex: Vg[simplex] if (simplex in Rg and len(Rg[simplex]) == 0) else Df[simplex] for simplex in Df}
         self.complex.persistence_data['cokernel'] = MatrixReduction.reduce(
             D_cok,
             order_function=self.filters.filter_function_rad(),
-            return_V=False)
+            return_reduction_matrix=False)
 
         matrix_relative = {
-            s: {t for t in self.complex.persistence_data['complex']['R'][s] if t not in self.complex.sub_complex}
-            for s in self.complex.persistence_data['complex']['R'] if s not in self.complex.sub_complex}
+            s: {t for t in self.complex.persistence_data['complex']['reduced_matrix'][s] if t not in self.complex.sub_complex}
+            for s in self.complex.persistence_data['complex']['reduced_matrix'] if s not in self.complex.sub_complex}
         self.complex.persistence_data['relative'] = MatrixReduction.reduce(
             matrix_relative,
             order_function=self.filters.filter_function_rad(),
-            return_V=False)
+            return_reduction_matrix=False)
 
     @staticmethod
     def get_birth_death_from_matrix(R, low_inv) -> dict:

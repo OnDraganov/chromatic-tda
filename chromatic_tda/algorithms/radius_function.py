@@ -78,22 +78,22 @@ class RadiusFunctionConstructor:
         TimingUtils().stop("Rad :: Find Smallest Circumstack")
         return center, radii2
 
-    @staticmethod
-    def find_smallest_circumstack_center_miniball(*point_sets: npt.NDArray) -> npt.NDArray:
-        TimingUtils().start("Rad :: Find Smallest Circumstack :: Miniball")
-        lengths = [len(point_set) for point_set in point_sets]
-        equispace = GeometryUtils.construct_equispace(*point_sets)
-        points = np.concatenate(point_sets)
-        points_reflected = GeometryUtils.reflect_points_through_affine_space(equispace, *points)
-        points_reflected_filtered = np.concatenate([
-            refl[~FloatingPointUtils.flag_duplicates_from_reference(orig, refl)]
-            for orig, refl in zip(point_sets, RadiusFunctionConstructor.split_points(points_reflected, lengths))
-        ])  # filter away duplicates
-        center, rad = MiniballAlgorithm.find_smallest_enclosing_ball(
-            np.concatenate([points, points_reflected_filtered]))
-        TimingUtils().stop("Rad :: Find Smallest Circumstack :: Miniball")
-
-        return center
+    # @staticmethod
+    # def find_smallest_circumstack_center_miniball(*point_sets: npt.NDArray) -> npt.NDArray:
+    #     TimingUtils().start("Rad :: Find Smallest Circumstack :: Miniball")
+    #     lengths = [len(point_set) for point_set in point_sets]
+    #     equispace = GeometryUtils.construct_equispace(*point_sets)
+    #     points = np.concatenate(point_sets)
+    #     points_reflected = GeometryUtils.reflect_points_through_affine_space(equispace, *points)
+    #     points_reflected_filtered = np.concatenate([
+    #         refl[~FloatingPointUtils.flag_duplicates_from_reference(orig, refl)]
+    #         for orig, refl in zip(point_sets, RadiusFunctionConstructor.split_points(points_reflected, lengths))
+    #     ])  # filter away duplicates
+    #     center, rad = MiniballAlgorithm.find_smallest_enclosing_ball(
+    #         np.concatenate([points, points_reflected_filtered]))
+    #     TimingUtils().stop("Rad :: Find Smallest Circumstack :: Miniball")
+    #
+    #     return center
 
     @staticmethod
     def find_smallest_circumstack_weighted_circumspheres(*point_sets: npt.NDArray) -> tuple[npt.NDArray, npt.NDArray]:

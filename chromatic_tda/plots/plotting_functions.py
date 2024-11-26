@@ -157,12 +157,12 @@ def plot_labeled_point_set(points, labels, ax=None, **kwargs):
     if len(points) > 0 and len(points[0]) != 2:
         raise ValueError('Only two-dimensional point sets can be plotted.')
     colors = kwargs.get('colors', {})
-    markers = kwargs.get('markers', {0: 'o', 1: 's', 2: '^'})
-    for i, current_label in enumerate(sorted(set(labels))):
+    markers = kwargs.get('markers', {lab: marker for lab, marker in zip(sorted(set(labels)), ('o', 's', '^'))})
+    for current_label in sorted(set(labels)):
         plt.plot(*zip(*[pt for pt, lab in zip(points, labels) if lab == current_label]),
                  linestyle='none',
-                 marker=markers.get(i, 'o'),
-                 color=colors.get(i, None),
+                 marker=markers.get(current_label, 'o'),
+                 color=colors.get(current_label, None),
                  label=str(current_label),
                  alpha=kwargs.get('alpha', 1))
     plt.gca().set_aspect('equal')

@@ -6,6 +6,8 @@ The main purpose of the code is to provide implementation to experiment with chr
 
 The code gives no restriction on the dimension of points or number of colors, but the complexity quickly grows in both parameters. The expected use is points in 2D or 3D with 2 or 3 colors for hundreds to a few thousand points, but both can be increased for toy examples with small numbers of points.
 
+***New in 1.1.8: experimental feature extraction.*** It is now possible to go from a bar back to a loop in a point cloud (or higher-dimensional equivalents). For details, see the last section in the jupyter notebook `manual`. For now it is released as "experimental". I will be happy for any feedback on this: is it useful? Is it intuitive to use? Is there something confusing/inconvenient/missing? 
+
 # Installation
 
 ## Install with `pip`

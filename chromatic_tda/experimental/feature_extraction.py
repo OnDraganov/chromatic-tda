@@ -4,6 +4,7 @@ from chromatic_tda import SimplicialComplex
 from chromatic_tda.core.core_simplicial_complex import CoreSimplicialComplex
 from chromatic_tda.utils.floating_point_utils import FloatingPointUtils
 
+BLANK = ''
 
 class FeatureExtractor:
     """A class created with a simplicial pair to extract persistent pairs."""
@@ -39,7 +40,7 @@ class FeatureExtractor:
             raise ValueError("Persistence not yet computed, run `compute_persistence` on the simplicial complex first.")
 
         pairs = [(birth, death) for birth, death in self.simplicial_complex.birth_death[group]['pairs']
-                 if (len(death) == dim + 1 and
+                 if (len(death) == dim + 2 and
                      not FloatingPointUtils.is_trivial_bar((self.simplicial_complex.get_simplex_weight(birth),
                                                             self.simplicial_complex.get_simplex_weight(death)))
                      )
@@ -51,7 +52,8 @@ class FeatureExtractor:
         elif sorted_by == 'proximity':
             if bar_of_interest is None:
                 raise ValueError('If sorted_by="proximity", then bar_of_interest needs to be given')
-            key = lambda pair: np.linalg.norm(bar_of_interest - (self.simplicial_complex.get_simplex_weight(pair[0]), self.simplicial_complex.get_simplex_weight(pair[1])))
+            key = lambda pair: np.linalg.norm(np.array(bar_of_interest)
+                                              - (self.simplicial_complex.get_simplex_weight(pair[0]), self.simplicial_complex.get_simplex_weight(pair[1])))
             reverse = False
         else:
             raise ValueError('sorted_by can only be "persistence" or "proximity"')

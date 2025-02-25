@@ -189,7 +189,7 @@ def plot_edges(points, edges, ax=None, **kwargs):
     kwargs['facecolor'] = kwargs.get('facecolor', 'white')
     kwargs['size'] = kwargs.get('size', 7)
     kwargs['color'] = kwargs.get('color', '#000072')
-    kwargs['linewidth'] = kwargs.get('color', 1)
+    kwargs['linewidth'] = kwargs.get('linewidth', 1)
     if ax:
         plt.sca(ax)
     else:

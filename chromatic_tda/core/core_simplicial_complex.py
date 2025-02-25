@@ -148,9 +148,10 @@ class CoreSimplicialComplex:
     def get_dimension(self) -> int:
         return max(self.dim_simplex_dict, default=-1)
 
-    def write(self) -> None:
-        print()
-        print(f"*** Simplicial Complex (dimension = {self.get_dimension()})")
-        for dim in sorted(self.dim_simplex_dict):
-            print(
-                f"Simplices with dimension {dim} ({self.get_simplices_of_dim_count(dim)}): {self.get_simplices_of_dim(dim)}")
+    def chain_boundary(self, simplices) -> set:
+        """Return boundary of a chain of simplices, i.e., the symmetric difference of boundaries of the given collection
+         of simplices."""
+        boundary = set()
+        for simplex in simplices:
+            boundary ^= self.boundary[simplex]
+        return boundary

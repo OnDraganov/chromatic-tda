@@ -148,7 +148,11 @@ def plot_six_pack(data, axs=None, **kwargs):
 
 
 def plot_labeled_point_set(points, labels, ax=None, **kwargs):
-    """A simple plot of points and labels"""
+    """A simple plot of points and labels.
+    Accepted keyword arguments: size, facecolor, markers, colors, alpha
+    Returns
+    -------
+    Figure, Axes"""
     if ax:
         plt.sca(ax)
     else:
@@ -169,6 +173,36 @@ def plot_labeled_point_set(points, labels, ax=None, **kwargs):
     if kwargs.get('legend', False):
         plt.legend()
     return plt.gcf(), plt.gca()
+
+def plot_edges(points, edges, ax=None, **kwargs):
+    """Plot the given set of edges with vertex position given by points.
+    Parameters
+    ----------
+    points ... list of points in a plane
+    edges  ... list of abstract edges, e.g., an edge (1, 5) will connect points[1] and points[5]
+    ax     ... axis to witch the edges are drawn, e.g. the second return value of plot_labeled_point_set
+
+    Returns
+    -------
+    Figure, Axes
+    """
+    kwargs['facecolor'] = kwargs.get('facecolor', 'white')
+    kwargs['size'] = kwargs.get('size', 7)
+    kwargs['color'] = kwargs.get('color', '#000072')
+    kwargs['linewidth'] = kwargs.get('color', 1)
+    if ax:
+        plt.sca(ax)
+    else:
+        plt.figure(figsize=(kwargs['size'], kwargs['size']),
+                   facecolor=kwargs['facecolor'])
+    kwargs.pop('facecolor')
+    kwargs.pop('size')
+    for edge in edges:
+        edge_points = [points[i] for i in edge]
+        plt.plot(*zip(*edge_points), **kwargs)
+
+    return plt.gcf(), plt.gca()
+
 
 
 class PlottingUtils:

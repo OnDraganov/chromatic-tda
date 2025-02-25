@@ -147,7 +147,4 @@ class SimplicialComplex:
     def chain_boundary(self, simplices) -> set:
         """Return boundary of a chain of simplices, i.e., the symmetric difference of boundaries of the given collection
          of simplices"""
-        boundary = set()
-        for simplex in simplices:
-            boundary ^= self.core_complex.boundary[simplex]
-        return boundary
+        return self.core_complex.chain_boundary(simplices)

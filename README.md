@@ -8,6 +8,13 @@ The code gives no restriction on the dimension of points or number of colors, bu
 
 ***New in 1.1.8: experimental feature extraction.*** It is now possible to go from a bar back to a loop in a point cloud (or higher-dimensional equivalents). For details, see the last section in the jupyter notebook `manual`. For now it is released as "experimental". I will be happy for any feedback on this: is it useful? Is it intuitive to use? Is there something confusing/inconvenient/missing? 
 
+# Cite
+
+If you use the code, please cite the following paper:
+
+
+S. Cultrera di Montesano, O. Draganov, H. Edelsbrunner, M. Saghafian: *Chromatic alpha complexes*, Foundations of Data Science (2025). doi: [10.3934/fods.2025003](https://doi.org/10.3934/fods.2025003)
+
 # Installation
 
 ## Install with `pip`
@@ -51,7 +58,7 @@ For more details check the docstrings of the methods and the jupyter notebook fi
 
 # Resources
 
-The code is based on research done at Institute of Science and Technology by Ranita Biswas, Sebastiano Cultrera di Montesano, Ondřej Draganov, Herbert Edelsbrunner and Morteza Saghafian. A preprint of the full paper can be found on arXiv: [Chromatic Alpha Complexes](https://arxiv.org/abs/2212.03128). A shorter introduction to the main ideas can be found in a preprint [Chromatic Topological Data Analysis](https://arxiv.org/abs/2406.04102).
+The code is based on research done at Institute of Science and Technology by Ranita Biswas, Sebastiano Cultrera di Montesano, Ondřej Draganov, Herbert Edelsbrunner and Morteza Saghafian. A preprint of the full paper can be found on arXiv: [Chromatic Alpha Complexes preprint](https://arxiv.org/abs/2212.03128), published version here: [Chromatic Alpha Complexes](https://doi.org/10.3934/fods.2025003). A shorter introduction to the main ideas can be found in a preprint [Chromatic Topological Data Analysis](https://arxiv.org/abs/2406.04102).
 
 A presentation about the main concepts used in this package can be viewed on YouTube: [AATRN Online Seminar: TDA for Chromatic Point Clouds](https://youtu.be/HIqiF00yKaw). A recording of a complementary talk focusing more on the motivations of the work and the combinatorial structures underlying it is accessible through [google drive](https://drive.google.com/file/d/1RBiGlgY4mlRL59eAVmMLrgBCZYN97QnZ/view).
 
